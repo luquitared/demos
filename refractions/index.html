@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Refractions — same news, different lenses</title>
+<meta name="description" content="A single news event refracted through every podcast lens it touches. Built from the podcast4 cross-show segment index." />
+<style>
+  :root {
+    --paper: #fbf7f0;
+    --ink: #1a1a1a;
+    --muted: #6b6b6b;
+    --rule: #d9d2c4;
+    --accent: #8b1d1d;
+    --serif: ui-serif, "Iowan Old Style", "Georgia", serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", system-ui, sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font: 17px/1.6 var(--serif);
+    -webkit-font-smoothing: antialiased;
+  }
+  main { max-width: 720px; margin: 0 auto; padding: 64px 24px 96px; }
+  .series {
+    font-family: var(--sans);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  .series a { color: inherit; text-decoration: none; border-bottom: 1px solid var(--rule); }
+  h1 {
+    font-size: clamp(34px, 5.5vw, 48px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin: 0 0 20px;
+    text-wrap: balance;
+  }
+  .dek {
+    font-size: 18px;
+    line-height: 1.5;
+    color: #2b2b2b;
+    margin: 0 0 48px;
+    max-width: 580px;
+  }
+  ul.list { list-style: none; padding: 0; margin: 0; display: grid; gap: 16px; }
+  li a {
+    display: block;
+    border: 1px solid var(--rule);
+    background: rgba(255,255,255,0.5);
+    border-radius: 10px;
+    padding: 22px 24px;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 120ms ease, transform 120ms ease;
+  }
+  li a:hover {
+    border-color: var(--accent);
+    transform: translateY(-1px);
+  }
+  .row { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; }
+  .row h2 { font-size: 22px; margin: 0; font-weight: 700; letter-spacing: -0.01em; }
+  .row .date {
+    font-family: var(--sans);
+    font-size: 12px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .desc { color: var(--muted); margin: 8px 0 0; font-size: 15px; line-height: 1.5; }
+  footer {
+    margin-top: 80px;
+    padding-top: 20px;
+    border-top: 1px solid var(--rule);
+    font-family: var(--sans);
+    font-size: 12px;
+    color: var(--muted);
+  }
+  footer a { color: inherit; }
+</style>
+</head>
+<body>
+<main>
+  <nav class="series">
+    <a href="/">demos</a>
+    <span style="margin: 0 8px; opacity: 0.4;">/</span>
+    <span>refractions</span>
+  </nav>
+
+  <h1>Refractions.</h1>
+  <p class="dek">
+    A single news event refracted through every podcast lens that touched it.
+    Built on the podcast4 cross-show segment index — the kind of story no
+    individual show could tell.
+  </p>
+
+  <ul class="list">
+    <li>
+      <a href="./iran/">
+        <div class="row">
+          <h2>Iran, in five lenses</h2>
+          <span class="date">2026-05-20</span>
+        </div>
+        <p class="desc">
+          Seven podcasts mentioned Iran the week of May 12. A historian saw a
+          plateau, a journalist saw a regime, a market saw a variable, a hawk
+          saw a countdown, a comedian saw a punchline. None of them shared a
+          noun.
+        </p>
+      </a>
+    </li>
+  </ul>
+
+  <footer>
+    Source: <a href="https://github.com/luquitared/demos">github.com/luquitared/demos</a>
+  </footer>
+</main>
+</body>
+</html>

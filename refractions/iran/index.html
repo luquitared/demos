@@ -1,0 +1,759 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Five Irans — Refractions · Week of 2026-05-12</title>
+<meta name="description" content="Seven podcasts mentioned Iran this week. None of them were talking about the same Iran. A look at the same country refracted through five different podcast lenses." />
+<meta name="theme-color" content="#fbf7f0" />
+<style>
+  :root {
+    --paper: #fbf7f0;
+    --ink: #1a1a1a;
+    --muted: #6b6b6b;
+    --rule: #d9d2c4;
+    --accent: #8b1d1d;
+    --serif: ui-serif, "Iowan Old Style", "Georgia", serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", system-ui, sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font: 17px/1.6 var(--serif);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection { background: rgba(139, 29, 29, 0.18); }
+
+  .wrap {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 64px 24px 96px;
+  }
+  .wide {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* Series / breadcrumb */
+  .series {
+    font-family: var(--sans);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  .series a { color: inherit; text-decoration: none; border-bottom: 1px solid var(--rule); }
+  .series a:hover { color: var(--accent); border-color: currentColor; }
+  .series .sep { margin: 0 8px; opacity: 0.4; }
+
+  /* Hero */
+  h1.lede {
+    font-size: clamp(34px, 5.5vw, 54px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin: 0 0 24px;
+    font-weight: 700;
+    text-wrap: balance;
+  }
+  h1.lede em {
+    font-style: italic;
+    color: var(--accent);
+  }
+  p.dek {
+    font-size: 19px;
+    line-height: 1.5;
+    color: #2b2b2b;
+    margin: 0 0 36px;
+    text-wrap: pretty;
+    max-width: 600px;
+  }
+  .byline {
+    font-family: var(--sans);
+    font-size: 13px;
+    color: var(--muted);
+    margin: 0 0 48px;
+  }
+
+  /* Spine — the data behind the thesis */
+  .spine {
+    border: 1px solid var(--rule);
+    background: rgba(255,255,255,0.4);
+    border-radius: 8px;
+    padding: 22px 24px;
+    margin: 0 0 80px;
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .spine .stat .num {
+    font-family: var(--sans);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    display: block;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .spine .stat .lbl {
+    font-family: var(--sans);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+  .spine .shows {
+    grid-column: 1 / -1;
+    border-top: 1px solid var(--rule);
+    padding-top: 16px;
+    font-family: var(--sans);
+    font-size: 13px;
+    color: #444;
+    line-height: 1.7;
+  }
+  .spine .shows .lbl {
+    font-family: var(--sans);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 6px;
+  }
+  .spine .shows span.show-pill {
+    display: inline-block;
+    margin-right: 6px;
+    margin-bottom: 4px;
+    padding: 2px 8px;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    background: var(--paper);
+  }
+
+  /* Lens sections */
+  .lens {
+    padding: 64px 0 24px;
+    border-top: 1px solid var(--rule);
+    margin-top: 16px;
+    scroll-margin-top: 24px;
+  }
+  .lens:first-of-type { margin-top: 0; }
+
+  .lens-no {
+    font-family: var(--sans);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .lens-no .swatch {
+    width: 10px; height: 10px;
+    border-radius: 2px;
+    background: var(--lens-color, var(--accent));
+  }
+  .lens-no .name {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .lens h2 {
+    font-size: clamp(26px, 3.6vw, 34px);
+    line-height: 1.15;
+    margin: 0 0 14px;
+    letter-spacing: -0.015em;
+    font-weight: 700;
+    text-wrap: balance;
+  }
+  .lens .framing {
+    font-size: 17px;
+    line-height: 1.6;
+    margin: 0 0 28px;
+    color: #2b2b2b;
+    text-wrap: pretty;
+  }
+  .lens .framing em { font-style: italic; }
+
+  /* Embedded clip card */
+  .clip-card {
+    border: 1px solid var(--rule);
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 0 0 24px;
+    box-shadow:
+      0 1px 0 rgba(0,0,0,0.02),
+      0 12px 32px -16px rgba(0,0,0,0.08);
+  }
+  .clip-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--rule);
+    font-family: var(--sans);
+    font-size: 13px;
+    background: var(--paper);
+  }
+  .clip-meta .avatar {
+    width: 28px; height: 28px;
+    border-radius: 999px;
+    background-size: cover; background-position: center;
+    flex-shrink: 0;
+    border: 1px solid var(--rule);
+  }
+  .clip-meta .who {
+    flex: 1;
+    min-width: 0;
+  }
+  .clip-meta .show {
+    font-weight: 600;
+    color: var(--ink);
+    display: block;
+    line-height: 1.25;
+  }
+  .clip-meta .ep {
+    color: var(--muted);
+    font-size: 12px;
+    display: block;
+    line-height: 1.25;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-top: 1px;
+  }
+  .clip-meta .ts {
+    font-variant-numeric: tabular-nums;
+    color: var(--muted);
+    background: var(--paper);
+    padding: 3px 8px;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+
+  .video {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #111;
+    cursor: pointer;
+  }
+  .video iframe,
+  .video img.thumb {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    border: 0;
+    display: block;
+  }
+  .video img.thumb { object-fit: cover; }
+  .video .play-btn {
+    position: absolute; inset: 0;
+    margin: auto;
+    width: 64px; height: 64px;
+    border-radius: 999px;
+    background: rgba(0,0,0,0.55);
+    border: 2px solid rgba(255,255,255,0.85);
+    color: white;
+    display: flex; align-items: center; justify-content: center;
+    backdrop-filter: blur(6px);
+    pointer-events: none;
+    transition: transform 120ms ease;
+  }
+  .video:hover .play-btn { transform: scale(1.06); }
+  .video .play-btn svg { width: 22px; height: 22px; margin-left: 3px; }
+
+  .clip-summary {
+    padding: 16px 18px 18px;
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.55;
+    color: #2b2b2b;
+  }
+
+  /* Pull quote */
+  .pull {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 22px;
+    line-height: 1.35;
+    color: var(--ink);
+    border-left: 3px solid var(--lens-color, var(--accent));
+    padding: 4px 0 4px 18px;
+    margin: 24px 0 8px;
+    text-wrap: balance;
+  }
+  .pull-attr {
+    font-family: var(--sans);
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 28px;
+  }
+
+  /* Per-lens tinting (subtle backgrounds via ::before) */
+  .lens { position: relative; }
+  .lens::before {
+    content: "";
+    position: absolute;
+    top: 0; left: -64px; right: -64px;
+    height: 100%;
+    background: var(--lens-color, transparent);
+    opacity: 0.025;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  .lens--historian   { --lens-color: #8b6914; } /* sepia */
+  .lens--journalist  { --lens-color: #1e4d8c; } /* newsprint blue */
+  .lens--markets     { --lens-color: #0f6e3e; } /* terminal green */
+  .lens--hawk        { --lens-color: #8b1d1d; } /* alert red */
+  .lens--comedy      { --lens-color: #b8478e; } /* magenta */
+
+  /* Synthesis */
+  .synth {
+    margin-top: 96px;
+    padding: 64px 0 0;
+    border-top: 3px double var(--rule);
+  }
+  .synth .kicker {
+    font-family: var(--sans);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+  .synth h2 {
+    font-size: clamp(28px, 4vw, 38px);
+    line-height: 1.1;
+    margin: 0 0 24px;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+    text-wrap: balance;
+  }
+  .synth p {
+    font-size: 18px;
+    line-height: 1.6;
+    color: #2b2b2b;
+    margin: 0 0 18px;
+    text-wrap: pretty;
+  }
+
+  /* Lens-summary grid (in synthesis) */
+  .lens-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 28px 0 12px;
+  }
+  .lens-row .cell {
+    border: 1px solid var(--rule);
+    background: rgba(255,255,255,0.5);
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-family: var(--sans);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .lens-row .cell strong {
+    display: block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 4px;
+    font-weight: 600;
+  }
+  .lens-row .cell em {
+    font-style: normal;
+    color: var(--ink);
+  }
+  @media (max-width: 540px) {
+    .spine { grid-template-columns: 1fr 1fr; }
+    .lens-row { grid-template-columns: 1fr; }
+  }
+
+  /* Footer */
+  footer {
+    margin-top: 80px;
+    padding-top: 24px;
+    border-top: 1px solid var(--rule);
+    font-family: var(--sans);
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  footer a { color: inherit; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <nav class="series">
+    <a href="/">demos</a>
+    <span class="sep">/</span>
+    <a href="/refractions/">refractions</a>
+    <span class="sep">/</span>
+    <span>iran</span>
+  </nav>
+
+  <h1 class="lede">
+    Seven podcasts mentioned Iran this week.<br/>
+    None of them were talking about the <em>same Iran</em>.
+  </h1>
+
+  <p class="dek">
+    A historian saw a 2,500-year-old empire. A journalist saw a regime in an
+    autocracy axis. A market analyst saw a variable. A combat-sports host saw
+    a nuclear timeline. A comedian saw a punchline. This is what the same
+    week sounds like across five different lenses.
+  </p>
+
+  <p class="byline">
+    Built from the podcast4 catalog · week of 2026-05-12 · all clips jump
+    to real Deepgram-timestamped moments.
+  </p>
+
+  <div class="spine">
+    <div class="stat"><span class="num">7</span><span class="lbl">shows</span></div>
+    <div class="stat"><span class="num">26</span><span class="lbl">Iran mentions</span></div>
+    <div class="stat"><span class="num">5</span><span class="lbl">incompatible framings</span></div>
+    <div class="shows">
+      <span class="lbl">Shows that mentioned Iran this week</span>
+      <span class="show-pill">The Joe Rogan Experience (8)</span>
+      <span class="show-pill">The Rest Is History (5)</span>
+      <span class="show-pill">Diary of a CEO (5)</span>
+      <span class="show-pill">The Tim Dillon Show (3)</span>
+      <span class="show-pill">The Prof G Pod (2)</span>
+      <span class="show-pill">This Past Weekend w/ Theo Von (2)</span>
+      <span class="show-pill">Flagrant (1)</span>
+    </div>
+  </div>
+
+  <!-- ─────────── LENS 01 · HISTORIAN ─────────── -->
+  <section class="lens lens--historian" id="historian">
+    <div class="lens-no">
+      <span class="swatch"></span>
+      Lens 01 · <span class="name">The Historian</span>
+    </div>
+    <h2>Iran is the ground itself — a 2,500-year-old plateau that keeps remembering.</h2>
+    <p class="framing">
+      For Tom Holland and Dominic Sandbrook on <em>The Rest Is History</em>,
+      "Iran" is the Achaemenid heartland. They never call it Iran. They call it
+      Persia, and they walk through the same flat ground that favored Persian
+      cavalry against Athens in 490 BC — ground every modern invader still has
+      to cross. The framing flattens 2,500 years into a single fault line.
+    </p>
+
+    <div class="clip-card">
+      <div class="clip-meta">
+        <div class="avatar" style="background-image:url('https://i.ytimg.com/vi/63d-gjFTKZo/hqdefault.jpg')"></div>
+        <div class="who">
+          <span class="show">The Rest Is History</span>
+          <span class="ep">Ep. 668 — Greece vs Persia: The Rise of the First Superpower (Pt 1)</span>
+        </div>
+        <span class="ts">14:30 – 20:05</span>
+      </div>
+      <div class="video"
+           data-vid="63d-gjFTKZo" data-start="870" data-end="1205" data-title="Darius weaponises Persian religion">
+        <img class="thumb" src="https://i.ytimg.com/vi/63d-gjFTKZo/maxresdefault.jpg" alt="The Rest Is History thumbnail" />
+        <div class="play-btn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
+      </div>
+      <div class="clip-summary">
+        Tom Holland on Darius's brutal consolidation of the Iranian heartlands
+        — rebellions across the same plateau, suppressed the same way. The
+        Persian Empire didn't begin in modern Iran by accident; the geography
+        did the work.
+      </div>
+    </div>
+
+    <p class="pull">
+      "The Persian Empire originated in modern-day Iran. The plateau where the
+      events involving Darius take place."
+    </p>
+    <p class="pull-attr">— summary, The Rest Is History · Ep. 668</p>
+  </section>
+
+  <!-- ─────────── LENS 02 · JOURNALIST ─────────── -->
+  <section class="lens lens--journalist" id="journalist">
+    <div class="lens-no">
+      <span class="swatch"></span>
+      Lens 02 · <span class="name">The Journalist</span>
+    </div>
+    <h2>Iran is a node in an autocracy axis — and the US miscalculated it.</h2>
+    <p class="framing">
+      For Anne Applebaum on <em>The Diary of a CEO</em>, Iran is not geography
+      and not religion. It's a member of a network — Russia, China, Iran,
+      smaller satellites — whose mutual interest is keeping liberal democracies
+      from finishing the post-1945 project. The clip lands on a specific
+      claim: that the US president underestimated how decentralized and
+      resilient the Iranian regime actually is.
+    </p>
+
+    <div class="clip-card">
+      <div class="clip-meta">
+        <div class="avatar" style="background-image:url('https://i.ytimg.com/vi/kwEtOyaFhCA/hqdefault.jpg')"></div>
+        <div class="who">
+          <span class="show">The Diary of a CEO</span>
+          <span class="ep">Anne Applebaum — "You Won't Notice Until It's Too Late!"</span>
+        </div>
+        <span class="ts">45:39 – 48:49</span>
+      </div>
+      <div class="video"
+           data-vid="kwEtOyaFhCA" data-start="2739" data-end="2929" data-title="The Most Dangerous Part Of Dictatorship">
+        <img class="thumb" src="https://i.ytimg.com/vi/kwEtOyaFhCA/maxresdefault.jpg" alt="Diary of a CEO thumbnail" />
+        <div class="play-btn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
+      </div>
+      <div class="clip-summary">
+        Applebaum: the regime's decentralized command structure means there is
+        no single decapitation strike. The American failure was strategic
+        foresight, not firepower.
+      </div>
+    </div>
+
+    <p class="pull">
+      "A complex, embedded regime with a decentralized defense system that was
+      miscalculated by the US president."
+    </p>
+    <p class="pull-attr">— mention context, Anne Applebaum on Diary of a CEO</p>
+  </section>
+
+  <!-- ─────────── LENS 03 · MARKETS ─────────── -->
+  <section class="lens lens--markets" id="markets">
+    <div class="lens-no">
+      <span class="swatch"></span>
+      Lens 03 · <span class="name">The Market</span>
+    </div>
+    <h2>Iran is a variable in a different conversation entirely.</h2>
+    <p class="framing">
+      On <em>The Prof G Pod</em>, Alice Han and James Kynge spend most of the
+      episode on Trump-Xi summit choreography and the Shanghai Composite. Iran
+      enters as a single line — a "crisis point looming" — and exits. Same
+      country, but here it's a sub-variable in a much larger trade story. Not
+      the protagonist. Background risk.
+    </p>
+
+    <div class="clip-card">
+      <div class="clip-meta">
+        <div class="avatar" style="background-image:url('https://i.ytimg.com/vi/X_sY02r6J6k/hqdefault.jpg')"></div>
+        <div class="who">
+          <span class="show">The Prof G Pod with Scott Galloway</span>
+          <span class="ep">China Decode: The Trump-Xi Meeting That Could Reshape the Global Economy</span>
+        </div>
+        <span class="ts">0:48 – 2:42</span>
+      </div>
+      <div class="video"
+           data-vid="X_sY02r6J6k" data-start="48" data-end="162" data-title="Markets">
+        <img class="thumb" src="https://i.ytimg.com/vi/X_sY02r6J6k/maxresdefault.jpg" alt="Prof G Pod thumbnail" />
+        <div class="play-btn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
+      </div>
+      <div class="clip-summary">
+        The opener of the episode — Alice Han and James Kynge frame Iran as
+        one of several crises overshadowing the Beijing summit, then move on
+        to semiconductor and Shanghai Composite analysis.
+      </div>
+    </div>
+
+    <p class="pull">
+      "Mentioned in the context of a crisis impacting global relations."
+    </p>
+    <p class="pull-attr">— mention context, Prof G Pod · Trump-Xi episode</p>
+  </section>
+
+  <!-- ─────────── LENS 04 · HAWK ─────────── -->
+  <section class="lens lens--hawk" id="hawk">
+    <div class="lens-no">
+      <span class="swatch"></span>
+      Lens 04 · <span class="name">The Hawk</span>
+    </div>
+    <h2>Iran is a nuclear timeline with a religious mission.</h2>
+    <p class="framing">
+      Gad Saad and Joe Rogan on <em>JRE</em> spend over half an hour on Iran,
+      and the entire frame is threat. The arguments move fast: eschatology
+      and nuclear proliferation, then debate over the credibility of
+      intelligence on Iranian capabilities, then Netanyahu's strategic
+      calculus. There is no "Iran the country" here — only the regime, and
+      what it will or won't do.
+    </p>
+
+    <div class="clip-card">
+      <div class="clip-meta">
+        <div class="avatar" style="background-image:url('https://i.ytimg.com/vi/6jdaXp0iwtw/hqdefault.jpg')"></div>
+        <div class="who">
+          <span class="show">The Joe Rogan Experience</span>
+          <span class="ep">#2497 — Gad Saad</span>
+        </div>
+        <span class="ts">41:29 – 46:39</span>
+      </div>
+      <div class="video"
+           data-vid="6jdaXp0iwtw" data-start="2489" data-end="2799" data-title="Geopolitical Tensions and the Iran-Israel Conflict">
+        <img class="thumb" src="https://i.ytimg.com/vi/6jdaXp0iwtw/maxresdefault.jpg" alt="JRE thumbnail" />
+        <div class="play-btn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
+      </div>
+      <div class="clip-summary">
+        Gad Saad and Joe Rogan on US-Israel-Iran triangulation: nuclear
+        intelligence credibility, Netanyahu's incentives, and whether the
+        regime would ever actually use a weapon if it had one.
+      </div>
+    </div>
+
+    <p class="pull">
+      "Discussed as a regime with an eschatology that poses a nuclear
+      proliferation threat to global peace."
+    </p>
+    <p class="pull-attr">— mention context, Joe Rogan + Gad Saad on JRE #2497</p>
+  </section>
+
+  <!-- ─────────── LENS 05 · COMEDY ─────────── -->
+  <section class="lens lens--comedy" id="comedy">
+    <div class="lens-no">
+      <span class="swatch"></span>
+      Lens 05 · <span class="name">The Comedy</span>
+    </div>
+    <h2>Iran is a comparison class for things that should be bombed.</h2>
+    <p class="framing">
+      On <em>The Tim Dillon Show</em>, Iran shows up not as policy but as
+      yardstick. Tim Dillon, riffing on a hantavirus outbreak aboard a cruise
+      ship, suggests the ship should be destroyed — and reaches for the
+      Iranian nuclear program as the natural reference point. The same
+      vocabulary as the hawk's lens. None of the same weight.
+    </p>
+
+    <div class="clip-card">
+      <div class="clip-meta">
+        <div class="avatar" style="background-image:url('https://i.ytimg.com/vi/add64uypsko/hqdefault.jpg')"></div>
+        <div class="who">
+          <span class="show">The Tim Dillon Show</span>
+          <span class="ep">495 — Hantavirus Cruise &amp; iPad Babies</span>
+        </div>
+        <span class="ts">1:09:59 – 1:15:24</span>
+      </div>
+      <div class="video"
+           data-vid="add64uypsko" data-start="4199" data-end="4524" data-title="The Hantavirus Cruise Controversy">
+        <img class="thumb" src="https://i.ytimg.com/vi/add64uypsko/maxresdefault.jpg" alt="Tim Dillon Show thumbnail" />
+        <div class="play-btn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
+      </div>
+      <div class="clip-summary">
+        Dillon contrasts his proposed extreme measures for the hantavirus
+        cruise ship with "geopolitical concerns like the Iranian nuclear
+        program," then drifts to theories about underwater alien bases.
+      </div>
+    </div>
+
+    <p class="pull">
+      "Used as a comparison for geopolitical threats that the speaker believes
+      should be bombed."
+    </p>
+    <p class="pull-attr">— mention context, The Tim Dillon Show · Ep. 495</p>
+  </section>
+
+  <!-- ─────────── SYNTHESIS ─────────── -->
+  <section class="synth">
+    <div class="kicker">Synthesis</div>
+    <h2>What you only see in the aggregate.</h2>
+    <p>
+      No single one of these framings is wrong. Each is internally coherent —
+      each show's audience is being told a self-consistent story about Iran.
+      But laid side by side, the five lenses don't share a noun. The
+      historian's <em>Iran</em> is a plateau. The journalist's is a regime.
+      The market analyst's is a risk premium. The hawk's is a countdown. The
+      comedian's is a punchline.
+    </p>
+    <p>
+      Subscribe to one podcast and you get one Iran. Subscribe to seven and
+      you get a country that doesn't quite cohere — and a glimpse of the
+      thing that's actually true: <em>that the same news event refracts into
+      five different stories before it reaches your week.</em>
+    </p>
+
+    <div class="lens-row">
+      <div class="cell">
+        <strong>Historian</strong><em>A plateau, 2,500 years deep.</em>
+      </div>
+      <div class="cell">
+        <strong>Journalist</strong><em>A regime in an autocracy axis.</em>
+      </div>
+      <div class="cell">
+        <strong>Market</strong><em>A variable in the trade summit.</em>
+      </div>
+      <div class="cell">
+        <strong>Hawk</strong><em>A nuclear timeline.</em>
+      </div>
+      <div class="cell" style="grid-column: 1 / -1;">
+        <strong>Comedian</strong><em>A yardstick for absurdity.</em>
+      </div>
+    </div>
+
+    <p style="margin-top: 32px; font-size: 15px; color: var(--muted);">
+      This page is itself the artifact: it can only exist because every clip
+      above came from a single, cross-show segment index. No podcast told
+      this story. Their aggregation did.
+    </p>
+  </section>
+
+  <footer>
+    <p>
+      Refractions · Iran · Week of 2026-05-12 · Built from the podcast4 Neon
+      catalog. Each timestamp is a real Deepgram-aligned moment; play buttons
+      jump a YouTube embed to that second.
+    </p>
+    <p>
+      <a href="https://github.com/luquitared/demos">github.com/luquitared/demos</a>
+    </p>
+  </footer>
+
+</div>
+
+<script>
+  // Tap-to-play: swap thumb+button for an autoplay iframe with start/end.
+  // The page is long enough that we want only the current clip mounted.
+  function mount(card) {
+    if (card.dataset.playing === "1") return;
+    const vid = card.dataset.vid;
+    const start = card.dataset.start;
+    const end = card.dataset.end;
+    const title = card.dataset.title || "Clip";
+    card.dataset.playing = "1";
+    const iframe = document.createElement("iframe");
+    iframe.src = "https://www.youtube.com/embed/" + vid
+      + "?autoplay=1&start=" + start
+      + "&end=" + end
+      + "&rel=0&playsinline=1&modestbranding=1";
+    iframe.allow = "accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture";
+    iframe.allowFullscreen = true;
+    iframe.title = title;
+    card.querySelector(".thumb")?.remove();
+    card.querySelector(".play-btn")?.remove();
+    card.appendChild(iframe);
+  }
+  function unmount(card) {
+    if (card.dataset.playing !== "1") return;
+    card.dataset.playing = "";
+    const vid = card.dataset.vid;
+    card.querySelector("iframe")?.remove();
+    card.innerHTML = `
+      <img class="thumb" src="https://i.ytimg.com/vi/${vid}/maxresdefault.jpg" alt="thumbnail" />
+      <div class="play-btn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
+    `;
+  }
+  document.querySelectorAll(".video").forEach((card) => {
+    card.addEventListener("click", () => mount(card));
+  });
+  // Unmount iframes that scroll fully out of view, so only one is live.
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (!e.isIntersecting) unmount(e.target);
+    }
+  }, { threshold: 0.05 });
+  document.querySelectorAll(".video").forEach((card) => io.observe(card));
+</script>
+</body>
+</html>
