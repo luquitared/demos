@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>demos</title>
+<meta name="description" content="A landing pad for one-off concept pages — sketches, prototypes, and ideas that aren't ready for a real project." />
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --card: #131313;
+    --fg: #fafafa;
+    --muted: #71717a;
+    --line: #262626;
+    --accent: #f97316;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  main { max-width: 720px; margin: 0 auto; padding: 64px 24px 80px; }
+  header { margin-bottom: 48px; }
+  .eyebrow {
+    font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 12px;
+  }
+  .eyebrow .dot {
+    display: inline-block; width: 6px; height: 6px;
+    border-radius: 999px; background: var(--accent);
+    margin-right: 8px; vertical-align: middle;
+  }
+  h1 {
+    font-size: 36px; line-height: 1.1; margin: 0 0 16px;
+    letter-spacing: -0.02em; font-weight: 700;
+  }
+  .intro {
+    color: var(--muted); max-width: 540px;
+    font-size: 15px;
+  }
+  ul.demos {
+    list-style: none; padding: 0; margin: 32px 0 0;
+    display: grid; gap: 14px;
+  }
+  li a {
+    display: block;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 20px 22px;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 120ms ease, transform 120ms ease;
+  }
+  li a:hover {
+    border-color: var(--accent);
+    transform: translateY(-1px);
+  }
+  .row { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; }
+  .row h2 {
+    font-size: 18px; font-weight: 600; margin: 0;
+    letter-spacing: -0.005em;
+  }
+  .date {
+    color: var(--muted); font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+  }
+  .desc { color: var(--muted); margin: 6px 0 0; font-size: 14px; }
+  .tags { margin-top: 12px; display: flex; gap: 6px; flex-wrap: wrap; }
+  .tag {
+    font-size: 11px;
+    color: var(--muted);
+    border: 1px solid var(--line);
+    padding: 2px 8px;
+    border-radius: 999px;
+  }
+  footer {
+    margin-top: 72px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 12px;
+  }
+  footer a { color: var(--muted); }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="eyebrow"><span class="dot"></span>demos.pages.dev</div>
+    <h1>Concept pages.</h1>
+    <p class="intro">
+      A landing pad for one-off ideas — sketches, prototypes, and what-ifs that
+      live as static HTML before (or instead of) becoming a real project.
+    </p>
+  </header>
+
+  <ul class="demos">
+    <li>
+      <a href="./reel/">
+        <div class="row">
+          <h2>Podcast clip reel</h2>
+          <span class="date">2026-05-20</span>
+        </div>
+        <p class="desc">
+          What if the podcast4 segment catalog was a vertical, swipeable feed?
+          Twelve real moments — Crime Junkie, Rest Is History, Huberman, Schulz —
+          stitched into a TikTok-style scroll.
+        </p>
+        <div class="tags">
+          <span class="tag">podcast4</span>
+          <span class="tag">youtube embed</span>
+          <span class="tag">snap-scroll</span>
+        </div>
+      </a>
+    </li>
+  </ul>
+
+  <footer>
+    Source: <a href="https://github.com/luquitared/demos">github.com/luquitared/demos</a>
+  </footer>
+</main>
+</body>
+</html>

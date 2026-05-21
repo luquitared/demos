@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Reel — podcast4 concept</title>
+<meta name="theme-color" content="#000000" />
+<meta name="description" content="Vertical, swipeable feed of segment clips from the podcast4 catalog. Each card jumps a YouTube embed to a specific moment from a real episode." />
+<style>
+  :root {
+    --fg: #fafafa;
+    --muted: #a1a1aa;
+    --accent: #f97316;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    height: 100%;
+    background: #000;
+    color: var(--fg);
+    font: 15px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    overscroll-behavior: none;
+    -webkit-font-smoothing: antialiased;
+  }
+  /* Snap container — one card per viewport, vertical scroll */
+  .feed {
+    height: 100dvh;
+    width: 100vw;
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
+    scrollbar-width: none;
+  }
+  .feed::-webkit-scrollbar { display: none; }
+
+  .card {
+    position: relative;
+    height: 100dvh;
+    width: 100vw;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  /* Blurred thumbnail background fills the card */
+  .bg {
+    position: absolute; inset: 0;
+    background-size: cover;
+    background-position: center;
+    filter: blur(28px) brightness(0.45) saturate(1.05);
+    transform: scale(1.15);
+    z-index: 0;
+  }
+
+  /* Video wrapper — letterboxed 16:9 centered vertically */
+  .video-wrap {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+  }
+  .video {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    aspect-ratio: 16 / 9;
+    background: #000;
+  }
+  .video iframe,
+  .video img.thumb {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    border: 0;
+    display: block;
+  }
+  .video img.thumb {
+    object-fit: cover;
+    background: #111;
+  }
+
+  .play-btn {
+    position: absolute; inset: 0;
+    margin: auto;
+    width: 80px; height: 80px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.55);
+    border: 2px solid rgba(255,255,255,0.85);
+    color: white;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    transition: transform 120ms ease;
+    z-index: 2;
+  }
+  .play-btn:hover { transform: scale(1.05); }
+  .play-btn:active { transform: scale(0.95); }
+  .play-btn svg { width: 28px; height: 28px; margin-left: 4px; }
+
+  /* Top + bottom overlays */
+  .top-overlay {
+    position: absolute; top: 0; left: 0; right: 0;
+    padding: env(safe-area-inset-top, 12px) 18px 36px;
+    padding-top: max(env(safe-area-inset-top, 12px), 18px);
+    background: linear-gradient(to bottom, rgba(0,0,0,0.75), rgba(0,0,0,0));
+    z-index: 3;
+    display: flex; justify-content: space-between; align-items: flex-start;
+    gap: 12px;
+    pointer-events: none;
+  }
+  .brand {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .brand .dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 999px;
+    background: var(--accent);
+    margin-right: 8px;
+    vertical-align: middle;
+    animation: pulse 2.2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 0.55; }
+    50% { opacity: 1; }
+  }
+  .counter {
+    font-size: 12px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    background: rgba(0,0,0,0.4);
+    padding: 4px 10px;
+    border-radius: 999px;
+    backdrop-filter: blur(6px);
+  }
+
+  .bottom-overlay {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    padding: 36px 22px max(env(safe-area-inset-bottom, 24px), 28px);
+    background: linear-gradient(to top, rgba(0,0,0,0.92) 30%, rgba(0,0,0,0));
+    z-index: 3;
+  }
+  .show {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 8px;
+    padding: 5px 10px 5px 6px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 999px;
+    backdrop-filter: blur(6px);
+  }
+  .show-avatar {
+    width: 22px; height: 22px;
+    border-radius: 999px;
+    background-size: cover; background-position: center;
+    flex-shrink: 0;
+  }
+  .seg-title {
+    font-size: 22px;
+    line-height: 1.2;
+    font-weight: 700;
+    margin: 0 0 8px;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+  .seg-summary {
+    font-size: 14px;
+    color: rgba(250,250,250,0.78);
+    margin: 0 0 14px;
+    max-width: 640px;
+    text-wrap: pretty;
+  }
+  .meta-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 12px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .meta-row a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .meta-row a:hover { text-decoration: underline; }
+  .timestamp {
+    background: rgba(255,255,255,0.08);
+    padding: 3px 8px;
+    border-radius: 4px;
+    color: var(--fg);
+  }
+
+  /* Swipe hint, only on first card */
+  .swipe-hint {
+    position: absolute;
+    bottom: calc(env(safe-area-inset-bottom, 12px) + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 11px;
+    color: rgba(255,255,255,0.55);
+    z-index: 4;
+    pointer-events: none;
+    animation: bob 1.6s ease-in-out infinite;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  @keyframes bob {
+    0%, 100% { transform: translate(-50%, 0); opacity: 0.55; }
+    50%      { transform: translate(-50%, 6px); opacity: 1; }
+  }
+
+  @media (max-width: 720px) {
+    .seg-title { font-size: 19px; }
+    .seg-summary { font-size: 13px; }
+    .play-btn { width: 68px; height: 68px; }
+    .play-btn svg { width: 24px; height: 24px; }
+  }
+
+  /* Footer card after last clip */
+  .end-card {
+    height: 100dvh;
+    width: 100vw;
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0 24px;
+    background:
+      radial-gradient(circle at 30% 20%, rgba(249,115,22,0.18), transparent 50%),
+      radial-gradient(circle at 70% 80%, rgba(99, 102, 241, 0.15), transparent 50%),
+      #000;
+  }
+  .end-card h2 {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0 0 12px;
+    letter-spacing: -0.02em;
+  }
+  .end-card p {
+    color: var(--muted);
+    max-width: 380px;
+    margin: 0 0 24px;
+    font-size: 14px;
+  }
+  .end-card .restart {
+    color: var(--fg);
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    padding: 10px 22px;
+    border-radius: 999px;
+    font: inherit;
+    cursor: pointer;
+  }
+  .end-card .restart:hover { background: rgba(255,255,255,0.14); }
+</style>
+</head>
+<body>
+<div class="feed" id="feed"></div>
+
+<script>
+  // Real segments from the podcast4 Neon catalog (2026-05-13 scrape).
+  // Each clip references an actual YouTube video_id + segment start/end
+  // timestamps captured by Deepgram during ingest. The feed picks one
+  // moment per show to keep variety.
+  const CLIPS = [
+    {
+      show: "Crime Junkie",
+      episode: "MYSTERIOUS DEATH OF: Spencer Irwin",
+      videoId: "YvurPm1zeU4",
+      start: 63, end: 216,
+      segTitle: "Found in Fresno",
+      summary: "Spencer Irwin's mother questions the official drug-overdose narrative after her son is found dead under suspicious circumstances. Authorities say one thing — his family knows another.",
+    },
+    {
+      show: "The Rest Is History",
+      episode: "Greece vs Persia: The Rise of the First Superpower (Pt 1)",
+      videoId: "63d-gjFTKZo",
+      start: 174, end: 256,
+      segTitle: "Persia's 9/11 moment",
+      summary: "Athenians burn Sardis. King Darius vows retribution. Tom Holland frames the Persian shock as a 5th-century-BC equivalent of a superpower discovering it can be hit at home.",
+    },
+    {
+      show: "The Tucker Carlson Show",
+      episode: "Zelensky's Press Secretary Reveals All",
+      videoId: "Pkz2-cWHPbg",
+      start: 4384, end: 4496,
+      segTitle: "What's Zelensky's wife like?",
+      summary: "Iuliia Mendel, Zelensky's former press secretary, describes his pre-interview habit — disappearing into the bathroom and re-emerging visibly different — and the rumors that habit fuels.",
+    },
+    {
+      show: "The Diary Of A CEO",
+      episode: "Pulitzer Prize Historian: You Won't Notice Until It's Too Late!",
+      videoId: "kwEtOyaFhCA",
+      start: 618, end: 725,
+      segTitle: "Could America become an autocracy?",
+      summary: "Anne Applebaum on gerrymandering, the refusal to accept election outcomes, and why the historian's read on 2020 is darker than the post-mortems suggest.",
+    },
+    {
+      show: "Andrew Schulz's Flagrant",
+      episode: "Spirit Airlines DIED, JPMorgan Lawsuit Is INSANE",
+      videoId: "O9w5iuJiETA",
+      start: 2706, end: 2855,
+      segTitle: "Broken nose stolen valor",
+      summary: "Akaash Singh and Andrew Schulz on a bare-knuckle fighter encounter, Schulz's recent nose injury, and the ratio of legit-broken-nose stories to fabricated ones.",
+    },
+    {
+      show: "2 Bears, 1 Cave",
+      episode: "The Bears Go Up In Smoke",
+      videoId: "YxrcqMcw7F8",
+      start: 2832, end: 2897,
+      segTitle: "Bert tries to explain Girl Talk",
+      summary: "Bert Kreischer pitches Tom Segura on the mashup artist Girl Talk. The conversation pivots to whether the podcast market is actually oversaturated.",
+    },
+    {
+      show: "The Prof G Pod",
+      episode: "China Decode: The Trump-Xi Meeting",
+      videoId: "X_sY02r6J6k",
+      start: 48, end: 162,
+      segTitle: "Markets ahead of Trump-Xi",
+      summary: "Alice Han and James Kynge on the diplomatic choreography around the Beijing summit, the Shanghai Composite rally, and what semis are pricing in.",
+    },
+    {
+      show: "The Mel Robbins Podcast",
+      episode: "Eliminate Self-Doubt Forever",
+      videoId: "Jd80_EKVb1A",
+      start: 2847, end: 2997,
+      segTitle: "Stop complaining (the protocol)",
+      summary: "Shadé Zahrai on 'worry time' as stimulus control — a concrete framework for converting chronic complaining into bounded, scheduled rumination.",
+    },
+    {
+      show: "Kinda Funny Games Daily",
+      episode: "Valve Launching FOUR Steam Machines?!",
+      videoId: "BnKxzJ9i41k",
+      start: 3225, end: 3335,
+      segTitle: "eBay rejects GameStop's $56B bid",
+      summary: "Ryan Cohen's $56B offer for eBay gets a same-day no. eBay's board calls the bid 'neither credible nor attractive,' and questions GameStop's governance.",
+    },
+    {
+      show: "My First Million",
+      episode: "I put 80% of my money in the S&P",
+      videoId: "5459w3HFgfY",
+      start: 2019, end: 2097,
+      segTitle: "YC's Request for Startups",
+      summary: "Shaan Puri and Sam Parr on how YC's RFS list has drifted from 'B2B SaaS for X' to swing-for-the-fences ideas — and Daniel Gross's aesthetic-data-center pitch.",
+    },
+    {
+      show: "Darknet Diaries",
+      episode: "174: Pacific Rim",
+      videoId: "QzI9ig-DFoc",
+      start: 5457, end: 5636,
+      segTitle: "Sophos vs. China",
+      summary: "Jack Rhysider on the multi-year campaign by a Chinese state-sponsored actor against security vendor Sophos — and why FBI involvement hasn't slowed it down.",
+    },
+    {
+      show: "Huberman Lab",
+      episode: "Master Self Control & Overcome Procrastination",
+      videoId: "e89rVf4Pf0k",
+      start: 0, end: 188,
+      segTitle: "Dr. Kentaro Fujita on self-control",
+      summary: "How focusing on higher-order purposes and 'whys' is a more reliable lever for self-control than willpower or motivation — opener of the Huberman + Fujita conversation.",
+    },
+  ];
+
+  function fmt(sec) {
+    const h = Math.floor(sec / 3600);
+    const m = Math.floor((sec % 3600) / 60);
+    const s = Math.floor(sec % 60);
+    if (h > 0) return h + ":" + String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0");
+    return m + ":" + String(s).padStart(2, "0");
+  }
+
+  function fmtDuration(sec) {
+    const m = Math.floor(sec / 60);
+    const s = Math.floor(sec % 60);
+    if (m === 0) return s + "s";
+    return m + "m " + s + "s";
+  }
+
+  const feed = document.getElementById("feed");
+
+  CLIPS.forEach((clip, idx) => {
+    const card = document.createElement("section");
+    card.className = "card";
+    card.dataset.idx = String(idx);
+
+    const thumb = "https://i.ytimg.com/vi/" + clip.videoId + "/maxresdefault.jpg";
+    const fallbackThumb = "https://i.ytimg.com/vi/" + clip.videoId + "/hqdefault.jpg";
+
+    const dur = clip.end - clip.start;
+
+    card.innerHTML = `
+      <div class="bg" style="background-image:url('${thumb}'),url('${fallbackThumb}')"></div>
+      <div class="video-wrap">
+        <div class="video">
+          <img class="thumb" src="${thumb}" onerror="this.src='${fallbackThumb}'" alt="${clip.show} thumbnail" />
+          <button class="play-btn" aria-label="Play clip">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="top-overlay">
+        <div class="brand"><span class="dot"></span>mentioned.fm reel</div>
+        <div class="counter">${idx + 1} / ${CLIPS.length}</div>
+      </div>
+      <div class="bottom-overlay">
+        <div class="show">
+          <span class="show-avatar" style="background-image:url('${thumb}')"></span>
+          ${clip.show}
+        </div>
+        <h2 class="seg-title">${clip.segTitle}</h2>
+        <p class="seg-summary">${clip.summary}</p>
+        <div class="meta-row">
+          <span class="timestamp">${fmt(clip.start)} – ${fmt(clip.end)}</span>
+          <span>${fmtDuration(dur)}</span>
+          <a href="https://www.youtube.com/watch?v=${clip.videoId}&t=${clip.start}s" target="_blank" rel="noopener">Watch full episode ↗</a>
+        </div>
+      </div>
+      ${idx === 0 ? '<div class="swipe-hint">scroll for next clip ↓</div>' : ''}
+    `;
+
+    feed.appendChild(card);
+  });
+
+  // End card
+  const endCard = document.createElement("section");
+  endCard.className = "end-card";
+  endCard.innerHTML = `
+    <h2>That's the reel.</h2>
+    <p>This concept turns the podcast4 segment catalog into a swipeable feed. Every clip above is a real moment indexed by Deepgram, jumping a YouTube embed to a precise timestamp.</p>
+    <button class="restart" onclick="document.getElementById('feed').scrollTo({top:0,behavior:'smooth'})">Start over ↑</button>
+  `;
+  feed.appendChild(endCard);
+
+  // Tap-to-play: swap thumbnail+button for an autoplay iframe.
+  // We mount/unmount iframes per-card via IntersectionObserver so only
+  // the visible (or near-visible) card holds a live YouTube embed —
+  // keeps memory and CPU sane on a long feed and stops cross-card
+  // audio bleed when you swipe past a clip that's still playing.
+  function mountIframe(card) {
+    const clip = CLIPS[Number(card.dataset.idx)];
+    if (!clip) return; // skip end-card
+    const video = card.querySelector(".video");
+    if (!video || video.dataset.playing === "1") return;
+    video.dataset.playing = "1";
+    const iframe = document.createElement("iframe");
+    iframe.src = "https://www.youtube.com/embed/" + clip.videoId
+      + "?autoplay=1&start=" + Math.floor(clip.start)
+      + "&end=" + Math.floor(clip.end)
+      + "&rel=0&playsinline=1&modestbranding=1";
+    iframe.allow = "accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture";
+    iframe.allowFullscreen = true;
+    iframe.title = clip.segTitle + " — " + clip.show;
+    // Drop the thumbnail + play button under the iframe
+    video.querySelector(".thumb")?.remove();
+    video.querySelector(".play-btn")?.remove();
+    video.appendChild(iframe);
+  }
+
+  function unmountIframe(card) {
+    const video = card?.querySelector(".video");
+    if (!video || video.dataset.playing !== "1") return;
+    const clip = CLIPS[Number(card.dataset.idx)];
+    if (!clip) return;
+    video.dataset.playing = "";
+    const thumb = "https://i.ytimg.com/vi/" + clip.videoId + "/maxresdefault.jpg";
+    const fallbackThumb = "https://i.ytimg.com/vi/" + clip.videoId + "/hqdefault.jpg";
+    video.innerHTML = `
+      <img class="thumb" src="${thumb}" onerror="this.src='${fallbackThumb}'" alt="${clip.show} thumbnail" />
+      <button class="play-btn" aria-label="Play clip">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+      </button>
+    `;
+    wirePlayButton(video, card);
+  }
+
+  function wirePlayButton(video, card) {
+    const btn = video.querySelector(".play-btn");
+    if (!btn) return;
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      mountIframe(card);
+    });
+    // Also let tapping the thumbnail play
+    const thumb = video.querySelector(".thumb");
+    thumb?.addEventListener("click", () => mountIframe(card));
+  }
+
+  document.querySelectorAll(".card").forEach((card) => {
+    const video = card.querySelector(".video");
+    if (video) wirePlayButton(video, card);
+  });
+
+  // Unmount iframes from cards that fully leave the viewport
+  const io = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      if (!entry.isIntersecting) unmountIframe(entry.target);
+    }
+  }, { threshold: 0.1 });
+  document.querySelectorAll(".card").forEach((card) => io.observe(card));
+</script>
+</body>
+</html>
