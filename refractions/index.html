@@ -3,120 +3,613 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Refractions — same news, different lenses</title>
-<meta name="description" content="A single news event refracted through every podcast lens it touches. Built from the podcast4 cross-show segment index." />
+<title>Refractions — a series</title>
+<meta name="description" content="A serial editorial. One news event per issue, refracted through every podcast lens that touched it. Built from the podcast4 cross-show segment index." />
+<meta name="theme-color" content="#0e0d0b" />
 <style>
   :root {
-    --paper: #fbf7f0;
-    --ink: #1a1a1a;
-    --muted: #6b6b6b;
-    --rule: #d9d2c4;
-    --accent: #8b1d1d;
+    --bg: #0e0d0b;
+    --ink: #f4eee2;
+    --muted: #8a8377;
+    --rule: #2a2722;
+    --accent: #d97757;
+    --accent-2: #c0a060;
     --serif: ui-serif, "Iowan Old Style", "Georgia", serif;
+    --display: "Times New Roman", ui-serif, "Iowan Old Style", "Georgia", serif;
     --sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", "Menlo", monospace;
   }
   *, *::before, *::after { box-sizing: border-box; }
   html, body {
     margin: 0;
-    background: var(--paper);
+    background:
+      radial-gradient(ellipse 80% 50% at 50% 0%, rgba(217,119,87,0.10), transparent 70%),
+      var(--bg);
+    background-attachment: fixed;
     color: var(--ink);
-    font: 17px/1.6 var(--serif);
+    font: 16px/1.6 var(--sans);
     -webkit-font-smoothing: antialiased;
   }
-  main { max-width: 720px; margin: 0 auto; padding: 64px 24px 96px; }
-  .series {
+  ::selection { background: rgba(217,119,87,0.35); color: white; }
+
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 32px 28px 96px; }
+
+  /* Top bar — newspaper folio */
+  .folio {
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 14px;
+    margin-bottom: 80px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .folio a { color: var(--muted); text-decoration: none; }
+  .folio a:hover { color: var(--accent); }
+  .folio .crumbs > * + *::before { content: " · "; opacity: 0.6; margin: 0 4px; }
+  .folio .crumbs .here { color: var(--ink); }
+
+  /* Masthead */
+  .masthead { text-align: center; margin-bottom: 56px; }
+  .masthead .above {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
+  .masthead h1 {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(72px, 14vw, 160px);
+    line-height: 0.85;
+    letter-spacing: -0.04em;
+    margin: 0 0 16px;
+    color: var(--ink);
+    text-rendering: optimizeLegibility;
+  }
+  .masthead h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+  .masthead .below {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 19px;
+    color: var(--muted);
+    max-width: 580px;
+    margin: 0 auto;
+    line-height: 1.5;
+  }
+
+  /* Thin double-rule */
+  .rule-double {
+    height: 0;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    box-sizing: border-box;
+    padding-top: 3px;
+    margin: 0 0 48px;
+  }
+
+  /* "On the cover" / hero issue */
+  .hero {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 48px;
+    align-items: stretch;
+    margin-bottom: 96px;
+  }
+  @media (max-width: 820px) {
+    .hero { grid-template-columns: 1fr; gap: 24px; }
+  }
+
+  .hero-cover {
+    position: relative;
+    background:
+      linear-gradient(160deg, #2a1a14 0%, #0e0d0b 70%),
+      var(--bg);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    overflow: hidden;
+    padding: 36px 32px 28px;
+    min-height: 460px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .hero-cover::before {
+    content: "";
+    position: absolute;
+    top: -40%; right: -40%;
+    width: 100%; height: 100%;
+    background: radial-gradient(circle, rgba(217,119,87,0.25), transparent 60%);
+    pointer-events: none;
+  }
+  .hero-cover .vol {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+  .hero-cover .topic {
+    font-family: var(--display);
+    font-size: clamp(48px, 7vw, 86px);
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    line-height: 0.9;
+    margin: 0 0 24px;
+    color: var(--ink);
+  }
+  .hero-cover .topic em { font-style: italic; color: var(--accent); }
+  .hero-cover .pull {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 19px;
+    line-height: 1.45;
+    color: rgba(244,238,226,0.86);
+    max-width: 420px;
+    margin: 0 0 28px;
+    position: relative;
+    padding-left: 14px;
+  }
+  .hero-cover .pull::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 4px; bottom: 4px;
+    width: 2px;
+    background: var(--accent);
+  }
+  .hero-cover .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--accent);
+    color: #1a0e07;
+    padding: 12px 22px;
+    border-radius: 999px;
     font-family: var(--sans);
-    font-size: 12px;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+    align-self: flex-start;
+    transition: transform 120ms ease, box-shadow 120ms ease;
+  }
+  .hero-cover .cta:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 24px -10px rgba(217,119,87,0.5);
+  }
+  .hero-cover .cta svg { width: 16px; height: 16px; }
+
+  .hero-side {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .hero-meta {
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 22px;
+    background: rgba(255,255,255,0.02);
+  }
+  .hero-meta h3 {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 14px;
+    font-weight: 600;
+  }
+  .hero-meta .lenses {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .hero-meta .lens-mini {
+    border-top: 1px solid var(--rule);
+    padding-top: 10px;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  .hero-meta .lens-mini .swatch {
+    display: inline-block;
+    width: 10px; height: 10px;
+    border-radius: 2px;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  .hero-meta .lens-mini .label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .hero-meta .lens-mini .gist {
+    font-family: var(--serif);
+    color: var(--ink);
+    margin-top: 2px;
+    font-size: 14px;
+    line-height: 1.35;
+  }
+  .lens-mini[data-lens="historian"]  .swatch { background: #8b6914; }
+  .lens-mini[data-lens="journalist"] .swatch { background: #5b8fd6; }
+  .lens-mini[data-lens="markets"]    .swatch { background: #4cb98a; }
+  .lens-mini[data-lens="hawk"]       .swatch { background: #d97757; }
+  .lens-mini[data-lens="comedy"]     .swatch { background: #d68fc9; }
+
+  .hero-stats {
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 22px;
+    background: rgba(255,255,255,0.02);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .hero-stats .s .n {
+    font-family: var(--display);
+    font-size: 36px;
+    line-height: 1;
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .hero-stats .s .l {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+
+  /* Section header */
+  .sec-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 24px;
+    gap: 24px;
+  }
+  .sec-head h2 {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(28px, 4vw, 38px);
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+  .sec-head .note {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+
+  /* Queue table */
+  .queue {
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 64px;
+    background: rgba(255,255,255,0.02);
+  }
+  .queue .row {
+    display: grid;
+    grid-template-columns: 60px 1fr 60px 80px 1fr;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--rule);
+    gap: 16px;
+  }
+  .queue .row:last-child { border-bottom: 0; }
+  .queue .row.head {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: rgba(255,255,255,0.02);
+  }
+  .queue .topic-name {
+    font-family: var(--display);
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .queue .topic-name .tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-left: 10px;
+    vertical-align: middle;
+    border: 1px solid var(--rule);
+    padding: 2px 7px;
+    border-radius: 3px;
+  }
+  .queue .num {
+    font-family: var(--display);
+    font-size: 26px;
+    color: var(--accent-2);
+    font-weight: 700;
+    text-align: center;
+  }
+  .queue .ment {
+    font-family: var(--mono);
+    color: var(--muted);
+    font-size: 13px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .queue .hint {
+    font-family: var(--serif);
+    font-style: italic;
+    color: rgba(244,238,226,0.7);
+    font-size: 14px;
+    line-height: 1.4;
+  }
+  @media (max-width: 720px) {
+    .queue .row { grid-template-columns: 40px 1fr 60px; gap: 10px; padding: 14px 16px; }
+    .queue .row .col-ment, .queue .row .col-hint { display: none; }
+    .queue .row.head .col-ment, .queue .row.head .col-hint { display: none; }
+  }
+
+  /* About section */
+  .about {
+    border-top: 1px solid var(--rule);
+    padding-top: 64px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+  }
+  @media (max-width: 720px) {
+    .about { grid-template-columns: 1fr; gap: 24px; }
+  }
+  .about h2 {
+    font-family: var(--display);
+    font-size: 32px;
+    letter-spacing: -0.02em;
+    margin: 0 0 16px;
+    font-weight: 700;
+  }
+  .about p {
+    font-family: var(--serif);
+    font-size: 17px;
+    line-height: 1.65;
+    color: rgba(244,238,226,0.86);
+    margin: 0 0 16px;
+  }
+  .about .meta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 24px;
+  }
+  .about .meta-grid .item {
+    border: 1px solid var(--rule);
+    padding: 14px 16px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.02);
+  }
+  .about .meta-grid .item strong {
+    font-family: var(--mono);
+    font-size: 10px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--muted);
-    margin-bottom: 24px;
-  }
-  .series a { color: inherit; text-decoration: none; border-bottom: 1px solid var(--rule); }
-  h1 {
-    font-size: clamp(34px, 5.5vw, 48px);
-    line-height: 1.05;
-    letter-spacing: -0.02em;
-    margin: 0 0 20px;
-    text-wrap: balance;
-  }
-  .dek {
-    font-size: 18px;
-    line-height: 1.5;
-    color: #2b2b2b;
-    margin: 0 0 48px;
-    max-width: 580px;
-  }
-  ul.list { list-style: none; padding: 0; margin: 0; display: grid; gap: 16px; }
-  li a {
     display: block;
-    border: 1px solid var(--rule);
-    background: rgba(255,255,255,0.5);
-    border-radius: 10px;
-    padding: 22px 24px;
-    text-decoration: none;
-    color: inherit;
-    transition: border-color 120ms ease, transform 120ms ease;
+    margin-bottom: 6px;
+    font-weight: 600;
   }
-  li a:hover {
-    border-color: var(--accent);
-    transform: translateY(-1px);
+  .about .meta-grid .item span {
+    font-family: var(--serif);
+    font-size: 16px;
+    color: var(--ink);
   }
-  .row { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; }
-  .row h2 { font-size: 22px; margin: 0; font-weight: 700; letter-spacing: -0.01em; }
-  .row .date {
-    font-family: var(--sans);
-    font-size: 12px;
-    color: var(--muted);
-    font-variant-numeric: tabular-nums;
-  }
-  .desc { color: var(--muted); margin: 8px 0 0; font-size: 15px; line-height: 1.5; }
+
   footer {
     margin-top: 80px;
     padding-top: 20px;
     border-top: 1px solid var(--rule);
-    font-family: var(--sans);
-    font-size: 12px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
     color: var(--muted);
+    text-transform: uppercase;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
   }
-  footer a { color: inherit; }
+  footer a { color: var(--muted); text-decoration: none; }
+  footer a:hover { color: var(--accent); }
 </style>
 </head>
 <body>
-<main>
-  <nav class="series">
-    <a href="/">demos</a>
-    <span style="margin: 0 8px; opacity: 0.4;">/</span>
-    <span>refractions</span>
-  </nav>
+<div class="wrap">
 
-  <h1>Refractions.</h1>
-  <p class="dek">
-    A single news event refracted through every podcast lens that touched it.
-    Built on the podcast4 cross-show segment index — the kind of story no
-    individual show could tell.
-  </p>
+  <div class="folio">
+    <span class="crumbs">
+      <a href="/">demos</a>
+      <span class="here">refractions</span>
+    </span>
+    <span>Vol. I · 2026-05</span>
+  </div>
 
-  <ul class="list">
-    <li>
-      <a href="./iran/">
-        <div class="row">
-          <h2>Iran, in five lenses</h2>
-          <span class="date">2026-05-20</span>
-        </div>
-        <p class="desc">
-          Seven podcasts mentioned Iran the week of May 12. A historian saw a
-          plateau, a journalist saw a regime, a market saw a variable, a hawk
-          saw a countdown, a comedian saw a punchline. None of them shared a
-          noun.
+  <header class="masthead">
+    <div class="above">Mentioned.fm · a serial editorial</div>
+    <h1>Refr<em>a</em>ctions</h1>
+    <p class="below">
+      One news event per issue, refracted through every podcast lens that
+      touched it. Built from the cross-show segment index — the kind of story
+      no individual show could tell.
+    </p>
+  </header>
+
+  <div class="rule-double"></div>
+
+  <!-- Hero / published issue -->
+  <section class="hero">
+    <a class="hero-cover" href="./iran/" style="text-decoration:none;color:inherit;">
+      <div>
+        <div class="vol">Vol. I · published</div>
+        <h2 class="topic">Iran,<br/><em>five ways.</em></h2>
+        <p class="pull">
+          "Seven podcasts mentioned Iran this week. None of them were talking
+          about the same Iran."
         </p>
-      </a>
-    </li>
-  </ul>
+      </div>
+      <span class="cta">
+        Read the issue
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+        </svg>
+      </span>
+    </a>
+
+    <div class="hero-side">
+      <div class="hero-stats">
+        <div class="s"><div class="n">7</div><div class="l">shows</div></div>
+        <div class="s"><div class="n">26</div><div class="l">mentions</div></div>
+        <div class="s"><div class="n">5</div><div class="l">lenses</div></div>
+      </div>
+
+      <div class="hero-meta">
+        <h3>The five lenses</h3>
+        <div class="lenses">
+          <div class="lens-mini" data-lens="historian">
+            <div class="label"><span class="swatch"></span>Historian</div>
+            <div class="gist">A 2,500-year-old plateau.</div>
+          </div>
+          <div class="lens-mini" data-lens="journalist">
+            <div class="label"><span class="swatch"></span>Journalist</div>
+            <div class="gist">A node in an autocracy axis.</div>
+          </div>
+          <div class="lens-mini" data-lens="markets">
+            <div class="label"><span class="swatch"></span>Market</div>
+            <div class="gist">A variable in the trade summit.</div>
+          </div>
+          <div class="lens-mini" data-lens="hawk">
+            <div class="label"><span class="swatch"></span>Hawk</div>
+            <div class="gist">A nuclear timeline.</div>
+          </div>
+          <div class="lens-mini" data-lens="comedy" style="grid-column: 1 / -1;">
+            <div class="label"><span class="swatch"></span>Comedy</div>
+            <div class="gist">A yardstick for absurdity.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Queue -->
+  <div class="sec-head">
+    <h2>In the queue.</h2>
+    <span class="note">candidates pulled from this week's entity_mentions</span>
+  </div>
+
+  <div class="queue">
+    <div class="row head">
+      <div>Vol.</div>
+      <div>Topic</div>
+      <div>Shows</div>
+      <div class="col-ment">Mentions</div>
+      <div class="col-hint">Why it refracts</div>
+    </div>
+
+    <div class="row">
+      <div class="num">II</div>
+      <div class="topic-name">Vladimir Putin <span class="tag">person</span></div>
+      <div class="num" style="font-size:18px;color:var(--ink);text-align:left;">3</div>
+      <div class="ment col-ment">15</div>
+      <div class="hint col-hint">Diary of a CEO frames him as autocracy's archetype; Tucker frames him as a misread negotiator; comedy shows frame him as a meme.</div>
+    </div>
+
+    <div class="row">
+      <div class="num">III</div>
+      <div class="topic-name">TikTok <span class="tag">thing</span></div>
+      <div class="num" style="font-size:18px;color:var(--ink);text-align:left;">5</div>
+      <div class="ment col-ment">6</div>
+      <div class="hint col-hint">Algorithm critique on Huberman, addiction tropes on Modern Wisdom, distribution math on My First Million.</div>
+    </div>
+
+    <div class="row">
+      <div class="num">IV</div>
+      <div class="topic-name">Israel <span class="tag">place</span></div>
+      <div class="num" style="font-size:18px;color:var(--ink);text-align:left;">4</div>
+      <div class="ment col-ment">18</div>
+      <div class="hint col-hint">Surfaces alongside Iran in JRE and Applebaum, but the framing tradeoffs are entirely different. Probably a companion issue.</div>
+    </div>
+
+    <div class="row">
+      <div class="num">V</div>
+      <div class="topic-name">Michael Jackson <span class="tag">person</span></div>
+      <div class="num" style="font-size:18px;color:var(--ink);text-align:left;">3</div>
+      <div class="ment col-ment">19</div>
+      <div class="hint col-hint">19 mentions across 3 shows, all in the same week the biopic broke records. A pure cultural-moment refraction.</div>
+    </div>
+
+    <div class="row">
+      <div class="num">VI</div>
+      <div class="topic-name">The New York Times <span class="tag">organization</span></div>
+      <div class="num" style="font-size:18px;color:var(--ink);text-align:left;">5</div>
+      <div class="ment col-ment">8</div>
+      <div class="hint col-hint">Five podcasts referenced the NYT this week — each one with a different relationship to it (authority, foil, vector, prop).</div>
+    </div>
+  </div>
+
+  <!-- About -->
+  <section class="about">
+    <div>
+      <h2>What this is.</h2>
+      <p>
+        Most podcast aggregators show you what each show said. Refractions
+        shows you what happens when you stack them — the moment where the
+        same proper noun starts meaning five different things depending on
+        the feed it landed in.
+      </p>
+      <p>
+        Each issue takes one entity from the catalog's
+        <code style="font-family:var(--mono);font-size:13px;color:var(--accent);">entity_mentions</code>
+        table, finds the shows that talked about it, and isolates how each
+        show <em>framed</em> it. The aggregation is the story.
+      </p>
+    </div>
+    <div>
+      <h2>How it's built.</h2>
+      <div class="meta-grid">
+        <div class="item">
+          <strong>Source</strong>
+          <span>podcast4 catalog · Neon</span>
+        </div>
+        <div class="item">
+          <strong>Cadence</strong>
+          <span>Weekly · one topic</span>
+        </div>
+        <div class="item">
+          <strong>Clip timing</strong>
+          <span>Deepgram-aligned</span>
+        </div>
+        <div class="item">
+          <strong>Format</strong>
+          <span>Static HTML · no JS framework</span>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <footer>
-    Source: <a href="https://github.com/luquitared/demos">github.com/luquitared/demos</a>
+    <span>Refractions · Vol. I · 2026-05</span>
+    <a href="https://github.com/luquitared/demos">github.com/luquitared/demos</a>
   </footer>
-</main>
+
+</div>
 </body>
 </html>
