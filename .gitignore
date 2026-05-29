@@ -1,3 +1,9 @@
 .DS_Store
 node_modules/
 .wrangler/
+
+# Private, password-protected pages — deployed to Cloudflare but kept OUT of
+# this public GitHub repo (the CF password gates the live URL, but committing
+# the HTML would expose its full text on GitHub). Wrangler still uploads these
+# on `pages deploy` (it does not consult .gitignore), so they stay live.
+/chris-signalfire-opportunity/

@@ -18,6 +18,7 @@
 
 const PROTECTED = {
   '/private-sample/': 'PW_PRIVATE_SAMPLE',
+  '/chris-signalfire-opportunity/': 'PW_CHRIS_SIGNALFIRE',
 };
 
 export const onRequest = async (context) => {
