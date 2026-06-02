@@ -3,71 +3,23 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Fluid — particle hero (Vercel-style copy)</title>
+<title>Fluid — cursor particle emitter (Vercel-style copy)</title>
 <style>
   :root { color-scheme: dark; }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  html, body { height: 100%; background: #060608; overflow: hidden; }
-  body { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Inter, sans-serif; }
-
+  html, body { height: 100%; background: #000; overflow: hidden; cursor: crosshair; }
   #stage { position: fixed; inset: 0; }
   canvas { display: block; }
-
-  /* foreground copy, sits above the canvas like the real page */
-  .hero {
-    position: fixed; inset: 0; display: grid; place-items: center;
-    text-align: center; pointer-events: none; padding: 0 24px;
+  .back {
+    position: fixed; bottom: 14px; left: 16px; z-index: 2;
+    font: 12px ui-sans-serif, system-ui, sans-serif; color: #444; text-decoration: none;
   }
-  .hero .inner { max-width: 760px; }
-  .badge {
-    display: inline-flex; align-items: center; gap: 8px; margin-bottom: 28px;
-    font-size: 14px; color: #b9bdc6;
-  }
-  .badge b {
-    background: #1f6feb22; color: #6ea8fe; border: 1px solid #6ea8fe33;
-    padding: 2px 9px; border-radius: 999px; font-weight: 600; font-size: 12px;
-  }
-  h1 {
-    font-size: clamp(40px, 7vw, 84px); line-height: 0.98; letter-spacing: -0.03em;
-    font-weight: 600; color: #fff;
-    background: linear-gradient(#fff, #b8bcc6); -webkit-background-clip: text; background-clip: text;
-  }
-  p.sub { margin: 26px auto 34px; max-width: 540px; color: #9aa0ab; font-size: 19px; line-height: 1.5; }
-  .cta { display: inline-flex; gap: 14px; pointer-events: auto; }
-  .cta button {
-    font: inherit; font-size: 15px; font-weight: 500; padding: 12px 22px; border-radius: 999px;
-    cursor: pointer; border: 1px solid transparent; transition: transform .15s ease, background .15s ease;
-  }
-  .cta .primary { background: #fff; color: #000; }
-  .cta .ghost { background: #0d0d10; color: #e8e8ea; border-color: #2a2a30; }
-  .cta button:hover { transform: translateY(-1px); }
-  .cta .ghost:hover { background: #16161b; }
-
-  /* faint dotted frame + corner pluses, like the real hero */
-  .frame { position: fixed; inset: 64px 12% ; border: 1px solid #ffffff10; pointer-events: none; }
-  .frame::before, .frame::after,
-  .plus { color: #ffffff44; }
-  .plus { position: fixed; font-size: 22px; line-height: 0; pointer-events: none; }
-
-  .hint { position: fixed; bottom: 18px; left: 0; right: 0; text-align: center; color: #5a5f69; font-size: 13px; pointer-events: none; }
+  .back:hover { color: #888; }
 </style>
 </head>
 <body>
   <div id="stage"></div>
-
-  <div class="frame"></div>
-  <div class="hero">
-    <div class="inner">
-      <div class="badge"><b>New</b> Lower Costs with Active CPU Pricing</div>
-      <h1>The power of servers,<br/>in serverless form</h1>
-      <p class="sub">Fluid compute combines the efficiency of servers and the flexibility of serverless, enabling real-time, dynamic workloads like APIs, streaming, and AI.</p>
-      <div class="cta">
-        <button class="primary">Enable Fluid</button>
-        <button class="ghost">Get a demo</button>
-      </div>
-    </div>
-  </div>
-  <div class="hint">move your cursor through the dots &nbsp;·&nbsp; <a href="/" style="color:#7a808b;pointer-events:auto;">← demos</a></div>
+  <a class="back" href="/">← demos</a>
 
 <script type="importmap">
 {
@@ -82,164 +34,85 @@
 import * as THREE from 'three';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-import { AfterimagePass } from 'three/addons/postprocessing/AfterimagePass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 
 const stage = document.getElementById('stage');
 
-// ---------- renderer ----------
-const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.setSize(innerWidth, innerHeight);
-renderer.setClearColor(0x000000, 0);
+renderer.setClearColor(0x000000, 1);
 stage.appendChild(renderer.domElement);
 
 const scene = new THREE.Scene();
 
-// orthographic world: x in [-aspect, aspect], y in [-1, 1]
+// ortho world: x in [-aspect, aspect], y in [-1, 1] (y up)
 let aspect = innerWidth / innerHeight;
 const camera = new THREE.OrthographicCamera(-aspect, aspect, 1, -1, 0.01, 10);
 camera.position.z = 2;
 
-// ---------- particle field ----------
-// fill the view with a jittered grid of points; bias density toward the
-// bottom + edges and away from the center (where the headline sits), so the
-// resting cloud has the same organic "settled ink" shape as the real hero.
-const COLS = 420, ROWS = 200;
-const homes = [];
-const rands = [];
-
-function densityAt(nx, ny) {
-  // nx in [-1,1] (scaled by aspect outside), ny in [-1,1] (1 = top, -1 = bottom)
-  const t = (ny + 1) / 2;                       // 0 at bottom, 1 at top
-  const bottom = Math.pow(1 - t, 1.7);          // strong bottom weighting
-  const lower  = THREE.MathUtils.clamp((0.65 - t) / 0.65, 0, 1); // gate to lower ~2/3
-  const edges  = Math.pow(Math.abs(nx), 2.2) * 0.6 * lower;       // creep up the L/R edges
-  const center = 1.0 - 0.92 * Math.exp(-(nx * nx * 2.6 + (ny - 0.05) * (ny - 0.05) * 4.0)); // carve hole behind text
-  return THREE.MathUtils.clamp(Math.max(bottom, edges) * center, 0, 1);
+// ---------------------------------------------------------------------------
+//  Particle pool — the cursor EMITS particles that then fall under gravity,
+//  drift on a little curl noise, and fade out. Nothing is visible at rest.
+// ---------------------------------------------------------------------------
+const MAX = 9000;
+const px = new Float32Array(MAX);   // position x
+const py = new Float32Array(MAX);   // position y
+const vx = new Float32Array(MAX);   // velocity x
+const vy = new Float32Array(MAX);   // velocity y
+const life = new Float32Array(MAX); // remaining life (s)
+const ttl  = new Float32Array(MAX); // total life (s)
+const seed = new Float32Array(MAX); // per-particle randomness
+let head = 0;                       // ring-buffer write head
+function spawn(x, y, ivx, ivy) {
+  const i = head; head = (head + 1) % MAX;
+  px[i] = x; py[i] = y;
+  vx[i] = ivx; vy[i] = ivy;
+  ttl[i] = 2.4 + Math.random() * 1.6;
+  life[i] = ttl[i];
+  seed[i] = Math.random();
 }
 
-for (let i = 0; i < COLS; i++) {
-  for (let j = 0; j < ROWS; j++) {
-    const u = i / (COLS - 1), v = j / (ROWS - 1);
-    const x = (u * 2 - 1) * aspect;
-    const y = v * 2 - 1;
-    const r = Math.random();
-    if (r > densityAt(x / aspect, y) * 1.25) continue; // probabilistic mask
-    const jx = (Math.random() - 0.5) * (2 * aspect / COLS) * 2.2;
-    const jy = (Math.random() - 0.5) * (2 / ROWS) * 2.2;
-    homes.push(x + jx, y + jy, (Math.random() - 0.5) * 0.05);
-    rands.push(Math.random());
-  }
-}
-const COUNT = rands.length;
+// tuning — the "feel"
+const GRAVITY     = 0.62;   // downward accel (world units / s^2). gentle.
+const DRAG        = 0.86;   // velocity retained per second (air resistance)
+const EMIT_STEP   = 0.0072; // world-space spacing between emitted dots along the path
+const JITTER      = 0.016;  // perpendicular spread of the emitted ribbon
+const INHERIT     = 0.10;   // how much cursor velocity the dots inherit
+const SWAY        = 0.10;   // curl-noise turbulence amplitude
+const MAX_SEG     = 0.45;   // ignore cursor teleports longer than this
 
+// ---------------------------------------------------------------------------
+//  Geometry / material — crisp soft round dots, additive, faint glow via bloom
+// ---------------------------------------------------------------------------
 const geo = new THREE.BufferGeometry();
-geo.setAttribute('position', new THREE.Float32BufferAttribute(homes, 3));
-geo.setAttribute('aHome',    new THREE.Float32BufferAttribute(homes.slice(), 3));
-geo.setAttribute('aRand',    new THREE.Float32BufferAttribute(rands, 1));
-
-const uniforms = {
-  uTime:          { value: 0 },
-  uPixelRatio:    { value: renderer.getPixelRatio() },
-  uSize:          { value: 2.1 },
-  uColor:         { value: new THREE.Color(0xc9ccd4) },
-  uMouse:         { value: new THREE.Vector2(999, 999) },
-  uMouseVel:      { value: new THREE.Vector2(0, 0) },
-  uMouseRadius:   { value: 0.26 },
-  uMouseStrength: { value: 0.34 },
-  uFlowAmp:       { value: 0.11 },
-};
+const aPos = new Float32Array(MAX * 3);
+const aAlpha = new Float32Array(MAX);
+const aSize = new Float32Array(MAX);
+geo.setAttribute('position', new THREE.BufferAttribute(aPos, 3));
+geo.setAttribute('aAlpha', new THREE.BufferAttribute(aAlpha, 1));
+geo.setAttribute('aSize',  new THREE.BufferAttribute(aSize, 1));
 
 const mat = new THREE.ShaderMaterial({
-  uniforms,
+  uniforms: {
+    uPixelRatio: { value: renderer.getPixelRatio() },
+    uColor:      { value: new THREE.Color(0xcdd1d9) },
+  },
   transparent: true,
   depthWrite: false,
+  depthTest: false,
   blending: THREE.AdditiveBlending,
   vertexShader: /* glsl */`
-    attribute vec3 aHome;
-    attribute float aRand;
-    uniform float uTime, uSize, uPixelRatio, uFlowAmp;
-    uniform float uMouseRadius, uMouseStrength;
-    uniform vec2 uMouse, uMouseVel;
+    attribute float aAlpha;
+    attribute float aSize;
+    uniform float uPixelRatio;
     varying float vA;
-
-    // --- Ashima simplex noise 3D (public domain) ---
-    vec4 permute(vec4 x){ return mod(((x*34.0)+1.0)*x,289.0); }
-    vec4 taylorInvSqrt(vec4 r){ return 1.79284291400159 - 0.85373472095314*r; }
-    float snoise(vec3 v){
-      const vec2 C = vec2(1.0/6.0, 1.0/3.0);
-      const vec4 D = vec4(0.0,0.5,1.0,2.0);
-      vec3 i  = floor(v + dot(v, C.yyy));
-      vec3 x0 = v - i + dot(i, C.xxx);
-      vec3 g = step(x0.yzx, x0.xyz);
-      vec3 l = 1.0 - g;
-      vec3 i1 = min(g.xyz, l.zxy);
-      vec3 i2 = max(g.xyz, l.zxy);
-      vec3 x1 = x0 - i1 + C.xxx;
-      vec3 x2 = x0 - i2 + C.yyy;
-      vec3 x3 = x0 - D.yyy;
-      i = mod(i, 289.0);
-      vec4 p = permute(permute(permute(
-                i.z + vec4(0.0, i1.z, i2.z, 1.0))
-              + i.y + vec4(0.0, i1.y, i2.y, 1.0))
-              + i.x + vec4(0.0, i1.x, i2.x, 1.0));
-      float n_ = 1.0/7.0;
-      vec3 ns = n_ * D.wyz - D.xzx;
-      vec4 j = p - 49.0 * floor(p * ns.z * ns.z);
-      vec4 x_ = floor(j * ns.z);
-      vec4 y_ = floor(j - 7.0 * x_);
-      vec4 x = x_ *ns.x + ns.yyyy;
-      vec4 y = y_ *ns.x + ns.yyyy;
-      vec4 h = 1.0 - abs(x) - abs(y);
-      vec4 b0 = vec4(x.xy, y.xy);
-      vec4 b1 = vec4(x.zw, y.zw);
-      vec4 s0 = floor(b0)*2.0 + 1.0;
-      vec4 s1 = floor(b1)*2.0 + 1.0;
-      vec4 sh = -step(h, vec4(0.0));
-      vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy;
-      vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww;
-      vec3 p0 = vec3(a0.xy, h.x);
-      vec3 p1 = vec3(a0.zw, h.y);
-      vec3 p2 = vec3(a1.xy, h.z);
-      vec3 p3 = vec3(a1.zw, h.w);
-      vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2,p2), dot(p3,p3)));
-      p0 *= norm.x; p1 *= norm.y; p2 *= norm.z; p3 *= norm.w;
-      vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
-      m = m*m;
-      return 42.0 * dot(m*m, vec4(dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3)));
-    }
-    // divergence-free-ish flow from the gradient of a scalar noise field
-    vec2 flow(vec2 p, float t){
-      float e = 0.08;
-      float n1 = snoise(vec3(p + vec2(0.0, e), t));
-      float n2 = snoise(vec3(p - vec2(0.0, e), t));
-      float n3 = snoise(vec3(p + vec2(e, 0.0), t));
-      float n4 = snoise(vec3(p - vec2(e, 0.0), t));
-      return vec2(n1 - n2, -(n3 - n4)) / (2.0 * e);
-    }
-
     void main(){
-      vec3 pos = aHome;
-
-      // organic ambient drift (curl-like flow field)
-      vec2 f = flow(aHome.xy * 1.4 + vec2(0.0, uTime * 0.06), uTime * 0.05);
-      pos.xy += f * uFlowAmp * (0.6 + aRand * 0.8);
-
-      // mouse repulsion: carve a void + push along the cursor's motion (the wake)
-      vec2 d = pos.xy - uMouse;
-      float dist = length(d);
-      float fall = exp(-(dist*dist) / (uMouseRadius*uMouseRadius));
-      pos.xy += normalize(d + 1e-4) * fall * uMouseStrength;
-      pos.xy += uMouseVel * fall * 1.6;          // drag particles in the direction of travel
-
-      vec4 mv = modelViewMatrix * vec4(pos, 1.0);
+      vA = aAlpha;
+      vec4 mv = modelViewMatrix * vec4(position, 1.0);
       gl_Position = projectionMatrix * mv;
-
-      float swell = 1.0 + fall * 1.4;            // pushed dots flare a touch brighter/bigger
-      gl_PointSize = uSize * uPixelRatio * (0.45 + aRand * 0.9) * swell;
-      vA = (0.18 + aRand * 0.32) * (0.7 + fall * 1.3);
+      gl_PointSize = aSize * uPixelRatio;
     }
   `,
   fragmentShader: /* glsl */`
@@ -248,71 +121,188 @@ const mat = new THREE.ShaderMaterial({
     varying float vA;
     void main(){
       float d = length(gl_PointCoord - 0.5);
-      float a = smoothstep(0.5, 0.06, d) * vA;
-      if (a < 0.008) discard;
+      float a = smoothstep(0.5, 0.04, d) * vA;
+      if (a < 0.004) discard;
       gl_FragColor = vec4(uColor, a);
     }
   `,
 });
 
 const points = new THREE.Points(geo, mat);
+points.frustumCulled = false;
 scene.add(points);
 
-// ---------- post-processing (afterimage trails + bloom) ----------
+// ---------------------------------------------------------------------------
+//  Post: subtle bloom only (dots are crisp, not smoky)
+// ---------------------------------------------------------------------------
 const composer = new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene, camera));
-
-const afterimage = new AfterimagePass();
-afterimage.uniforms['damp'].value = 0.86;   // persistence → the smoky trail
-composer.addPass(afterimage);
-
-const bloom = new UnrealBloomPass(
-  new THREE.Vector2(innerWidth, innerHeight),
-  0.42,   // strength
-  0.8,    // radius
-  0.0     // threshold (dots are dim, so threshold ~0)
-);
+const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.45, 0.55, 0.0);
 composer.addPass(bloom);
 composer.addPass(new OutputPass());
 
-// ---------- pointer ----------
-const mouse = new THREE.Vector2(999, 999);
-const target = new THREE.Vector2(999, 999);
-let lastTarget = new THREE.Vector2(999, 999);
-const vel = new THREE.Vector2(0, 0);
+// ---------------------------------------------------------------------------
+//  cheap 2D value-noise for gentle horizontal sway as particles fall
+// ---------------------------------------------------------------------------
+function hash(x, y){ const s = Math.sin(x*127.1 + y*311.7) * 43758.5453; return s - Math.floor(s); }
+function vnoise(x, y){
+  const xi = Math.floor(x), yi = Math.floor(y);
+  const xf = x - xi, yf = y - yi;
+  const u = xf*xf*(3-2*xf), v = yf*yf*(3-2*yf);
+  const a = hash(xi, yi),     b = hash(xi+1, yi);
+  const c = hash(xi, yi+1),   d = hash(xi+1, yi+1);
+  return (a*(1-u)+b*u)*(1-v) + (c*(1-u)+d*u)*v - 0.5;
+}
 
-function toWorld(clientX, clientY) {
+// ---------------------------------------------------------------------------
+//  pointer → emission along the path (arc-length sampling for even spacing)
+// ---------------------------------------------------------------------------
+const cursor = new THREE.Vector2(0, 0);
+let haveCursor = false, prevCursor = new THREE.Vector2(0, 0);
+let cvx = 0, cvy = 0;            // cursor velocity (world / s)
+let carry = 0;                  // leftover arc-length between frames
+let userActive = false, lastInputT = -10;
+
+function toWorld(clientX, clientY, out){
   const nx = (clientX / innerWidth) * 2 - 1;
   const ny = -((clientY / innerHeight) * 2 - 1);
-  target.set(nx * aspect, ny);
+  out.set(nx * aspect, ny);
 }
-addEventListener('pointermove', (e) => toWorld(e.clientX, e.clientY), { passive: true });
-addEventListener('pointerleave', () => target.set(999, 999));
+addEventListener('pointermove', (e) => {
+  toWorld(e.clientX, e.clientY, cursor);
+  if (!haveCursor){ prevCursor.copy(cursor); haveCursor = true; }
+  userActive = true; lastInputT = performance.now() / 1000;
+}, { passive: true });
 
-// ---------- loop ----------
-const clock = new THREE.Clock();
-function tick() {
-  const t = clock.getElapsedTime();
-  uniforms.uTime.value = t;
+// idle "attract" path so the canvas is alive before the user moves the mouse
+const idle = new THREE.Vector2(0, 0);
+function idlePath(t){
+  const x = Math.sin(t * 0.55) * aspect * 0.72;
+  const y = Math.sin(t * 0.9 + 1.3) * 0.45 + 0.15;
+  idle.set(x, y);
+}
 
-  // smooth the cursor; derive its velocity for the directional wake
-  if (target.x < 900) {
-    if (mouse.x > 900) mouse.copy(target);       // first contact, no jump
-    vel.set(target.x - lastTarget.x, target.y - lastTarget.y);
-    lastTarget.copy(target);
-  } else {
-    vel.multiplyScalar(0.9);
+function emitAlong(ax, ay, bx, by, ivx, ivy){
+  const dx = bx - ax, dy = by - ay;
+  const segLen = Math.hypot(dx, dy);
+  if (segLen > MAX_SEG) return;            // teleport / first frame — skip
+  let dist = carry;
+  const nx = segLen > 1e-6 ? dx / segLen : 0;
+  const ny = segLen > 1e-6 ? dy / segLen : 0;
+  const perpx = -ny, perpy = nx;
+  while (dist <= segLen){
+    const t = dist / Math.max(segLen, 1e-6);
+    const j = (Math.random() - 0.5) * JITTER;
+    const ox = ax + dx * t + perpx * j;
+    const oy = ay + dy * t + perpy * j;
+    spawn(
+      ox, oy,
+      ivx * INHERIT + (Math.random() - 0.5) * 0.05,
+      ivy * INHERIT + (Math.random() - 0.5) * 0.05
+    );
+    dist += EMIT_STEP;
   }
-  mouse.lerp(target, 0.18);
-  uniforms.uMouse.value.copy(mouse);
-  uniforms.uMouseVel.value.lerp(vel, 0.25);
+  carry = dist - segLen;
+}
 
-  composer.render();
+// ---------------------------------------------------------------------------
+//  simulate one step + build the draw buffers
+// ---------------------------------------------------------------------------
+function simulate(dt, now){
+  const dragF = Math.pow(DRAG, dt);
+  let n = 0;
+  for (let i = 0; i < MAX; i++){
+    if (life[i] <= 0) continue;
+    life[i] -= dt;
+    if (life[i] <= 0) continue;
+
+    // forces: gravity + gentle curl-ish sway
+    const sway = vnoise(px[i] * 1.6 + now * 0.15, py[i] * 1.6) * SWAY;
+    vx[i] += sway * dt;
+    vy[i] -= GRAVITY * dt;
+    vx[i] *= dragF; vy[i] *= dragF;
+    px[i] += vx[i] * dt;
+    py[i] += vy[i] * dt;
+
+    // fade: quick in, long out
+    const k = life[i] / ttl[i];                 // 1 -> 0 over lifetime
+    const fadeIn = THREE.MathUtils.smoothstep(1 - k, 0.0, 0.06);
+    const fadeOut = THREE.MathUtils.smoothstep(k, 0.0, 0.5);
+    const alpha = fadeIn * fadeOut;
+
+    aPos[n*3] = px[i]; aPos[n*3+1] = py[i]; aPos[n*3+2] = 0;
+    aAlpha[n] = alpha * (0.62 + seed[i] * 0.38);
+    aSize[n]  = 1.6 + seed[i] * 2.0;
+    n++;
+  }
+  geo.setDrawRange(0, n);
+  geo.attributes.position.needsUpdate = true;
+  geo.attributes.aAlpha.needsUpdate = true;
+  geo.attributes.aSize.needsUpdate = true;
+  return n;
+}
+function draw(){ composer.render(); }
+
+// ---------------------------------------------------------------------------
+//  main loop
+// ---------------------------------------------------------------------------
+const clock = new THREE.Clock();
+function tick(){
+  let dt = clock.getDelta();
+  dt = Math.min(dt, 1 / 30);               // clamp to avoid blowups on tab refocus
+  const now = clock.elapsedTime;
+
+  // choose emitter source: real cursor while active, else the idle path
+  if (userActive && (performance.now()/1000 - lastInputT) > 3.5) userActive = false;
+
+  if (userActive && haveCursor){
+    const sx = cursor.x, sy = cursor.y;
+    cvx = (sx - prevCursor.x) / dt;
+    cvy = (sy - prevCursor.y) / dt;
+    emitAlong(prevCursor.x, prevCursor.y, sx, sy, cvx, cvy);
+    prevCursor.set(sx, sy);
+  } else {
+    const a = idle.clone();
+    idlePath(now);
+    const ivx = (idle.x - a.x) / dt, ivy = (idle.y - a.y) / dt;
+    emitAlong(a.x, a.y, idle.x, idle.y, ivx, ivy);
+  }
+
+  simulate(dt, now);
+  draw();
   requestAnimationFrame(tick);
 }
 tick();
 
-// ---------- resize ----------
+// test hook: synchronously run a cursor sweep over many frames, then render.
+// lets the falling-trail behaviour be inspected even in a throttled tab.
+window.__test = function(frames = 220, dt = 1/60){
+  let prev = { x: -aspect * 0.8, y: 0.45 };
+  let last = 0;
+  for (let f = 0; f < frames; f++){
+    const t = f / frames;
+    // a horizontal sweep with a little vertical wiggle
+    const cur = { x: -aspect * 0.8 + t * aspect * 1.6, y: 0.45 + Math.sin(t * 7) * 0.08 };
+    emitAlong(prev.x, prev.y, cur.x, cur.y, (cur.x - prev.x) / dt, (cur.y - prev.y) / dt);
+    prev = cur;
+    last = simulate(dt, f * dt);
+  }
+  draw();
+  return last;
+};
+// hold the "cursor" roughly still → particles should fall straight down as a curtain
+window.__hold = function(frames = 200, dt = 1/60){
+  let prev = { x: 0.1, y: 0.55 }, last = 0;
+  for (let f = 0; f < frames; f++){
+    const cur = { x: 0.1 + Math.sin(f * 0.3) * 0.03, y: 0.55 };
+    emitAlong(prev.x, prev.y, cur.x, cur.y, 0, 0);
+    prev = cur;
+    last = simulate(dt, f * dt);
+  }
+  draw();
+  return last;
+};
+
 addEventListener('resize', () => {
   aspect = innerWidth / innerHeight;
   camera.left = -aspect; camera.right = aspect; camera.top = 1; camera.bottom = -1;
@@ -320,7 +310,7 @@ addEventListener('resize', () => {
   renderer.setSize(innerWidth, innerHeight);
   composer.setSize(innerWidth, innerHeight);
   bloom.setSize(innerWidth, innerHeight);
-  uniforms.uPixelRatio.value = renderer.getPixelRatio();
+  mat.uniforms.uPixelRatio.value = renderer.getPixelRatio();
 });
 </script>
 </body>
