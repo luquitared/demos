@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Telegram Bots for Prediction Markets — Market Analysis</title>
+<style>
+  :root{
+    --ink:#1a1a1a; --muted:#5c6470; --line:#e3e6ea; --bg:#ffffff;
+    --accent:#1f6feb; --good:#1a7f48; --warn:#9a6700; --bad:#b42318;
+    --soft:#f6f8fa; --soft2:#eef2f6;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font:16px/1.62 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+    color:var(--ink); background:var(--bg); margin:0;
+  }
+  .wrap{max-width:880px; margin:0 auto; padding:56px 28px 96px}
+  header.title{border-bottom:2px solid var(--ink); padding-bottom:22px; margin-bottom:14px}
+  .kicker{font-size:12.5px; letter-spacing:.13em; text-transform:uppercase; color:var(--muted); font-weight:600}
+  h1{font-size:30px; line-height:1.2; margin:.35em 0 .15em; letter-spacing:-.01em}
+  .sub{color:var(--muted); font-size:15px}
+  .meta-row{display:flex; flex-wrap:wrap; gap:8px 22px; margin-top:16px; font-size:13px; color:var(--muted)}
+  h2{font-size:21px; margin:46px 0 12px; padding-top:8px; letter-spacing:-.01em}
+  h3{font-size:16.5px; margin:26px 0 8px}
+  p{margin:0 0 13px}
+  a{color:var(--accent); text-decoration:none}
+  a:hover{text-decoration:underline}
+  ul,ol{margin:0 0 14px; padding-left:22px}
+  li{margin:5px 0}
+  strong{font-weight:650}
+  code{background:var(--soft2); padding:1px 5px; border-radius:4px; font-size:13px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+
+  .toc{background:var(--soft); border:1px solid var(--line); border-radius:10px; padding:16px 20px; margin:24px 0 8px}
+  .toc h4{margin:0 0 8px; font-size:12.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted)}
+  .toc ol{margin:0; padding-left:20px; columns:2; column-gap:34px}
+  .toc li{margin:3px 0; font-size:14px}
+
+  .lede{font-size:17.5px; line-height:1.55; color:#2a2f37; border-left:3px solid var(--accent);
+    padding:2px 0 2px 18px; margin:20px 0 6px}
+
+  .callout{border:1px solid var(--line); border-left:4px solid var(--accent); background:var(--soft);
+    border-radius:8px; padding:14px 18px; margin:18px 0}
+  .callout.good{border-left-color:var(--good)}
+  .callout.warn{border-left-color:var(--warn)}
+  .callout.bad{border-left-color:var(--bad)}
+  .callout h4{margin:0 0 6px; font-size:14px}
+
+  table{border-collapse:collapse; width:100%; margin:18px 0; font-size:13.5px}
+  th,td{border:1px solid var(--line); padding:9px 11px; text-align:left; vertical-align:top}
+  th{background:var(--soft2); font-weight:650; font-size:12.5px}
+  tbody tr:nth-child(even){background:#fafbfc}
+  td.center,th.center{text-align:center}
+
+  .tag{display:inline-block; font-size:11px; font-weight:650; padding:2px 8px; border-radius:20px;
+    letter-spacing:.02em; white-space:nowrap}
+  .t-high{background:#dcf3e6; color:var(--good)}
+  .t-med{background:#fdf1d3; color:var(--warn)}
+  .t-low{background:#fbe2de; color:var(--bad)}
+  .t-neutral{background:var(--soft2); color:var(--muted)}
+
+  .grid{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:18px 0}
+  .card{border:1px solid var(--line); border-radius:10px; padding:16px 18px; background:#fff}
+  .card h4{margin:0 0 4px; font-size:15px}
+  .card .who{font-size:12px; color:var(--muted); margin-bottom:8px}
+  .card p{font-size:13.5px; margin:0 0 8px}
+  .card .foot{font-size:12px; color:var(--muted); border-top:1px solid var(--line); padding-top:7px; margin-top:4px}
+
+  .stat-row{display:flex; flex-wrap:wrap; gap:12px; margin:20px 0}
+  .stat{flex:1; min-width:150px; border:1px solid var(--line); border-radius:10px; padding:14px 16px; background:var(--soft)}
+  .stat .n{font-size:23px; font-weight:700; letter-spacing:-.02em}
+  .stat .l{font-size:12.5px; color:var(--muted); margin-top:2px; line-height:1.35}
+
+  .verdict{display:flex; gap:14px; align-items:flex-start; border:1px solid var(--line);
+    border-radius:10px; padding:14px 16px; margin:12px 0; background:#fff}
+  .verdict .badge{flex:0 0 auto; font-size:11px; font-weight:700; padding:4px 10px; border-radius:6px; margin-top:2px}
+  .b-yes{background:#dcf3e6; color:var(--good)} .b-partial{background:#fdf1d3; color:var(--warn)}
+  .b-no{background:#fbe2de; color:var(--bad)}
+  .verdict div p{margin:0; font-size:14px}
+  .verdict div p:first-child{font-weight:650; margin-bottom:3px}
+
+  .conf-note{font-size:12.5px; color:var(--muted); font-style:italic}
+  .src{font-size:12.5px; color:var(--muted)}
+  sup a{font-size:11px; padding:0 1px}
+
+  footer{margin-top:60px; padding-top:20px; border-top:1px solid var(--line); font-size:12.5px; color:var(--muted)}
+  .reflist{font-size:13px}
+  .reflist li{margin:7px 0; word-break:break-word}
+
+  hr{border:0; border-top:1px solid var(--line); margin:40px 0}
+  @media (max-width:640px){.grid,.toc ol{grid-template-columns:1fr; columns:1} .wrap{padding:34px 18px 70px}}
+  @media print{a{color:var(--ink)} .wrap{max-width:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<p style="font-size:13px;margin:0 0 16px"><a href="/" style="color:#1f6feb;text-decoration:none">&larr; demos</a></p>
+
+<header class="title">
+  <div class="kicker">Market Analysis &middot; Competitive Landscape</div>
+  <h1>Telegram Bots for Prediction Markets</h1>
+  <div class="sub">Kalshi &amp; Hyperliquid landscape, differentiation assessment, and go-to-market strategy for an AI-research + podcast-sourcing trading bot</div>
+  <div class="meta-row">
+    <span><strong>Prepared:</strong> June 3, 2026</span>
+    <span><strong>Method:</strong> Multi-source web research, adversarially fact-checked</span>
+    <span><strong>Sources:</strong> 17 fetched &middot; 25 claims verified &middot; 8 refuted</span>
+  </div>
+</header>
+
+<div class="toc">
+  <h4>Contents</h4>
+  <ol>
+    <li><a href="#tldr">Bottom line</a></li>
+    <li><a href="#context">Market context</a></li>
+    <li><a href="#landscape">Competitive landscape</a></li>
+    <li><a href="#matrix">Feature matrix</a></li>
+    <li><a href="#diff">Is your product differentiated?</a></li>
+    <li><a href="#whitespace">Whitespace &amp; risks</a></li>
+    <li><a href="#gtm">Go-to-market plan</a></li>
+    <li><a href="#validate">What to validate next</a></li>
+    <li><a href="#method">Sources &amp; method</a></li>
+  </ol>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="tldr">1 &nbsp;Bottom line</h2>
+
+<p class="lede">Your <em>venues</em> are not whitespace — bots already trade Kalshi, Hyperliquid, and Polymarket from Telegram, and most compete on copy/social trading. But your <em>core mechanic</em> — AI deep research that generates picks, plus mapping podcast predictions to real tradable markets — is genuinely unoccupied. No shipping Telegram bot does it today. The risk is not "is it different"; it's "is the difference defensible and is the timing right." On timing, yes: prediction-market volume is at record highs and Hyperliquid only opened its native prediction market in May 2026.</p>
+
+<div class="stat-row">
+  <div class="stat"><div class="n">~$23B+</div><div class="l">Prediction-market volume processed, recent measured window <span class="tag t-med">medium conf.</span></div></div>
+  <div class="stat"><div class="n">May 2026</div><div class="l">Hyperliquid native prediction markets went live; HIP-4 framework dated ~May 2 <span class="tag t-high">high conf.</span></div></div>
+  <div class="stat"><div class="n">0</div><div class="l">Shipping Telegram bots doing podcast-prediction-to-market matching <span class="tag t-high">high conf.</span></div></div>
+  <div class="stat"><div class="n">~1% + ref.</div><div class="l">Industry-standard bot fee model — validated as viable <span class="tag t-high">high conf.</span></div></div>
+</div>
+
+<div class="callout">
+  <h4>Three things to internalize</h4>
+  <ol style="margin-bottom:0">
+    <li><strong>"One-click trade from Telegram" is table stakes, not a differentiator.</strong> Every serious competitor already does this. Lead with research, not execution.</li>
+    <li><strong>The crowded lane is social/copy trading.</strong> pvp.trade, okbet, and others compete on "trade with / mirror other people." You are competing on "trade with a smarter signal." That's a cleaner, less contested position.</li>
+    <li><strong>Podcast-to-market is your sharpest, most ownable hook</strong> — narrow, demonstrable, and viral-friendly. It may matter more for go-to-market than the general AI research engine.</li>
+  </ol>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="context">2 &nbsp;Market context</h2>
+
+<h3>The prediction-market moment is real</h3>
+<p>Prediction markets are in a genuine growth phase, not a fad. Recent measured volume across the category exceeded <strong>~$23 billion</strong> in a single window, roughly double prior periods.<sup><a href="#s3">[3]</a></sup> Two structural shifts widen the opportunity:</p>
+<ul>
+  <li><strong>Hyperliquid entered.</strong> Hyperliquid launched native prediction markets in May 2026, and its HIP-4 framework (dated ~May 2, 2026) is designed to bring event/result contracts under its system.<sup><a href="#s1">[1]</a></sup> Hyperliquid has been processing very large perp volumes (cited in the hundreds of billions),<sup><a href="#s3">[3]</a></sup> so even a small prediction-market slice is a large absolute market — and the tooling around it is brand new.</li>
+  <li><strong>Kalshi is the regulated US on-ramp.</strong> CFTC-regulated, USD-denominated, and accessible to a mainstream American audience that will never touch a crypto wallet. That's a different (and arguably more valuable) customer than the Polymarket/Hyperliquid degen base.</li>
+</ul>
+
+<h3>The Telegram-bot playbook is proven — on memecoins</h3>
+<p>The "trade from inside Telegram" pattern was validated at enormous scale by crypto token bots. <strong>Trojan</strong> (Solana) is the largest Telegram trading bot, with cumulative volume cited around <strong>~$23.4B</strong> and a user base on the order of <strong>~1.7M</strong>.<sup><a href="#s2">[2]</a></sup> <strong>Banana Gun</strong> reached nearly <strong>$7B</strong> in lifetime trading volume.<sup><a href="#s2">[2]</a></sup> These bots compete on execution speed, anti-rug/MEV protection, and revenue-share tokenomics.</p>
+<div class="callout warn">
+  <h4>A caveat the research forced</h4>
+  <p style="margin:0">A tempting framing — "all the big Telegram bots are memecoin bots, so prediction markets are wide-open whitespace" — was <strong>refuted</strong> during fact-checking, as were several specific sector volume splits (the "$38.4B lifetime DEX-bot volume, 69.5% Solana" figure did not hold up). Treat the memecoin bots as a <em>proof of the distribution model</em>, not as evidence that the prediction-market lane is empty. It isn't.</p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="landscape">3 &nbsp;Competitive landscape</h2>
+<p>Grouped by venue. Confidence tags reflect what survived adversarial verification — several vendors' own marketing claims (full multi-venue parity, specific user/volume counts, exact fees) were <em>not</em> independently confirmed and are flagged accordingly.</p>
+
+<h3>Hyperliquid</h3>
+<div class="grid">
+  <div class="card">
+    <h4>pvp.trade <span class="tag t-high">verified</span></h4>
+    <div class="who">Telegram bot &middot; Hyperliquid &middot; incumbent</div>
+    <p>The established Telegram bot for Hyperliquid. Its differentiator is <strong>social trading</strong>: shared/group trading where users trade together and mirror each other inside Telegram.<sup><a href="#s4">[4]</a></sup></p>
+    <div class="foot">Position to beat on Hyperliquid. Competes on "trade with friends," not on signal quality.</div>
+  </div>
+  <div class="card">
+    <h4>HIP-4 prediction markets <span class="tag t-high">verified</span></h4>
+    <div class="who">Native venue &middot; ~May 2026</div>
+    <p>Hyperliquid's own prediction-market layer is days/weeks old. Third-party tooling is immature, which is exactly the window where a well-built bot can plant a flag.<sup><a href="#s1">[1]</a></sup></p>
+    <div class="foot">First-mover opportunity for a research-led bot here is real.</div>
+  </div>
+</div>
+
+<h3>Polymarket (the most mature bot ecosystem)</h3>
+<div class="grid">
+  <div class="card">
+    <h4>TradePolyBot <span class="tag t-high">verified</span></h4>
+    <div class="who">Telegram bot &middot; Polymarket</div>
+    <p>Trades Polymarket from Telegram. Confirmed that it does <strong>not</strong> offer AI deep-research forecasting — it's execution/convenience, not signal.<sup><a href="#s5">[5]</a></sup></p>
+    <div class="foot"><span class="tag t-low">refuted</span> Its advertised "~11,000 traders / $20M volume" did not survive verification — treat as unconfirmed marketing.</div>
+  </div>
+  <div class="card">
+    <h4>PolyBot <span class="tag t-high">verified</span></h4>
+    <div class="who">Telegram assistant &middot; Polymarket</div>
+    <p>A Telegram-based trading assistant for Polymarket. Same shape: fast paste-to-trade execution, not a research engine.<sup><a href="#s11">[11]</a></sup></p>
+    <div class="foot">Confirms the pattern: Polymarket bots are mature on convenience, thin on intelligence.</div>
+  </div>
+  <div class="card">
+    <h4>okbet <span class="tag t-high">verified</span></h4>
+    <div class="who">Telegram bot &middot; Polymarket + Kalshi</div>
+    <p>Core differentiators confirmed as <strong>social/copy trading</strong> across Polymarket with Kalshi support.<sup><a href="#s6">[6]</a></sup> Directly relevant: a bot already touches Kalshi.</p>
+    <div class="foot"><span class="tag t-low">refuted</span> Its "first/original prediction-market bot" claim and its "flat 1% only" pricing did not verify.</div>
+  </div>
+  <div class="card">
+    <h4>FrenFlow <span class="tag t-med">partial</span></h4>
+    <div class="who">Telegram bot &middot; multi-venue</div>
+    <p>Advertises one bot across Polymarket, Kalshi, Hyperliquid &amp; Predict.fun. <strong>Kalshi + Hyperliquid support verified</strong>;<sup><a href="#s10">[10]</a></sup> but the full "all-four-venues, full trading + copy + wallet tracking + alerts" parity claim was <strong>refuted</strong>.</p>
+    <div class="foot">Your closest positioning threat — watch it. But breadth ≠ working one-click execution everywhere.</div>
+  </div>
+</div>
+
+<h3>Kalshi</h3>
+<div class="grid">
+  <div class="card">
+    <h4>OctagonAI Kalshi bot <span class="tag t-high">verified</span></h4>
+    <div class="who">Command-line tool &middot; Kalshi &middot; AI research</div>
+    <p>The one tool that <em>does</em> use AI for deep fundamental research to generate Kalshi picks <strong>and execute real trades</strong>.<sup><a href="#s12">[12]</a></sup> Crucial nuance: it is a <strong>CLI, not a Telegram bot</strong> — developer-facing, no consumer chat UX.</p>
+    <div class="foot">This is the closest thing to your concept that exists — and the gap (no Telegram, no consumer UX, no podcast layer) is your opening.</div>
+  </div>
+  <div class="card">
+    <h4>okbet / FrenFlow (Kalshi) <span class="tag t-med">partial</span></h4>
+    <div class="who">Telegram &middot; Kalshi as secondary venue</div>
+    <p>Both touch Kalshi, but as one venue among several and via copy/convenience, not research. Neither leads with Kalshi or with signal generation.</p>
+    <div class="foot">Kalshi-native, research-led, consumer Telegram UX is open.</div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="matrix">4 &nbsp;Feature matrix</h2>
+<p>How the field stacks up against the three pillars of your concept. "&mdash;" = not offered; "&bull;" = offered.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Product</th>
+      <th>Venue(s)</th>
+      <th class="center">1-click trade in TG</th>
+      <th class="center">AI deep research / picks</th>
+      <th class="center">Podcast&rarr;market</th>
+      <th>Primary differentiator</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Your bot</strong></td>
+      <td>Kalshi (+ Hyperliquid?)</td>
+      <td class="center">&bull;</td>
+      <td class="center">&bull;</td>
+      <td class="center">&bull;</td>
+      <td>AI research + podcast sourcing</td>
+    </tr>
+    <tr>
+      <td>pvp.trade</td>
+      <td>Hyperliquid</td>
+      <td class="center">&bull;</td>
+      <td class="center">&mdash;</td>
+      <td class="center">&mdash;</td>
+      <td>Social / group trading</td>
+    </tr>
+    <tr>
+      <td>okbet</td>
+      <td>Polymarket + Kalshi</td>
+      <td class="center">&bull;</td>
+      <td class="center">&mdash;</td>
+      <td class="center">&mdash;</td>
+      <td>Copy / social trading</td>
+    </tr>
+    <tr>
+      <td>FrenFlow</td>
+      <td>Multi-venue (advertised)</td>
+      <td class="center">&bull;<span class="conf-note">*</span></td>
+      <td class="center">&mdash;</td>
+      <td class="center">&mdash;</td>
+      <td>Venue breadth</td>
+    </tr>
+    <tr>
+      <td>TradePolyBot</td>
+      <td>Polymarket</td>
+      <td class="center">&bull;</td>
+      <td class="center">&mdash;</td>
+      <td class="center">&mdash;</td>
+      <td>Fast execution / convenience</td>
+    </tr>
+    <tr>
+      <td>PolyBot</td>
+      <td>Polymarket</td>
+      <td class="center">&bull;</td>
+      <td class="center">&mdash;</td>
+      <td class="center">&mdash;</td>
+      <td>Trading assistant / convenience</td>
+    </tr>
+    <tr>
+      <td>OctagonAI</td>
+      <td>Kalshi</td>
+      <td class="center">CLI only</td>
+      <td class="center">&bull;</td>
+      <td class="center">&mdash;</td>
+      <td>AI fundamental research (dev tool)</td>
+    </tr>
+    <tr>
+      <td>Trojan / Banana Gun</td>
+      <td>Solana / EVM tokens</td>
+      <td class="center">&bull;</td>
+      <td class="center">&mdash;</td>
+      <td class="center">&mdash;</td>
+      <td>Speed, anti-rug, tokenomics</td>
+    </tr>
+  </tbody>
+</table>
+<p class="conf-note">* FrenFlow's full multi-venue one-click execution parity was not independently confirmed; verify before treating it as a like-for-like rival.</p>
+
+<div class="callout good">
+  <h4>What the matrix shows</h4>
+  <p style="margin:0">The "AI deep research / picks" and "podcast&rarr;market" columns are almost entirely empty. The single bot with AI research (OctagonAI) is a CLI, not a consumer chat product. <strong>You are the only entry that lights up all three columns in a consumer Telegram form factor.</strong></p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="diff">5 &nbsp;Is your product differentiated?</h2>
+
+<div class="verdict">
+  <span class="badge b-no">NO</span>
+  <div>
+    <p>One-click trading from Telegram</p>
+    <p>Fully commoditized. Every competitor does it. Necessary to have, useless as a wedge. Do not lead marketing with it.</p>
+  </div>
+</div>
+<div class="verdict">
+  <span class="badge b-partial">PARTIAL</span>
+  <div>
+    <p>AI does deep research and finds picks</p>
+    <p>Conceptually proven only by OctagonAI — and that's a developer CLI, not a consumer Telegram bot. So the <em>combination</em> "AI research + consumer chat UX + execution" is novel today. But it is <strong>replicable</strong>: any competitor can bolt an LLM research layer on. Your moat here must come from execution quality, proprietary data, and track-record transparency, not the idea itself.</p>
+  </div>
+</div>
+<div class="verdict">
+  <span class="badge b-yes">YES</span>
+  <div>
+    <p>Podcast predictions tied to real tradable markets</p>
+    <p>Genuine whitespace. No shipping bot in any venue does this. It's concrete, demonstrable, and inherently shareable ("Chamath said X on the pod &rarr; here's the Kalshi market &rarr; trade it"). This is your most defensible and most marketable hook — partly because building the podcast&rarr;market mapping pipeline is real, ownable work that compounds over time.</p>
+  </div>
+</div>
+
+<div class="callout">
+  <h4>The honest synthesis</h4>
+  <p>You are differentiated — but on <strong>signal and content, not on rails</strong>. The bots that exist are convenience and social layers on top of venues. You are proposing an <em>intelligence</em> layer. That's a stronger, less crowded place to compete, and it aligns with where Kalshi's mainstream audience actually struggles: not "how do I place a trade," but "what should I trade and why."</p>
+  <p style="margin-bottom:0">The thing to be clear-eyed about: the AI-research half is imitable. The podcast half is the harder-to-copy, attention-grabbing wedge. Weight your roadmap and messaging accordingly.</p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="whitespace">6 &nbsp;Whitespace &amp; risks</h2>
+
+<h3>Whitespace you can own</h3>
+<ul>
+  <li><strong>Podcast / creator-prediction sourcing.</strong> Nobody does it. Start with a handful of high-signal shows (All-In, political/macro pods, sports betting pods) and auto-link claims to live Kalshi/Hyperliquid markets.</li>
+  <li><strong>Research-led, not social-led.</strong> The whole field competes on "trade with others." "Trade with a smarter signal" is uncontested and more credible to a mainstream Kalshi user.</li>
+  <li><strong>Kalshi-native consumer UX.</strong> Existing Kalshi touchpoints are either dev tools (OctagonAI) or multi-venue afterthoughts (okbet, FrenFlow). A Kalshi-first consumer Telegram experience is open.</li>
+  <li><strong>Transparent, verifiable track record.</strong> If AI is picking, publish the picks and the P&amp;L on-chain/immutably. None of the social bots lead with auditable performance; it builds trust fast.</li>
+</ul>
+
+<h3>Risks to manage</h3>
+<div class="grid">
+  <div class="card">
+    <h4>Imitability of the AI layer</h4>
+    <p>A research LLM wrapper is the easiest half to copy. Defend with proprietary podcast/data pipeline, evaluation rigor, and a public track record competitors can't retroactively fake.</p>
+  </div>
+  <div class="card">
+    <h4>Custody &amp; trust</h4>
+    <p>A bot-ecosystem hack ("Polycule") has made <strong>non-custodial</strong> the expected default. Holding user funds is now a liability and a trust tax. Ship non-custodial.</p>
+  </div>
+  <div class="card">
+    <h4>Regulatory surface (Kalshi)</h4>
+    <p>Kalshi is CFTC-regulated; a bot that recommends trades and executes them touches advice + brokerage boundaries. Get clarity on KYC, "investment advice" framing, and Kalshi's API/affiliate terms early.</p>
+  </div>
+  <div class="card">
+    <h4>FrenFlow as a fast-follower</h4>
+    <p>It already advertises Kalshi + Hyperliquid breadth. If it adds a research layer before you reach scale, your novelty window narrows. Move on the podcast hook quickly.</p>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="gtm">7 &nbsp;Go-to-market plan</h2>
+
+<h3>Positioning</h3>
+<p class="lede">Not "a Telegram bot to trade Kalshi." Rather: <strong>"The research desk for prediction markets — in your Telegram. AI finds the edge, the experts on your favorite podcasts call the shots, you trade in one tap."</strong></p>
+
+<h3>Sequencing</h3>
+<ol>
+  <li><strong>Lead with the podcast hook.</strong> It's the most novel, most demonstrable, most shareable. Each "pod prediction &rarr; live market &rarr; tap to trade" moment is organic content. This is your top-of-funnel.</li>
+  <li><strong>Back it with the AI research engine.</strong> Once a podcast claim pulls someone in, the AI deep-research picks are what create retention and daily usage.</li>
+  <li><strong>Treat one-click execution as plumbing.</strong> It must be flawless, but it's not a headline.</li>
+  <li><strong>Pick the beachhead venue deliberately.</strong> Start <strong>Kalshi-first</strong> for the mainstream/regulated audience and a cleaner trust story; add <strong>Hyperliquid</strong> as the second venue to capture the fresh, under-tooled HIP-4 prediction market while it's early. Polymarket is the most saturated with bots — enter last, if at all.</li>
+</ol>
+
+<h3>Monetization <span class="tag t-high">validated</span></h3>
+<p>The fee-based model is industry-standard and confirmed viable.<sup><a href="#s2">[2]</a></sup> A <strong>~1% trade fee plus a referral program</strong> matches the category. Consider a research/premium subscription tier on top — justified because you sell intelligence, not just execution, which most fee-only competitors can't credibly charge for.</p>
+
+<h3>Distribution</h3>
+<ul>
+  <li><strong>Creator/podcast partnerships.</strong> The podcast feature is a built-in co-marketing wedge — shows whose predictions you surface have a reason to share you. This is the cheapest growth lever you have.</li>
+  <li><strong>Referral loops</strong> (the proven Telegram-bot growth mechanic from Trojan/Banana Gun).</li>
+  <li><strong>Public track record as content.</strong> Auto-post the AI's calls and results; turn performance into a marketing channel.</li>
+  <li><strong>Ride Hyperliquid's newness.</strong> Being early and visible on HIP-4 prediction markets earns ecosystem attention disproportionate to your size right now.</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2 id="validate">8 &nbsp;What to validate next</h2>
+<p>Open questions the research surfaced but could not close. Resolve these before committing the roadmap:</p>
+<ul>
+  <li><strong>FrenFlow reality check.</strong> Does it actually do working one-click Kalshi <em>and</em> Hyperliquid execution today, and at what volume? Its full-parity claim was refuted — go use it and find out where it breaks.</li>
+  <li><strong>Any stealth podcast-to-market product?</strong> Confirm nobody is quietly building the same hook before you bet marketing on it.</li>
+  <li><strong>Kalshi compliance posture.</strong> Custody (non-custodial strongly preferred), KYC obligations, and whether AI picks read as regulated "investment advice." Resolve before public launch.</li>
+  <li><strong>Audience sizing.</strong> Is the Kalshi Telegram-trading audience large enough on its own, or do you need Hyperliquid/Polymarket from day one to hit scale? This drives the venue-sequencing call.</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2 id="method">9 &nbsp;Sources &amp; method</h2>
+<p class="src">Built from a fan-out of parallel web searches across five angles (Kalshi bots, Hyperliquid prediction markets/bots, the broader crypto Telegram-bot landscape, Polymarket bots, and the AI-research/podcast differentiator). 17 sources were fetched, 66 factual claims extracted, and 25 of the most load-bearing claims put through 3-vote adversarial verification (a claim needed 2 of 3 votes to refute it to be killed). <strong>8 claims were refuted</strong> — including several vendor self-reported user/volume/pricing numbers and the "prediction markets are pure whitespace" framing — and are flagged inline rather than dropped silently. Source quality is mixed (primary product pages, secondary news/analytics, and some blog/unreliable sources excluded from claim-counting); treat single-source figures as directional.</p>
+
+<div class="callout warn">
+  <h4>Confidence note</h4>
+  <p style="margin:0">High-confidence, independently-supported facts: Hyperliquid's prediction-market launch &amp; HIP-4 timing; pvp.trade's social-trading positioning; the existence and execution-only nature of Polymarket bots; OctagonAI being a CLI not a Telegram bot; the fee-model norm; the podcast-to-market gap. <strong>Lower-confidence / unverified:</strong> exact volume and user counts for any bot (Trojan/Banana Gun figures are cited but vendor/secondary), FrenFlow's true multi-venue parity, and the prediction-market "$23B" magnitude (single-window, medium confidence).</p>
+</div>
+
+<h3>References</h3>
+<ol class="reflist">
+  <li id="s1">CoinGecko — Hyperliquid HIP-3/HIP-4, tokenized stocks &amp; prediction markets. <a href="https://www.coingecko.com/learn/hyperliquid-hip3-hip4-tokenized-stocks-and-prediction-markets">link</a></li>
+  <li id="s2">0xGreythorn (Medium) — Banana Gun &amp; Telegram-bot profitability/landscape. <a href="https://0xgreythorn.medium.com/banana-gun-leading-web3-bot-profitability-ec0590c48622">link</a></li>
+  <li id="s3">KuCoin News — Hyperliquid volume &amp; HIP-4 prediction-market push. <a href="https://www.kucoin.com/news/flash/hyperliquid-processes-225-billion-in-volume-as-hip-4-aims-to-boost-prediction-markets">link</a></li>
+  <li id="s4">Hypurr.co — pvp.trade ecosystem profile (Hyperliquid Telegram social trading). <a href="https://www.hypurr.co/ecosystem-projects/pvp-trade">link</a></li>
+  <li id="s5">Polymart — TradePolyBot listing (Polymarket Telegram bot). <a href="https://polymart.app/tradepolybot">link</a></li>
+  <li id="s6">Polymark.et — okbet product page (Polymarket + Kalshi copy/social bot). <a href="https://polymark.et/product/okbet">link</a></li>
+  <li id="s10">FrenFlow — official site (multi-venue Telegram bot). <a href="https://www.frenflow.com/">link</a></li>
+  <li id="s11">aarora4 — Awesome-Prediction-Market-Tools (PolyBot &amp; ecosystem). <a href="https://github.com/aarora4/Awesome-Prediction-Market-Tools">link</a></li>
+  <li id="s12">OctagonAI — kalshi-trading-bot-cli (AI research + execution, CLI). <a href="https://github.com/OctagonAI/kalshi-trading-bot-cli">link</a></li>
+  <li>Supporting: CoinGecko top Telegram trading bots <a href="https://www.coingecko.com/learn/top-telegram-trading-bots">link</a>; DLNews on Telegram bot popularity <a href="https://www.dlnews.com/articles/defi/telegram-bots-gain-in-popularity-with-more-memecoin-trading/">link</a>; PolyCatalog Polymarket bot directory <a href="https://www.polycatalog.io/polymarket-trading-bots">link</a>; Chainstack Hyperliquid trading bots 2026 <a href="https://chainstack.com/hyperliquid-trading-bots-2026/">link</a>.</li>
+</ol>
+
+<footer>
+  Telegram Bots for Prediction Markets — Market Analysis &middot; Prepared June 3, 2026.<br>
+  Figures attributed to vendor or secondary sources are directional; refuted claims are flagged inline and excluded from the conclusions. Raw research data: <code>assets/raw-research-output.json</code>.
+</footer>
+
+</div>
+</body>
+</html>

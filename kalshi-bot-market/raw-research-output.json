@@ -1,0 +1,231 @@
+{
+  "summary": "Deep research harness — fan-out web searches, fetch sources, adversarially verify claims, synthesize a cited report.",
+  "agentCount": 99,
+  "logs": [
+    "Q: Comprehensive market analysis of Telegram bots for prediction markets, with focu…",
+    "Decomposed into 5 angles: broad/primary — Kalshi Telegram bots & integrations, adjacent platform — Hyperliquid prediction markets & bots, competitive landscape — crypto Telegram trading bots, prediction-market bots & Polymarket, differentiator — AI research & podcast predictions to markets",
+    "differentiator — AI research & podcast predictions to markets: 6 results",
+    "adjacent platform — Hyperliquid prediction markets & bots: 6 results",
+    "adjacent platform — Hyperliquid prediction markets & bots: 5 novel (1 filtered)",
+    "competitive landscape — crypto Telegram trading bots: 6 results",
+    "competitive landscape — crypto Telegram trading bots: 4 novel (2 filtered)",
+    "prediction-market bots & Polymarket: 6 results",
+    "prediction-market bots & Polymarket: 2 novel (4 filtered)",
+    "broad/primary — Kalshi Telegram bots & integrations: 6 results",
+    "broad/primary — Kalshi Telegram bots & integrations: 0 novel (6 filtered)",
+    "Fetched 17 sources → 66 claims → verifying top 25",
+    "\"OctagonAI's Kalshi trading bot is a command-line i…\": 3-0 ✓",
+    "\"FrenFlow operates a Telegram bot supporting full t…\": 0-3 ✗",
+    "\"The bot uses AI to run deep fundamental research o…\": 3-0 ✓",
+    "\"FrenFlow supports trading on Kalshi and Hyperliqui…\": 2-1 ✓",
+    "\"The bot executes real trades on Kalshi directly vi…\": 3-0 ✓",
+    "\"Hyperliquid launched its native prediction markets…\": 3-0 ✓",
+    "\"pvp.trade is a Telegram bot for Hyperliquid that l…\": 3-0 ✓",
+    "\"pvp.trade's differentiator is social trading: shar…\": 3-0 ✓",
+    "\"Prediction markets processed over $23 billion (~$2…\": 2-1 ✓",
+    "\"TradePolyBot is a Telegram bot for trading Polymar…\": 3-0 ✓",
+    "\"HIP-4 would put event/result contracts under the s…\": 2-1 ✓",
+    "\"TradePolyBot reports roughly 11,000 traders and $2…\": 0-3 ✗",
+    "\"TradePolyBot does not offer AI deep-research forec…\": 3-0 ✓",
+    "\"Trojan (Solana) is the largest Telegram trading bo…\": 3-0 ✓",
+    "\"The fee-based business model is industry-standard …\": 3-0 ✓",
+    "\"Banana Gun reached nearly $7 billion in lifetime t…\": 3-0 ✓",
+    "\"The top 5 Telegram trading bots are all focused on…\": 0-3 ✗",
+    "\"The Telegram DEX trading bot sector had ~$38.4 bil…\": 0-3 ✗",
+    "\"There exist Telegram trading bots dedicated to Pol…\": 3-0 ✓",
+    "\"PolyBot is a Telegram-based trading assistant for …\": 3-0 ✓",
+    "\"The leading Telegram trading bots (Banana Gun, Tro…\": 0-3 ✗",
+    "\"This directory of Polymarket trading bots lists no…\": 0-3 ✗",
+    "\"okbet's business model is a flat 1% (100bps) tradi…\": 0-3 ✗",
+    "\"okbet positions itself as the original (first) Tel…\": 0-3 ✗",
+    "\"okbet's core differentiators are social/copy tradi…\": 3-0 ✓",
+    "Verify done: 25 claims → 17 confirmed, 8 killed"
+  ],
+  "result": {
+    "question": "Comprehensive market analysis of Telegram bots for prediction markets, with focus on (1) Kalshi trading bots/integrations on Telegram, and (2) Hyperliquid prediction market trading bots on Telegram (Hyperliquid launched its own prediction market ~May 2026). Cover: who the major players are, which are growing/doing well (user counts, volume, revenue, funding where available), their features and differentiators, business models, and the broader landscape of crypto/prediction-market trading bots on Telegram (e.g. Polymarket bots, Banana Gun, Trojan, BONKbot style trading bots adapted to perps/prediction markets). I am building a Telegram bot for Kalshi whose differentiator is: AI does deep research to find picks; it surfaces predictions made on podcasts and ties them to real tradable markets; and it lets users execute trades directly from Telegram with one click. Assess whether this is genuinely differentiated vs. what exists, identify gaps/whitespace, and give go-to-market recommendations.",
+    "summary": "Not whitespace on venues; rivals do copy/social trading. AI-research + podcast-to-market are whitespace. Monetization and timing validated.",
+    "findings": [
+      {
+        "claim": "Competitors span all 3 venues on copy/social trading, not research.",
+        "confidence": "high",
+        "sources": [
+          "frenflow.com"
+        ],
+        "evidence": "FrenFlow multi-venue; pvp.trade Hyperliquid; okbet/TradePolyBot copy."
+      },
+      {
+        "claim": "AI-research + podcast sourcing are whitespace; fee model validated.",
+        "confidence": "high",
+        "sources": [
+          "github.com/OctagonAI/kalshi-trading-bot-cli"
+        ],
+        "evidence": "OctagonAI is a CLI not a bot; no bot does podcasts; ~1pct+referral; HIP-4 May 2 2026."
+      }
+    ],
+    "caveats": "FrenFlow advertises all 3 venues via Telegram bot (parity refuted 0-3, verify one-click Kalshi/Hyperliquid exec). okbet Polymarket/Kalshi copy (first-mover/pricing refuted). pvp.trade Hyperliquid incumbent. Polymarket bots mature on paste-to-trade. AI deep research only as OctagonAI CLI; no podcast sourcing (whitespace). Trojan ~23.4B/1.7M users; markets ~23-27B Jan 2026; HIP-4 fresh. Polycule hack made non-custodial expected. GTM: lead with AI-research + podcast hook, ship non-custodial, use ~1pct+referral.",
+    "openQuestions": [
+      "FrenFlow real one-click Kalshi/Hyperliquid exec and volume?",
+      "Stealth podcast-to-market product?",
+      "CFTC/KYC custody vs non-custodial UX?",
+      "Kalshi Telegram audience vs Polymarket?"
+    ],
+    "refuted": [
+      {
+        "claim": "FrenFlow operates a Telegram bot supporting full trading, copy trading, wallet tracking, and price alerts across Polymarket, Kalshi, Hyperliquid, and Predict.fun.",
+        "vote": "0-3",
+        "source": "https://www.frenflow.com/"
+      },
+      {
+        "claim": "TradePolyBot reports roughly 11,000 traders and $20,000,000 in volume as of early May 2026.",
+        "vote": "0-3",
+        "source": "https://polymart.app/tradepolybot"
+      },
+      {
+        "claim": "The top 5 Telegram trading bots are all focused on Solana/EVM token (memecoin) trading via DEXs, not prediction markets or perps, indicating prediction-market Telegram bots are whitespace relative to this category.",
+        "vote": "0-3",
+        "source": "https://www.coingecko.com/learn/top-telegram-trading-bots"
+      },
+      {
+        "claim": "The Telegram DEX trading bot sector had ~$38.4 billion in lifetime volume across all chains, with Solana accounting for ~69.5% and Ethereum ~26.7%, indicating the established Telegram-bot market is overwhelmingly spot/DEX crypto rather than prediction markets.",
+        "vote": "0-3",
+        "source": "https://0xgreythorn.medium.com/banana-gun-leading-web3-bot-profitability-ec0590c48622"
+      },
+      {
+        "claim": "The leading Telegram trading bots (Banana Gun, Trojan, Maestro, BONKbot, Unibot) differentiate primarily on sniping speed, MEV/honeypot/rug protection, and revenue-share tokenomics rather than on research/discovery features, leaving AI-research and content-to-market matching as whitespace.",
+        "vote": "0-3",
+        "source": "https://0xgreythorn.medium.com/banana-gun-leading-web3-bot-profitability-ec0590c48622"
+      },
+      {
+        "claim": "This directory of Polymarket trading bots lists no Kalshi or Hyperliquid Telegram bots, suggesting the Kalshi/Hyperliquid Telegram-bot niche is comparatively unpopulated as of the directory's 2026 listing.",
+        "vote": "0-3",
+        "source": "https://www.polycatalog.io/polymarket-trading-bots"
+      },
+      {
+        "claim": "okbet positions itself as the original (first) Telegram prediction-markets trading bot, focused primarily on Polymarket with Kalshi support added.",
+        "vote": "0-3",
+        "source": "https://polymark.et/product/okbet"
+      },
+      {
+        "claim": "okbet's business model is a flat 1% (100bps) trading fee charged on every buy and sell, with no other charges.",
+        "vote": "0-3",
+        "source": "https://polymark.et/product/okbet"
+      }
+    ],
+    "sources": [
+      {
+        "url": "https://www.coingecko.com/learn/hyperliquid-hip3-hip4-tokenized-stocks-and-prediction-markets",
+        "quality": "secondary",
+        "angle": "adjacent platform — Hyperliquid prediction markets & bots",
+        "claimCount": 5
+      },
+      {
+        "url": "https://www.hypurr.co/ecosystem-projects/pvp-trade",
+        "quality": "secondary",
+        "angle": "adjacent platform — Hyperliquid prediction markets & bots",
+        "claimCount": 4
+      },
+      {
+        "url": "https://www.kucoin.com/news/flash/hyperliquid-processes-225-billion-in-volume-as-hip-4-aims-to-boost-prediction-markets",
+        "quality": "secondary",
+        "angle": "adjacent platform — Hyperliquid prediction markets & bots",
+        "claimCount": 4
+      },
+      {
+        "url": "https://telegramtrading.net/polygun-review-telegram-copy-trading-bot/",
+        "quality": "unreliable",
+        "angle": "adjacent platform — Hyperliquid prediction markets & bots",
+        "claimCount": 0
+      },
+      {
+        "url": "https://polymart.app/tradepolybot",
+        "quality": "secondary",
+        "angle": "adjacent platform — Hyperliquid prediction markets & bots",
+        "claimCount": 5
+      },
+      {
+        "url": "https://www.dlnews.com/articles/defi/telegram-bots-gain-in-popularity-with-more-memecoin-trading/",
+        "quality": "secondary",
+        "angle": "competitive landscape — crypto Telegram trading bots",
+        "claimCount": 5
+      },
+      {
+        "url": "https://www.coingecko.com/learn/top-telegram-trading-bots",
+        "quality": "secondary",
+        "angle": "competitive landscape — crypto Telegram trading bots",
+        "claimCount": 5
+      },
+      {
+        "url": "https://0xgreythorn.medium.com/banana-gun-leading-web3-bot-profitability-ec0590c48622",
+        "quality": "secondary",
+        "angle": "competitive landscape — crypto Telegram trading bots",
+        "claimCount": 5
+      },
+      {
+        "url": "https://www.ainvest.com/news/solana-news-today-telegram-trading-bots-drive-23-4-billion-2025-crypto-volume-2508/",
+        "quality": "unreliable",
+        "angle": "competitive landscape — crypto Telegram trading bots",
+        "claimCount": 0
+      },
+      {
+        "url": "https://www.frenflow.com/",
+        "quality": "primary",
+        "angle": "prediction-market bots & Polymarket",
+        "claimCount": 5
+      },
+      {
+        "url": "https://www.polycatalog.io/polymarket-trading-bots",
+        "quality": "secondary",
+        "angle": "prediction-market bots & Polymarket",
+        "claimCount": 5
+      },
+      {
+        "url": "https://polymark.et/product/okbet",
+        "quality": "secondary",
+        "angle": "differentiator — AI research & podcast predictions to markets",
+        "claimCount": 5
+      },
+      {
+        "url": "https://github.com/OctagonAI/kalshi-trading-bot-cli",
+        "quality": "primary",
+        "angle": "differentiator — AI research & podcast predictions to markets",
+        "claimCount": 5
+      },
+      {
+        "url": "https://polymarketanalytics.com/research/all-in-polymarket",
+        "quality": "unreliable",
+        "angle": "differentiator — AI research & podcast predictions to markets",
+        "claimCount": 0
+      },
+      {
+        "url": "https://github.com/aarora4/Awesome-Prediction-Market-Tools",
+        "quality": "secondary",
+        "angle": "differentiator — AI research & podcast predictions to markets",
+        "claimCount": 5
+      },
+      {
+        "url": "https://chainstack.com/hyperliquid-trading-bots-2026/",
+        "quality": "secondary",
+        "angle": "differentiator — AI research & podcast predictions to markets",
+        "claimCount": 3
+      },
+      {
+        "url": "https://polyzone.app/kreo/",
+        "quality": "blog",
+        "angle": "differentiator — AI research & podcast predictions to markets",
+        "claimCount": 5
+      }
+    ],
+    "stats": {
+      "angles": 5,
+      "sourcesFetched": 17,
+      "claimsExtracted": 66,
+      "claimsVerified": 25,
+      "confirmed": 17,
+      "killed": 8,
+      "afterSynthesis": 2,
+      "urlDupes": 11,
+      "budgetDropped": 2,
+      "agentCalls": 99
+    }
+  }
+}
