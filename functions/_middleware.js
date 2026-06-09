@@ -20,6 +20,7 @@ const PROTECTED = {
   '/private-sample/': 'PW_PRIVATE_SAMPLE',
   '/chris-signalfire-opportunity/': 'PW_CHRIS_SIGNALFIRE',
   '/kalshi-bot-market/': 'PW_KALSHI_BOT_MARKET',
+  '/kalmari-gtm/': 'PW_KALMARI_GTM',
 };
 
 export const onRequest = async (context) => {
