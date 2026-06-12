@@ -1,310 +1,254 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kalmari (Frontrun Bot) — Go-to-Market Plan — June 9, 2026</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kalmari — Go-To-Market Plan (June 2026)</title>
 <style>
-  :root { --ink: #1a1a1a; --muted: #666; --line: #e3e3e0; --bg: #fcfcfa; --card: #fff; --accent: #1f4e8c; }
-  * { box-sizing: border-box; }
-  body { margin: 0; background: var(--bg); color: var(--ink);
-         font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; }
-  main { max-width: 880px; margin: 0 auto; padding: 48px 24px 96px; }
-  header.report { border-bottom: 2px solid var(--ink); padding-bottom: 20px; margin-bottom: 36px; }
-  header.report h1 { font-size: 30px; margin: 0 0 6px; letter-spacing: -0.5px; }
-  header.report p { margin: 0; color: var(--muted); }
-  h2 { font-size: 22px; margin: 56px 0 12px; padding-top: 18px; border-top: 1px solid var(--line); letter-spacing: -0.3px; }
-  h2 .num { color: var(--muted); font-weight: 400; margin-right: 8px; }
-  h3 { font-size: 17px; margin: 28px 0 8px; }
-  p { margin: 10px 0; }
-  code { background: #f0f0ed; border-radius: 4px; padding: 1px 5px; font-size: 0.88em;
-         font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
-  a { color: var(--accent); }
+  body { font-family: Georgia, 'Times New Roman', serif; max-width: 880px; margin: 40px auto; padding: 0 24px; color: #1a1a1a; line-height: 1.55; background: #fff; }
+  h1 { font-size: 28px; border-bottom: 3px solid #1a1a1a; padding-bottom: 8px; }
+  h2 { font-size: 22px; margin-top: 48px; border-bottom: 1px solid #999; padding-bottom: 4px; }
+  h3 { font-size: 17px; margin-top: 28px; }
+  table { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 14px; font-family: -apple-system, Helvetica, Arial, sans-serif; }
+  th, td { border: 1px solid #bbb; padding: 7px 9px; text-align: left; vertical-align: top; }
+  th { background: #f0f0f0; }
+  code, .draft { font-family: ui-monospace, Menlo, monospace; font-size: 13px; }
+  .draft { display: block; white-space: pre-wrap; background: #f7f6f2; border: 1px solid #ddd; border-left: 4px solid #888; padding: 14px 16px; margin: 12px 0; line-height: 1.5; }
+  .meta { color: #555; font-size: 14px; }
+  .warn { background: #fdf3e7; border: 1px solid #e8c9a0; padding: 10px 14px; font-size: 14px; }
+  .small { font-size: 13px; color: #444; }
+  a { color: #0b4f8a; }
   ul, ol { padding-left: 24px; }
-  li { margin: 6px 0; }
-  table { border-collapse: collapse; width: 100%; margin: 14px 0; font-size: 14.5px; }
-  th, td { text-align: left; border-bottom: 1px solid var(--line); padding: 8px 12px 8px 0; vertical-align: top; }
-  th { font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
-  .toc { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 18px 24px; margin: 24px 0; }
-  .toc ol { margin: 6px 0; columns: 2; column-gap: 40px; }
-  .summary-box { background: #f4f6f9; border-left: 4px solid var(--accent); border-radius: 0 8px 8px 0; padding: 14px 20px; margin: 18px 0; }
-  .small { font-size: 13.5px; color: var(--muted); }
-  blockquote { margin: 12px 0; padding: 8px 18px; border-left: 3px solid var(--line); color: #444; font-size: 15px; }
-  .checklist li { list-style: none; position: relative; padding-left: 30px; margin: 9px 0; }
-  .checklist li::before { content: "☐"; position: absolute; left: 0; top: 0; font-size: 18px; color: var(--muted); }
+  .tag { font-family: -apple-system, sans-serif; font-size: 11px; background: #e8e8e8; border-radius: 3px; padding: 1px 6px; white-space: nowrap; }
 </style>
 </head>
 <body>
-<main>
 
 <p class="small" style="margin:0 0 18px"><a href="/">← demos</a></p>
 
-<header class="report">
-  <h1>Kalmari — Go-to-Market Plan</h1>
-  <p>AI-audited Kalshi picks with a public track record, copy-tradeable in one tap from Telegram · prepared June 9, 2026 · repo <code>tg-research/frontrun-bot</code></p>
-  <p class="small" style="margin-top:6px">Companion documents: <a href="/kalshi-bot-market/">Competitive Landscape Research (June 3)</a> · Product &amp; Code Audit (June 9, internal — not published)</p>
-</header>
+<h1>Kalmari — Go-To-Market Plan</h1>
+<p class="meta">Prepared June 10–11, 2026 · Product: <a href="https://kalmari.app">kalmari.app</a> — Telegram-native research &amp; trading workspace for Kalshi (Claude-driven market audits + podcast-mention signals, paper trading, BYOK live trading, public resolved track record). Pricing: Free / Pro $39/mo (first 100 lock $29 for life) / Desk $99/mo.</p>
+<p class="meta">Research basis: 104-agent verified web research run (21 confirmed claims, 4 refuted), live Telegram exploration via MTProto, subreddit rules pulled from Wayback snapshots and live Reddit mirrors, creator audience counts verified against platform APIs. Key sources linked throughout; full list at the end.</p>
 
-<div class="summary-box">
-  <strong>The strategy in one paragraph.</strong> Kalmari is not a trading bot; it is a <em>publicly accountable research desk</em> that happens to execute. Every competitor in the Telegram prediction-market space competes on execution convenience or social/copy features; none publishes AI-generated picks against a verifiable track record. That track record — the <code>/performance</code> page and leaderboard already built — is the entire marketing engine. The plan: harden the launch blockers, reprice around signal access (not LLM tokens), seed 50–100 real users from Kalshi-native communities, and let the product's own share pages, settled-pick results, and weekly recap content do the distribution. Paid acquisition waits until the track record has 3+ months of public history and the funnel converts.
-</div>
-
-<div class="toc">
-  <strong>Contents</strong>
-  <ol>
-    <li><a href="#product">What you're selling</a></li>
-    <li><a href="#positioning">Positioning &amp; messaging</a></li>
-    <li><a href="#icp">Who to sell it to</a></li>
-    <li><a href="#pricing">Pricing &amp; packaging</a></li>
-    <li><a href="#prelaunch">Launch preconditions</a></li>
-    <li><a href="#sequence">Launch sequence</a></li>
-    <li><a href="#channels">Channels, ranked</a></li>
-    <li><a href="#loops">Growth loops</a></li>
-    <li><a href="#content">The content engine</a></li>
-    <li><a href="#metrics">Funnel &amp; metrics</a></li>
-    <li><a href="#risks">Risks &amp; guardrails</a></li>
-    <li><a href="#plan90">The 90-day plan</a></li>
-  </ol>
-</div>
-
-<!-- ============================================================ -->
-<h2 id="product"><span class="num">1</span>What you're selling</h2>
-
-<p>The product as it exists today (post-<code>0af6340</code>, signals-first):</p>
+<h2>1. Executive summary</h2>
 <ul>
-  <li><strong>Two research feeds.</strong> AI mispricing audits across thousands of Kalshi markets, plus podcast-claim signals (speaker predictions mapped to live markets). Delivered in Telegram via <code>/signals</code>.</li>
-  <li><strong>One-tap copy trading.</strong> Any pick → live-repriced proposal → confirm. Drift detection warns when the edge has been eaten.</li>
-  <li><strong>Paper mode by default.</strong> $100 simulated, filled at live prices, zero risk. Live mode is opt-in via the user's own Kalshi API key (non-custodial, BYOK, encrypted at rest).</li>
-  <li><strong>A public, verifiable track record.</strong> Leaderboard by model/speaker/topic, the <code>/performance</code> explorer with per-pick theses and outcomes, shareable signal pages (<code>/s/&lt;id&gt;</code>) and portfolio pages (<code>/p/&lt;runID&gt;</code>).</li>
-  <li><strong>Retention machinery already built:</strong> weekly digest, deep links (<code>/start sig_&lt;id&gt;</code>), settlement tracking, insider-tier auto-copy.</li>
+  <li><strong>The single biggest asset is the public, resolved track record.</strong> Every channel below converts best with "here is every pick, scored after settlement, no cherry-picking" — it is the one claim competitors in this niche almost never back up. Lead with it everywhere.</li>
+  <li><strong>Beachhead communities:</strong> r/Kalshi (~36k members, +508% YoY), r/PredictionMarkets (~6.3k, most promo-tolerant on-topic sub), the official Kalshi Discord (~30k members), and Kalshi's own Telegram builder community (@KalshiEco — your join request is pending approval; admins include both Kalshi founders).</li>
+  <li><strong>The Kalshi Builders Program is the highest-leverage partnership.</strong> Kalshi runs weekly Wednesday 10:30 AM EST "builder hours" (RSVP via @KalshiBuilders). Getting Kalmari into Kalshi's ecosystem channels is free distribution to exactly the right users, with the platform's implicit blessing.</li>
+  <li><strong>Creator budget anchor: ~$500/post.</strong> NPR confirmed Kalshi and Polymarket themselves offered creators up to $500 per sponsored post, and both platforms are <em>reining those programs in</em> after the June 2026 LA-election mess — meaning experienced prediction-market creators have sponsorship inventory freeing up right now, and they have an income gap you can fill.</li>
+  <li><strong>Referral template:</strong> TrendSpider's affiliate program (10/20/30% recurring revenue share, tiered by volume, capped at first 12 months) is the directly reusable model for a $39/$99 trading-tool SaaS.</li>
+  <li><strong>Compliance is a live wire in this niche this month.</strong> Polymarket's $2.5M of largely undisclosed influencer payments is under FTC-risk scrutiny (Politico, June 5 2026). Every paid Kalmari placement must carry clear #ad / paid-partnership disclosure — this is also a differentiation opportunity ("the transparent one").</li>
 </ul>
 
-<p>What the June 3 competitive research established: one-click Telegram execution is commoditized (pvp.trade, okbet, FrenFlow, TradePolyBot all do it); the crowded lane is social/copy trading; and <strong>nobody ships AI research picks or podcast→market matching in a consumer Telegram product</strong>. The only AI-research comparable (OctagonAI) is a developer CLI. Kalshi-native, research-led, consumer UX is open lane.</p>
-
-<p><strong>The honest constraint:</strong> the AI-research half is imitable — any competitor can bolt on an LLM. The two things that compound and can't be retroactively faked are (a) the public track record's <em>history</em>, and (b) the podcast→market pipeline. Both should be over-weighted in everything below.</p>
-
-<!-- ============================================================ -->
-<h2 id="positioning"><span class="num">2</span>Positioning &amp; messaging</h2>
-
-<h3>Category and frame</h3>
-<p>Do not enter the "Telegram trading bot" category — it's owned by execution/social players and carries memecoin-bot trust baggage. Create the adjacent frame:</p>
-
-<blockquote><strong>"The research desk for prediction markets — in your Telegram."</strong><br>
-AI models audit every Kalshi market after each research run and publish their best picks with a public track record. See exactly how each model has performed, then copy any pick in one tap — paper money first, your own Kalshi account when you're ready.</blockquote>
-
-<h3>Message hierarchy</h3>
+<h2>2. Channel priority overview</h2>
 <table>
-  <tr><th>Priority</th><th>Message</th><th>Why this order</th></tr>
-  <tr><td>1. Lead</td><td><strong>"Every pick is public. So is every miss."</strong> The track record — hit rate, P&amp;L, per-pick theses, settled outcomes anyone can audit.</td><td>Trust is the scarce asset in a niche full of anonymous "signal groups." Radical transparency is the differentiator nobody can copy retroactively.</td></tr>
-  <tr><td>2. Hook</td><td><strong>Podcast → market.</strong> "They said it on the pod. Here's the live market. Here's how that call aged."</td><td>The most novel, demonstrable, shareable mechanic. Each instance is a self-contained piece of content. This is top-of-funnel, per the competitive research.</td></tr>
-  <tr><td>3. Comfort</td><td><strong>Paper first, your keys always.</strong> $100 simulated at live prices; live trading is your own Kalshi account, your own API key, never custody.</td><td>Removes the two biggest objections (risk, custody) in one line. Post-"Polycule"-hack, non-custodial is the expected default — say it loudly.</td></tr>
-  <tr><td>4. Plumbing</td><td>One-tap copy, drift warnings, portfolio tracking, weekly digest.</td><td>Table stakes. Must be flawless; never the headline.</td></tr>
+<tr><th>Priority</th><th>Channel</th><th>Reach</th><th>Cost</th><th>Expected payoff</th></tr>
+<tr><td>1</td><td>Kalshi Builders ecosystem (TG @KalshiEco / @KalshiBuilders, builder hours, Discord)</td><td>~30k Discord + ~900 TG builders</td><td>Free</td><td>Platform-blessed distribution, possible co-marketing</td></tr>
+<tr><td>2</td><td>Reddit organic (r/Kalshi, r/PredictionMarkets, r/Polymarket megathread, r/sportsbook)</td><td>~650k combined</td><td>Free (time)</td><td>Durable SEO + the niche's main watering holes</td></tr>
+<tr><td>3</td><td>Micro/mid creator sponsorships (Champ, TradeWithDesi, DGFantasy, OddsJam)</td><td>40k–190k subs each</td><td>$300–$2k/video + rev share</td><td>Direct conversion; these audiences already pay for picks</td></tr>
+<tr><td>4</td><td>Newsletter sponsorships (Event Horizon; Forecasting Newsletter)</td><td>3k+ highly qualified</td><td>~$150–$500/issue (negotiable, no rate cards)</td><td>Reaches traders, operators and press in one buy</td></tr>
+<tr><td>5</td><td>Telegram channel partnerships (alert-channel ecosystem, The Odds, Polymarket Quick Moves)</td><td>200–1.2k each, dense fit</td><td>Cross-promo / small flat fees</td><td>Users already living in Telegram — zero-friction install</td></tr>
+<tr><td>6</td><td>Credibility endorsements (Domer, Gaeten Dugas) + podcasts (SSG, Prediction Market Movers)</td><td>Small but canonical</td><td>$0–$500; mostly relationship</td><td>Legitimacy with serious traders; quotable validation</td></tr>
 </table>
 
-<h3>What to stop saying</h3>
-<ul>
-  <li>The current landing hero — <em>"Your AI trades Kalshi while you feast"</em> — promises autonomy you deliberately don't sell (auto-copy is insider-only and legally gray) and frames the product as a black-box bot rather than a research desk. Replace with the track-record frame above.</li>
-  <li>"Frontrun" as a public name. It connotes the one thing a CFTC-regulated venue's compliance team hates most. Ship as <strong>Kalmari</strong> everywhere; keep frontrun-bot as the repo name only.</li>
-  <li>Anything implying advice. House style: "the model's pick," "the audit found," "historical hit rate" — never "you should buy." Every public surface carries the hypothetical-performance footnote (audit §5, item 3).</li>
-</ul>
-
-<h3>Naming the proof</h3>
-<p>Give the research runs a recognizable, recurring product name — e.g. <strong>"The Audit"</strong> ("Tuesday's Audit found 7 mispriced markets") — so the content engine in §9 has a franchise to hang on. Models become characters with public records ("Opus is 12–4 on Fed markets"); the leaderboard already supports this framing natively.</p>
-
-<!-- ============================================================ -->
-<h2 id="icp"><span class="num">3</span>Who to sell it to</h2>
+<h2>3. Reddit action plan</h2>
+<p>Verified rule texts and reception patterns below; the universal pattern across every sub: <strong>writeup-first + free + author answers technical questions = upvotes; link-first = removal or snark</strong>. A near-identical product ("PaperPoly", $1,000 virtual capital + leaderboard) launched on r/Polymarket in May 2026 and was received well — the lane is open but won't stay empty.</p>
 
 <table>
-  <tr><th>Segment</th><th>Who they are</th><th>What they want</th><th>Role in GTM</th></tr>
-  <tr><td><strong>1. Active Kalshi retail traders</strong> (beachhead)</td><td>Have funded Kalshi accounts, trade weekly, hang out in r/Kalshi, prediction-market X/Twitter, Kalshi-adjacent Discords. US-based, not crypto-native.</td><td>Better selection ("what should I trade and why"), not better execution. They already know how to place an order.</td><td>First 100 users. They convert to paid fastest (real balances), generate live-mode proof, and are the most credible word-of-mouth source.</td></tr>
-  <tr><td><strong>2. Prediction-market curious</strong></td><td>Follow politics/econ/sports odds as spectators; read Polymarket screenshots on X; no Kalshi account yet.</td><td>A free, zero-risk way to play along and learn. Paper mode is built for exactly this.</td><td>Volume layer. Free forever is fine — they make leaderboards and leagues lively, share recap images, and a minority graduate to live.</td></tr>
-  <tr><td><strong>3. Podcast superfans</strong></td><td>All-In, macro/politics, sports-betting pod audiences. Emotionally invested in whether their host's takes are right.</td><td>A scoreboard for the discourse: "was Chamath right?" — tradeable or not.</td><td>The viral wedge. They arrive via podcast-claim content, not via Kalshi interest. Speaker leaderboards are the retention hook.</td></tr>
+<tr><th>Subreddit</th><th>Size</th><th>Self-promo policy (verified)</th><th>Verdict</th></tr>
+<tr><td>r/Kalshi</td><td>~36k, +508% YoY</td><td>"No links to pay-for-access sites… sharing resources encouraged as long as relevant, <strong>free</strong> and easily accessible"</td><td><strong>GO</strong> — lead with the free tier, never the paywall</td></tr>
+<tr><td>r/PredictionMarkets</td><td>~6.3k</td><td>No explicit rules; top posts are tool-builders self-promoting; open-source bot launch got warm reception</td><td><strong>GO</strong> — most tolerant on-topic sub</td></tr>
+<tr><td>r/Polymarket</td><td>~11.8k (the "127k" figure circulating in blogs is wrong)</td><td>Individual tool posts removed → redirected to pinned <a href="https://reddit.com/r/Polymarket/comments/1rwc8jy/built_something_for_polymarket_drop_it_here/">tools megathread</a></td><td><strong>GO via megathread</strong> (one comment, update don't repost)</td></tr>
+<tr><td>r/sportsbook</td><td>~601k</td><td>"No touting/selling picks"; self-promo OK if all content is on-Reddit, free, from a participating account; sub curates a free-tools sidebar</td><td><strong>GO carefully</strong> — free-tool framing, sports markets only, never picks-for-sale</td></tr>
+<tr><td>r/SideProject</td><td>~742k</td><td>Self-promo native; "[Name] – [description]" format; story/novelty wins</td><td><strong>GO</strong> — launch-story angle</td></tr>
+<tr><td>r/indiehackers</td><td>~175k</td><td>"Self Promotion" flair + Friday share threads</td><td>GO (low cost, feedback economy)</td></tr>
+<tr><td>ACX / Astral Codex Ten classifieds</td><td>~80k rationalists</td><td>Subreddit bans Substack self-promo, but Scott Alexander's <a href="https://www.astralcodexten.com/p/acx-classifieds-126">ACX Classifieds</a> has a "Consume My Product/Service" category</td><td>GO via blog classifieds, not the subreddit</td></tr>
+<tr><td>r/algotrading</td><td>~1.9M</td><td>"Content marketing… prohibited, <strong>even if the content is free or educational</strong>"</td><td>NO — unless you open-source a component and post it as content</td></tr>
+<tr><td>r/options, r/Daytrading</td><td>1.4M / 5.1M</td><td>Hard bans on promo / referral / app promotion</td><td>NO</td></tr>
 </table>
 
-<p><strong>Sequencing:</strong> win segment 1 first — everything else depends on a track record with real money behind it and testimonials from people who obviously know what they're doing. Segments 2 and 3 are activated by content, not outreach, and can run in parallel once the engine in §9 is live.</p>
+<h3>Post 1 — r/Kalshi (flagship, week 1)</h3>
+<p class="small">Format that wins there: track-record / strategy musing with modest, honest numbers. Top posts get 15–65 upvotes — don't expect fireworks, expect durable comments. Flair: Discussion. Precedent: <a href="https://reddit.com/r/Kalshi/comments/1pd7955/made_a_mentions_tracker/">"Made a mentions tracker!"</a> (1 up but 14 enthusiastic comments — demand for exactly this is proven, supply is thin).</p>
+<span class="draft">Title: I've been having Claude audit every Kalshi market daily and scoring its picks after settlement — here's the resolved track record
 
-<p><strong>Explicitly not the ICP (yet):</strong> crypto degen / Hyperliquid audiences. The competitive research flags HIP-4 as a real first-mover window, but it's a different customer, a different trust story, and a venue integration you haven't built. Revisit as a deliberate phase-2 expansion (§12), not a launch-day distraction.</p>
+Body:
+For the last few months I've run an experiment: an LLM reads Kalshi markets every day, flags ones it thinks are mispriced, sizes a recommendation, and the pick gets locked at signal-time price. When the market settles, the pick gets scored. No deleting losers, no cherry-picking — every pick is on the public board, including the bad ones.
 
-<!-- ============================================================ -->
-<h2 id="pricing"><span class="num">4</span>Pricing &amp; packaging</h2>
+A few things I didn't expect:
+• [insert 2–3 real, current stats from the leaderboard — e.g. hit rate by topic, best/worst model, a memorable losing streak]
+• Podcast hosts are a real signal source. I also map what hosts actually say on air to live markets ("X said Y will happen" → the market pricing Y at 34¢), and the speakers' records diverge wildly once you score them.
 
-<p>Adopt the audit §7 recommendation as-is — it's correct and the current tiers are selling a thing (LLM token budgets) customers can no longer use. Summary, with GTM framing added:</p>
+The whole thing runs in Telegram and the track record + paper trading ($1k simulated, live prices) is free to poke at — I want people to try to break the methodology. The leaderboard ranks speakers, channels, and AI models by hit rate over settled markets (min 3 resolved signals).
+
+What I'd love from this sub: what would convince you a feed like this is real signal vs. noise? Sample size thresholds? Calibration plots? Happy to share methodology details in comments.
+
+[link: kalmari.app — free, no account needed to browse]</span>
+<p class="small">Why this works: leads with the experiment and honest stats (the sub's rule explicitly welcomes free resources), asks the community a methodological question (drives comments), and never mentions pricing. <strong>Do not link the Pro tier anywhere in the post</strong> — "pay-for-access" links are the one named bannable offense.</p>
+
+<h3>Post 2 — r/PredictionMarkets (week 1–2)</h3>
+<p class="small">Killer format there: forensic numbers in the title. Precedent: <a href="https://reddit.com/r/PredictionMarkets/comments/1thmxnk/">"I built a Kalshi bot that printed $6k as I slept so I open sourced it"</a> (11 up / 13 comments, warm because it was a written-up journey, "not like the AI slop people usually post").</p>
+<span class="draft">Title: I scored [N] podcast-host predictions against Kalshi settlement prices — [X]% of "confident takes" lost money. Full resolved data inside.
+
+Body:
+[Open with the single most interesting finding — e.g. the best and worst speaker on the leaderboard with their records.]
+
+Method: transcripts of major podcasts get scanned for forecastable claims, each claim is mapped to a live Kalshi market and priced at mention time, then scored at settlement. Same pipeline runs LLM audits of mispriced markets. Everything resolves publicly — speakers, channels, and models ranked by hit rate, % returned, avg P&L per contract.
+
+[2–3 paragraph writeup of methodology + one surprising anecdote, e.g. a specific call that settled.]
+
+It's free to browse (Telegram bot + web leaderboard), and I'm posting because this sub appreciates wallet-forensics energy — consider this "pundit forensics." AMA on the pipeline.</span>
+
+<h3>Post 3 — r/Polymarket tools megathread (week 2)</h3>
+<span class="draft">Kalmari — Kalshi research feeds + paper trading in Telegram. Two free feeds: daily LLM audits of mispriced markets, and podcast-host claims mapped to live markets, both scored publicly after settlement (no cherry-picking — losers stay on the board). $1,000 paper account at live prices, leaderboard of speakers/models by hit rate. Kalshi-only today; if there's interest I'd consider Polymarket feeds — what would you want scored? kalmari.app</span>
+<p class="small">One comment, per megathread rules. The closing question doubles as roadmap research.</p>
+
+<h3>Post 4 — r/sportsbook (week 3, after sports-market content exists)</h3>
+<p class="small">Precedent: <a href="https://reddit.com/r/sportsbook/comments/1mnpqzo/">guessinglines.com post</a> (315 up / 84 comments) won by leading with a behavioral insight, not the link. Frame Kalmari's sports-event-contract angle the same way.</p>
+<span class="draft">Title: I tracked which podcast loudmouths actually beat the closing price on sports event contracts — the results are humbling
+
+Body: [Lead with the data: e.g. "Of N sports takes from big shows mapped to Kalshi sports markets, only X% would have made money at mention-time prices."] … full methodology in comments, the tracker is free, and no, I'm not selling picks — the whole point is that most picks are bad.</span>
+<p class="small">All analysis must live in the post itself (their Rule 2). Participate in the sub for 1–2 weeks first from the posting account; account history is explicitly checked.</p>
+
+<h3>Post 5 — r/SideProject / r/indiehackers (anytime, story angle)</h3>
+<span class="draft">Title: Kalmari — I built a bot that fact-checks podcast hosts with real-money prediction markets (and lets you paper-trade their takes)
+
+Body: build story — Go bot, Telegram-native because traders already live there, Claude pipeline for market audits, the "first 100 lock $29/mo for life" founding deal, what worked/what flopped, MRR if you're comfortable sharing. r/indiehackers variant: lessons-learned framing with revenue numbers.</span>
+
+<h3>Reddit cadence &amp; hygiene</h3>
+<ul>
+  <li>One sub per week from an account that also comments on other people's posts (every sub checks this; r/sportsbook says so explicitly).</li>
+  <li>Do <strong>not</strong> cross-post the same text — r/options-style "no copy-pasting across subreddits" rules and Reddit's spam filter both punish it. Rewrite per sub.</li>
+  <li>Reply to every technical comment within hours; the PaperPoly and kalshiwhisper threads show comments are where conversion happens, not the post score.</li>
+  <li>Recurring content: a monthly "audit results month in review" on r/Kalshi (best/worst calls, model-vs-model) can become a franchise post the sub expects.</li>
+</ul>
+
+<h2>4. Creator &amp; influencer partnerships</h2>
+<p class="small">All audience counts verified June 2026 (YouTube page metadata / X API). Cost estimates combine the verified niche anchor (Kalshi/Polymarket paid up to <a href="https://www.npr.org/2026/06/07/nx-s1-5846806/kalshi-polymarket-influencers-california-election">$500/post per NPR</a>) with standard YouTube rate benchmarks (micro $200–$1,000+/video, mid-tier $1,000–$10,000; finance niche prices at the top of range).</p>
 
 <table>
-  <tr><th>Tier</th><th>Price</th><th>Gets</th><th>GTM role</th></tr>
-  <tr><td><strong>Free</strong></td><td>$0</td><td>Paper trading, full leaderboard &amp; /performance access, signals <em>delayed 24–48h</em> after each run</td><td>The funnel. Delayed picks let skeptics verify the record is real — the strongest converter — without giving away the live edge. Paper mode keeps them engaged indefinitely.</td></tr>
-  <tr><td><strong>Pro</strong></td><td>$39/mo</td><td>Real-time picks + one-tap copy, live trading, weekly digest, 2 scheduled scans</td><td>The core offer. Anchor messaging to value, not cost: "one good pick at the historical hit rate pays for the month." $39 self-selects for funded Kalshi accounts.</td></tr>
-  <tr><td><strong>Desk</strong></td><td>$99/mo</td><td>Everything + early delivery, follow-by-model/topic filters, API/webhook, unlimited schedules</td><td>The "I trade seriously" tier. Also the future home of auto-copy <em>if and when</em> legal review clears it — until then it stays unsellable (TierInsider stays manual-grant).</td></tr>
+<tr><th>Creator</th><th>Platform / link</th><th>Audience</th><th>Why them</th><th>Est. cost</th></tr>
+<tr><td><strong>Champ</strong> <span class="tag">priority #1</span></td><td><a href="https://www.youtube.com/@champtgram">youtube.com/@champtgram</a></td><td>~190k</td><td>THE Kalshi/Polymarket-niche educator ("How To Make $500/Day Trading Polymarket/Kalshi"). Already monetizes a Kalshi referral code and a paid course — proven willing to do integrations; his audience is literally "people who want Kalshi edge."</td><td>$1,500–$3,000/dedicated video; push for rev-share hybrid</td></tr>
+<tr><td><strong>TradeWithDesi</strong> <span class="tag">priority #2</span></td><td><a href="https://www.youtube.com/@DesiYadav444">youtube.com/@DesiYadav444</a></td><td>~78k</td><td>Kalshi bot/automation content ("My Kalshi Bot Strategy That Made $15,000 This Week") — closest creator analog to a Telegram signals tool; natural "I plugged into Kalmari" video.</td><td>$500–$1,000/video</td></tr>
+<tr><td><strong>DGFantasy</strong></td><td><a href="https://www.youtube.com/@DGFantasy">youtube.com/@DGFantasy</a></td><td>~44k</td><td>"Prediction Markets for Dummies" tutorial + daily sports picks; audience accustomed to joining Telegram/Discord pick groups.</td><td>$300–$800/video or integration</td></tr>
+<tr><td><strong>OddsJam</strong></td><td><a href="https://www.youtube.com/@OddsJam">youtube.com/@OddsJam</a></td><td>~132k</td><td>Daily "Kalshi Trading Challenge" shorts — the P&amp;L-challenge format maps 1:1 to Kalmari's paper account. Note: they sell their own tools, so pitch a content collab, not a tool sponsorship.</td><td>$1,000–$2,500 if at all; try barter/cross-promo first</td></tr>
+<tr><td><strong>Domer</strong> <span class="tag">credibility</span></td><td><a href="https://x.com/Domahhhh">x.com/Domahhhh</a></td><td>40.4k X</td><td>Full-time PM trader, ~$4.8M all-time P&amp;L, covered by CBS/Bloomberg. One approving thread legitimizes Kalmari with serious traders. Don't offer cash first — offer the data.</td><td>Free Desk acct + early API access; cash only if he names a number</td></tr>
+<tr><td><strong>Gaeten Dugas</strong> <span class="tag">credibility</span></td><td><a href="https://x.com/GaetenD">x.com/GaetenD</a></td><td>8.6k X</td><td>Top-100 Kalshi trader, writes for Kalshi's own newsletter, WaPo/Bloomberg-featured. Ideal "here's how I'd use the mispricing alerts" guest content.</td><td>Free Desk + $250–$500 per guest piece</td></tr>
+<tr><td><strong>Good Work (Dan Toomey)</strong></td><td><a href="https://www.youtube.com/@goodwork">youtube.com/@goodwork</a></td><td>~1.6M</td><td>Business-comedy docs; has covered full-time Kalshi traders. Mass-reach awareness, later stage.</td><td>$10k+; defer until Pro funnel converts</td></tr>
+<tr><td><strong>Jay Liang</strong> <span class="tag">growth ops</span></td><td><a href="https://x.com/imjayliang">x.com/imjayliang</a></td><td>n/a (operator)</td><td>Built Kalshi's UGC machine (50M-view TikTok; hired 3 creators with 1M+ followers). Not an audience buy — a hire/agency route for viral short-form. Caveat: tied to the non-disclosure controversy; contract must mandate FTC disclosure.</td><td>Project fee, negotiate</td></tr>
 </table>
 
+<h3>Podcasts</h3>
 <ul>
-  <li><strong>Trial:</strong> 7 days, card-less, with <em>real-time</em> signals included — the trial must showcase the valuable thing, not the cheap thing. Add the ToS-acceptance step at activation (currently missing).</li>
-  <li><strong>Annual = 2 months free</strong>, pitched after a user's first winning month (the digest knows when that is).</li>
-  <li><strong>No performance fees, no profit share, no per-trade fee.</strong> The ~1% trade-fee norm from the bot ecosystem fits execution products; you sell research, and a flat subscription keeps you furthest from advice/brokerage characterization. Marginal cost per user is ~$0, so subscription margin is excellent.</li>
-  <li><strong>Founding-member pricing at launch:</strong> first 100 Pro subscribers lock $29/mo for life. Creates urgency, rewards the community that seeds the track record, and caps the discount's cost.</li>
+  <li><strong>Star Spangled Gamblers</strong> (<a href="https://podcasts.apple.com/us/podcast/star-spangled-gamblers/id1437934639">Apple Podcasts</a>, <a href="https://x.com/SSGamblers">@SSGamblers</a>) — the political-event-contract bettor podcast; exactly Kalmari's politics users. Their website/Substack is currently dead (site login-gated, Substack 404), so reach them via podcast feed contact or X DM. Cheap host-read likely $100–$300/episode given the state of their web presence — anchor low.</li>
+  <li><strong>Prediction Market Movers</strong> (<a href="https://podcasts.apple.com/au/podcast/prediction-market-movers/id1840287346">Apple Podcasts</a>, by Prediction News) — twice-monthly, interviews Kalshi traders and analytics founders. <strong>Pitch a founder interview — free.</strong> Their beat is literally "analytics founders in prediction markets."</li>
 </ul>
 
-<!-- ============================================================ -->
-<h2 id="prelaunch"><span class="num">5</span>Launch preconditions</h2>
-
-<p>Marketing a money product with known integrity bugs is how you convert a launch into a reputation crater. The audit's P0 list is the gate; the items below are the subset that would specifically embarrass you <em>publicly</em>, restated as launch criteria:</p>
-
-<ul class="checklist">
-  <li><strong>Track-record integrity:</strong> fix SELL-signal scoring, the missing audit-source filter on /performance, and run_id dedup <em>before</em> driving any traffic to the page. One skeptic finding one wrong number on your proof page ends the trust pitch permanently. Add the hypothetical-performance footnote and switch bet sorting to chronological.</li>
-  <li><strong>Live-mode safety:</strong> confirmation + key check on every path into live mode; clamp the 10-contract live default against real balance. The first "bot YOLOed my account" screenshot is unrecoverable.</li>
-  <li><strong>Identity &amp; access:</strong> key accounts on Telegram ID, independent cookie secret, separate whitelist from admin list, gate <code>/test</code> on an explicit dev flag, rotate the leaked tokens.</li>
-  <li><strong>Crash-safe orders + automated DB backups.</strong> One VM disk currently holds the only copy of users' encrypted trading keys.</li>
-  <li><strong>Pricing rework shipped</strong> (§4) — Stripe products, delayed-signals gating for Free, ToS acceptance.</li>
-  <li><strong>Compliance pass:</strong> written read on Kalshi API/affiliate ToS and the advice boundary; geographic/age gates the ToS already promises; prominent non-custody + BYOK disclosure. Keep auto-copy unsold.</li>
-  <li><strong>Replay-guard fix</strong> ("button expired — send /start") — the known "bot looks dead after deploy" issue is a first-session killer.</li>
-</ul>
-
-<p>Everything else in the audit can be fixed behind the scenes post-launch. Don't let the long tail delay the date; let these specific items gate it.</p>
-
-<!-- ============================================================ -->
-<h2 id="sequence"><span class="num">6</span>Launch sequence</h2>
-
-<h3>Phase 0 — Private beta (now → ~4 weeks)</h3>
-<ul>
-  <li>20–30 hand-picked users from segment 1, personally onboarded. Goal: watch real funnels (start → first paper copy → live key → first live trade), fix what breaks, collect the first testimonials.</li>
-  <li>Run the audits on a fixed public cadence starting <em>now</em> — every week of pre-launch run history makes the launch-day track record stronger. The record should be 8–12 weeks deep before you ask strangers to trust it.</li>
-  <li>Ship the two highest-leverage conversion artifacts from the audit's ideas list: the <strong>"$100 per run since March → $X today" backtest widget</strong> on the landing page, and <strong>edge-remaining countdowns</strong> on signal cards.</li>
-</ul>
-
-<h3>Phase 1 — Community soft launch (weeks 5–8)</h3>
-<ul>
-  <li>Open access, founding-member pricing live. Announce in 3–5 Kalshi-native communities (§7) as "a research experiment with a public record," not "a bot launch." The landing page leads with the performance page.</li>
-  <li>Begin the content engine (§9) on one channel (X) at full cadence.</li>
-  <li>Target: 100–300 users, ≥20 founding Pro subscribers, zero money-handling incidents.</li>
-</ul>
-
-<h3>Phase 2 — Public launch (weeks 9–14)</h3>
-<ul>
-  <li>The launch <em>artifact</em> is the track record: "We published every AI pick for N weeks. Here's the full record — wins, losses, and the misses." That post/thread, plus a Product Hunt launch the same week, plus 2–3 podcast/newsletter placements (§7).</li>
-  <li>Turn on the referral loop and paper leagues (§8) the same week — launch traffic should land in mechanics that multiply it.</li>
-</ul>
-
-<h3>Phase 3 — Scale what worked (month 4+)</h3>
-<ul>
-  <li>Double down on the 1–2 channels with the best activation-adjusted CAC; kill the rest. Consider small paid tests and the Hyperliquid/HIP-4 expansion question only now.</li>
-</ul>
-
-<!-- ============================================================ -->
-<h2 id="channels"><span class="num">7</span>Channels, ranked</h2>
-
-<table>
-  <tr><th>#</th><th>Channel</th><th>Play</th><th>Cost / expectation</th></tr>
-  <tr><td>1</td><td><strong>Track-record content on X</strong></td><td>A dedicated account auto-posting every settled pick (win <em>and</em> loss), weekly performance threads, model-vs-model records, "the market disagreed with the model — here's what happened." Prediction-market X is small, dense, and screenshot-driven; verifiable receipts are rare and travel far.</td><td>Free; the primary channel. Expect slow compounding — the asset is the archive, not any single post.</td></tr>
-  <tr><td>2</td><td><strong>Kalshi-native communities</strong> (r/Kalshi, prediction-market Discords, forecasting communities)</td><td>Participate as a researcher, not an advertiser: post interesting mispricings and methodology write-ups; link the performance page when asked. One honest "I built a thing that publishes its record" post per community at soft launch.</td><td>Free; first-100-users channel. Burnable if you spam — be a member first.</td></tr>
-  <tr><td>3</td><td><strong>Podcast-claim content</strong></td><td>Per-episode: "5 predictions from this week's All-In, the live Kalshi market for each, and the speaker's running record." Post natively to X/Reddit/TikTok-style clips. Speaker leaderboards give every episode a story.</td><td>Free; the viral wedge for segments 2–3. Also the moat — start the pipeline now so the speaker records have history.</td></tr>
-  <tr><td>4</td><td><strong>Creator &amp; newsletter partnerships</strong></td><td>Prediction-market newsletters and mid-size podcasts whose calls you track have built-in reasons to share their own record. Offer embeds of their leaderboard row, plus a rev-share referral code (the cheapest growth lever per the competitive research).</td><td>Low cost / rev-share. 2–3 placements timed to public launch.</td></tr>
-  <tr><td>5</td><td><strong>Telegram-native distribution</strong></td><td>A public broadcast channel posting delayed picks + settled results (funnel to the bot for real-time); bot directory listings; paper leagues in group chats (§8).</td><td>Free. Telegram channels are where the existing bot audience already discovers products.</td></tr>
-  <tr><td>6</td><td><strong>SEO / programmatic landing</strong></td><td>The share pages (<code>/s/</code>, <code>/p/</code>) and performance page already render public, OG-tagged HTML. Add per-market and per-speaker pages ("Will the Fed cut in March? — model analysis &amp; record"). Long-game compounding.</td><td>Free; starts paying in months, not weeks.</td></tr>
-  <tr><td>7</td><td><strong>Product Hunt / HN</strong></td><td>One-shot awareness spike at public launch. "AI research desk with a public track record" is a strong PH story; HN only if framed as the transparency/methodology experiment.</td><td>Free; spike not channel.</td></tr>
-  <tr><td>8</td><td><strong>Paid (X ads, podcast spots)</strong></td><td>Only after organic proves the funnel converts and LTV is known. Trading-adjacent paid traffic is expensive and low-trust.</td><td>Deferred to phase 3.</td></tr>
-</table>
-
-<!-- ============================================================ -->
-<h2 id="loops"><span class="num">8</span>Growth loops</h2>
-
-<p>Most of the machinery is already built — these are wiring jobs, not new systems:</p>
-
+<h3>Negotiation strategy</h3>
 <ol>
-  <li><strong>The proof loop (core).</strong> Research run → public picks → settled outcomes → auto-generated content → new users → more copy-trade data → richer track record. Runs entirely on existing data; needs only the auto-posting layer (§9).</li>
-  <li><strong>Share-a-pick.</strong> Signal share pages with OG images + <code>/start sig_&lt;id&gt;</code> deep links already exist. Add a referral parameter and a visible "shared by" credit so sharing is attributable and rewarded.</li>
-  <li><strong>Weekly recap cards.</strong> The digest already computes each user's week; <code>share_image.go</code> already renders OG images. Generate "My week: +12% · 5W–2L" cards with a referral link, offered in every digest. Verified-record flexing is the native marketing behavior of trading products.</li>
-  <li><strong>Paper leagues in group chats.</strong> Bot joins a Telegram group → weekly paper-trading league, shared leaderboard, trophy share-image for the winner. Group-native is Telegram's structural advantage and the onboarding is already paper-safe. Every league is a multi-person acquisition event.</li>
-  <li><strong>Referral program.</strong> Give-a-month/get-a-month on Pro. The proven Telegram-bot growth mechanic (Trojan/Banana Gun) adapted to subscription economics. Keep it simple; no tokenomics.</li>
-  <li><strong>Outcome notifications as retention.</strong> When a copied market settles, message the result with the user's running record ("That's 4 of your last 5 ✅"). Settlement detection already runs hourly; the emotional payoff of wins is currently delivered to nobody. Retention is a growth loop — churned users don't refer.</li>
+  <li><strong>Anchor on the niche's own number:</strong> "Kalshi and Polymarket were paying ~$500/post; we're a startup, so we pay part cash, part upside." Both platforms just cut these programs — creators have inventory and an income gap. You are the timely buyer.</li>
+  <li><strong>Structure: low flat fee + recurring rev share + founding perks.</strong> Offer micro creators $300–$500 per dedicated video <em>plus</em> 30% of first-12-month revenue on their referral code (TrendSpider's top "Apex" tier — give them the top tier immediately; it costs nothing until it works). A creator who sends 20 Pro subs earns ~$2,800/yr passive — that pitch beats a one-off $1,500 check and aligns them to keep mentioning you.</li>
+  <li><strong>Pay-per-performance kicker:</strong> bonus $250 at 25 paid conversions, $1,000 at 100. Trackable via per-creator referral links/codes (Stripe is already wired for this).</li>
+  <li><strong>Give every partner a Desk account free for life</strong> ($99/mo perceived value, ~zero marginal cost) + their own branded leaderboard page ("Champ's followers' paper-trading league") — see growth hacks.</li>
+  <li><strong>The product is the ad.</strong> The strongest creative in this niche is a challenge: "I followed only Kalmari signals with $1,000 paper money for 30 days." It produces episodic content (creators love series), uses the free tier (no compliance issues with real money), and every episode shows the bot.</li>
+  <li><strong>Non-negotiables in every contract:</strong> visible #ad/paid-partnership disclosure (the Polymarket scandal makes this existential), no "guaranteed returns" language, and pre-approval of any P&amp;L claims. Put it in writing; it protects you, and post-scandal it's a selling point.</li>
 </ol>
 
-<!-- ============================================================ -->
-<h2 id="content"><span class="num">9</span>The content engine</h2>
-
-<p>The product generates its own content; the job is packaging, not writing. Build a small render-and-post pipeline off the existing public APIs (<code>/api/leaderboard</code>, <code>/api/performance</code>, signals data):</p>
-
+<h2>5. Newsletter partnerships</h2>
 <table>
-  <tr><th>Cadence</th><th>Artifact</th><th>Source</th></tr>
-  <tr><td>Every research run</td><td>"The Audit: N markets scanned, M picks published" — card with tickers, sides, model probabilities vs. market price. Real-time to subscribers; public after the delay window.</td><td>Signals ingest</td></tr>
-  <tr><td>Every settlement</td><td>Result card: thesis excerpt, entry, outcome, P&amp;L — <strong>posted on wins and losses alike</strong>. The losses are what make the wins credible.</td><td>Settlement jobs</td></tr>
-  <tr><td>Weekly</td><td>Performance thread: equity curve, hit rate, best/worst call with the model's reasoning, model-vs-model standings.</td><td>/performance data</td></tr>
-  <tr><td>Per podcast episode</td><td>"5 claims → 5 markets" + speaker running records.</td><td>Podcast pipeline</td></tr>
-  <tr><td>Monthly</td><td>Methodology post: what the models got wrong and what changed. Builds the researcher identity; this is also where the v2 work (calibration, CLV, clusters) becomes marketing material once it graduates.</td><td>v2 analytics</td></tr>
+<tr><th>Newsletter</th><th>Audience</th><th>Fit</th><th>Approach &amp; price</th></tr>
+<tr><td><strong>Event Horizon</strong> (Dustin Gouker) — <a href="https://nexteventhorizon.substack.com">nexteventhorizon.substack.com</a>, <a href="https://x.com/DustinGouker">@DustinGouker</a> (14.3k X)</td><td>3,000+ subs (Substack's own ranking metadata)</td><td>The industry-news authority on Kalshi/Polymarket/regulation; readers are traders, operators, and press. Single most on-target buy.</td><td>No published rate card → propose. At a $50–$100 CPM (high-trust niche B2B-ish list): <strong>$150–$300/issue classified, $300–$500 sponsored section</strong>. Better opening move: pitch the podcast-accountability dataset as a <em>story</em> first; sponsor second. Ex-Legal Sports Report journalist — he wants data exclusives.</td></tr>
+<tr><td><strong>Forecasting Newsletter</strong> (Nuño Sempere) — <a href="https://forecasting.substack.com">forecasting.substack.com</a></td><td>Unpublished; EA/judgmental-forecasting crowd, ~bimonthly</td><td>Quant-curious/calibration-nerd segment; they will love the "scoring pundits properly" angle and hate hype.</td><td>Sponsorship may not be for sale; pitch inclusion as a <em>noteworthy project</em> (methodology-forward email, offer raw resolved data). Cost: $0.</td></tr>
+<tr><td><strong>Kalshi Kit</strong> (Kalshi's own newsletter, <a href="https://news.kalshi.com">news.kalshi.com</a>)</td><td>Kalshi's user base</td><td>Gaeten Dugas already writes for it; ecosystem features have precedent.</td><td>Route via Builders Program (below). Cost: $0, relationship-gated.</td></tr>
+<tr><td><strong>SBC Americas — Prediction Markets Weekly</strong> (<a href="https://sbcamericas.com">sbcamericas.com</a>)</td><td>Industry/B2B press</td><td>Trade-press coverage, useful for credibility and SEO rather than signups.</td><td>Send launch/data press notes; no spend.</td></tr>
 </table>
 
-<p><strong>Editorial rules:</strong> never delete a miss; never reorder to flatter (chronological, per the audit); every public number must reconcile with the performance page; hypothetical-performance disclaimer on anything resembling a return figure. The content engine is only as valuable as its credibility, and credibility is single-use.</p>
-
-<!-- ============================================================ -->
-<h2 id="metrics"><span class="num">10</span>Funnel &amp; metrics</h2>
-
-<p><strong>North star: weekly active copiers</strong> — users who copy ≥1 pick (paper or live) in a week. It captures trust in the signal, which is the product.</p>
+<h2>6. Telegram distribution (explored live via your account)</h2>
+<p class="small">I joined/requested all four worthwhile communities from your account on June 10. Two big "communities" found in search were excluded after inspection: @predictions_analysis (7.6k members — pure casino spam) and @PredictionMarketsToday (1.5k subs — automated Limitless.Exchange feed, ~1 view/post).</p>
 
 <table>
-  <tr><th>Stage</th><th>Metric</th><th>Initial target (phase 1–2)</th></tr>
-  <tr><td>Acquire</td><td>/start events by source (deep-link params make this measurable today)</td><td>Know your top-2 sources by week 8</td></tr>
-  <tr><td>Activate</td><td>% of new users who copy a paper pick within 48h</td><td>≥40% — if lower, onboarding is broken, fix before spending on traffic</td></tr>
-  <tr><td>Engage</td><td>Weekly active copiers / signups; digest open-through</td><td>≥25% W4 retention of activated users</td></tr>
-  <tr><td>Monetize</td><td>Trial→Pro conversion; founding-member count</td><td>≥10% of activated users start trial; ≥25% of trials convert</td></tr>
-  <tr><td>Deepen</td><td>Paper→live conversion (Kalshi key connected)</td><td>≥15% of Pro within 30 days — the strongest commitment signal</td></tr>
-  <tr><td>Refer</td><td>Shares per user; referral-attributed signups</td><td>Instrument now, set targets after launch</td></tr>
+<tr><th>Community</th><th>Size</th><th>Status</th><th>Nature / contacts</th></tr>
+<tr><td><strong>@KalshiEco</strong> — Kalshi Ecosystem</td><td>391 members</td><td>Join request sent (admin approval pending)</td><td>Kalshi's official builder group. Admins include founders <strong>Tarek Mansour</strong> and <strong>Luana Lopes Lara</strong>, plus <strong>"Shannon | Kalshi"</strong> and <strong>John Wang</strong> (growth). Members openly demo Kalshi API projects and get engaged replies; one member (JP) demos live-event mention detection — adjacent to your podcast feed, validating demand.</td></tr>
+<tr><td><strong>@KalshiBuilders</strong> — Builders Announcements</td><td>501 subs</td><td>Joined ✓</td><td>Official channel; documents the <strong>Builders Program</strong> and weekly <strong>builder hours, Wednesdays 10:30 AM EST</strong> (RSVP link in pinned welcome post, 5 slots/session).</td></tr>
+<tr><td><strong>@theoddspredict</strong> — The Odds: Prediction Markets Live</td><td>228 members</td><td>Joined ✓</td><td>Genuine industry discussion (CFTC rules, Susquehanna, Spain ban). Admins: <strong>Guy Kaufman</strong> and <strong>Tal</strong> of "More &amp; More". Small but high-quality; good venue for a founder post.</td></tr>
+<tr><td><strong>@polymarket_quick_moves</strong></td><td>1,242 subs</td><td>Joined ✓</td><td>Automated price-move alert channel, ~600+ views/post. Cross-promo or paid-pin candidate; also a format precedent for Kalmari's own public channel.</td></tr>
 </table>
 
-<p>The admin dashboard already tracks trial→paid and churn; extend it with the funnel above rather than adding an analytics vendor. <strong>Honesty metric to watch alongside growth:</strong> the live track record itself. A flat-to-down month is survivable if the content engine treats it honestly; it's fatal if growth tactics ever depend on implying it can't happen.</p>
+<p class="small">Wider ecosystem (from the <a href="https://github.com/aarora4/Awesome-Prediction-Market-Tools">Awesome-Prediction-Market-Tools</a> list, 471 stars): 10+ Telegram alert services exist — PolyAlertHub, PolySpy, PolyIntel, YN Signals (<a href="https://polymark.et/product/yn-signals">covers Kalshi</a>), Whale Tracker Livid ($29/mo) — mostly Polymarket-focused. Treat as partner/cross-promo candidates and as proof that Telegram-native prediction-market signal subscriptions are an accepted paid category.</p>
 
-<!-- ============================================================ -->
-<h2 id="risks"><span class="num">11</span>Risks &amp; guardrails</h2>
+<h3>What to say — drafts</h3>
+<p><strong>(a) Intro post in @KalshiEco once approved</strong> (norm there: show the build, link a demo, ask nothing):</p>
+<span class="draft">Hey all — I've been building Kalmari (kalmari.app), a Telegram-native research workspace on the Kalshi API: Claude audits markets daily and flags mispricings, a second feed maps podcast-host claims to live markets, and every pick is scored publicly after settlement (speakers, channels, and models ranked by hit rate). Paper trading with live prices built in; BYOK for live orders — the user places every trade.
 
+The part I'd love feedback on from people here: the audit pipeline sizes picks at signal-time price and scores at settlement, min 3 resolved signals before anything ranks. Demo: [link]. Happy to swap notes with anyone building on the API — and curious what the API team thinks about a webhook for settlement events 👀</span>
+
+<p><strong>(b) DM to Shannon | Kalshi / John Wang (builders program):</strong></p>
+<span class="draft">Hi [name] — I'm Lucas, building Kalmari (kalmari.app), a Telegram research workspace on the Kalshi API: LLM market audits + podcast-claim signals, all picks scored publicly at settlement, paper trading by default and BYOK for live orders (user places every trade — no autopilot).
+
+Two asks: (1) I'd love a builder-hours slot to demo it and sanity-check our API usage; (2) is there a path to being listed in builder resources / Kalshi Kit? Happy to share our resolved track-record data with the team — the podcast-accountability angle ("which hosts actually call it") might be fun content for Kalshi's socials too.</span>
+
+<p><strong>(c) Partnership pitch to alert-channel operators (YN Signals, PolyAlertHub, etc.):</strong></p>
+<span class="draft">Hey — I run Kalmari, a Kalshi research bot (LLM audits + podcast signals, public resolved track record). Your subscribers and mine overlap but the products don't compete — you do real-time alerts, we do scored research feeds. Two ideas: (1) straight cross-promo, one pinned post each; (2) you join our affiliate program — 30% of first-year revenue on anyone who subscribes through your link, plus a free Desk account so you can verify the feeds yourself first. Open to either — want a test link?</span>
+
+<p><strong>(d) The Odds (Guy Kaufman / Tal):</strong> post the Susquehanna-style "prediction markets as an information channel" essay angle there — the community is industry-brained, not retail. Then a soft "I'm building toward this, track record here" close.</p>
+
+<h3>Kalmari's own Telegram channel (owned distribution)</h3>
+<p>Create a public <strong>@kalmari channel</strong> that auto-posts: (1) each research run's picks <em>24h delayed</em> (matching the free tier), (2) settlement results — wins AND losses, (3) weekly leaderboard snapshots as share images. This is the engine of every Telegram growth loop below; the bot already renders these (share_image.go, leaderboard) so it's mostly wiring. Delayed-public/realtime-paid is exactly the freemium split the pricing page promises.</p>
+
+<h2>7. Referral program &amp; growth hacks</h2>
+
+<h3>Referral design (template: <a href="https://trendspider.com/affiliates/">TrendSpider</a>, verified)</h3>
 <table>
-  <tr><th>Risk</th><th>Guardrail</th></tr>
-  <tr><td><strong>Regulatory (advice/brokerage characterization).</strong> AI picks + one-tap execution on a CFTC-regulated venue sits near the advice boundary; the code already labels auto-copy "legally gray."</td><td>Subscription-only pricing (no per-trade or performance fees); informational framing throughout; hypothetical-performance disclaimers; auto-copy stays unsold pending review; written read of Kalshi's API/affiliate ToS before public launch; geographic/age gates implemented, not just promised in ToS.</td></tr>
-  <tr><td><strong>A bad public month.</strong> The track record is the brand; variance is certain.</td><td>Sample-size floors on every public stat (the ≥3-resolved rule, extended); always show record since inception, not cherry-picked windows; pre-write the "losing month" methodology post tone. Selling transparency means the drawdown post is a brand <em>asset</em> — but only if it ships unprompted.</td></tr>
-  <tr><td><strong>Track-record integrity bug found by an outsider.</strong></td><td>§5 fixes before traffic; the reconciliation discipline the audit praised (one consistent story across leaderboard/performance/portfolios) maintained as a hard invariant in CI if possible.</td></tr>
-  <tr><td><strong>Fast follower (FrenFlow et al.) bolts on an LLM.</strong></td><td>The moats are history and the podcast pipeline. Publish relentlessly so any copycat starts with a zero-length record; invest in podcast→market mapping quality as the compounding asset.</td></tr>
-  <tr><td><strong>Custody perception.</strong> Users paste private keys into a Telegram chat; you hold encrypted keys server-side.</td><td>Loud non-custodial/BYOK messaging; move key entry to a web form (off Telegram's servers) per the audit; disclose the storage posture plainly. One leaked-key incident ends the company — backups and key-handling hygiene are GTM-critical, not just ops.</td></tr>
-  <tr><td><strong>Live-money UX accident on launch traffic.</strong></td><td>The §5 live-mode safety items; consider rate-limiting live-mode enables in week 1 of each phase; watch every live trade manually during phases 0–1 (volume permits it).</td></tr>
+<tr><th>Audience</th><th>Mechanic</th><th>Payout</th></tr>
+<tr><td>Affiliates / creators / channel operators</td><td>Referral link + Stripe-tracked code</td><td>20% of revenue for first 12 months (TrendSpider "VIP" tier); 30% for named partners. Cookie/code attribution, monthly payout, $50 minimum.</td></tr>
+<tr><td>Regular users</td><td>In-bot <code>/refer</code> command → personal t.me deep link</td><td>Give-get: referred friend gets an extended 14-day Pro trial; referrer gets 1 month Pro free per converted referral (stackable). Telegram deep links make this one tap.</td></tr>
+<tr><td>Founding members</td><td>First-100 $29-for-life cohort gets a numbered badge on the leaderboard + 3 "gift months" to hand out</td><td>Scarcity + status; costs ~nothing, makes the first cohort evangelists.</td></tr>
 </table>
 
-<!-- ============================================================ -->
-<h2 id="plan90"><span class="num">12</span>The 90-day plan</h2>
+<h3>Growth hacks (ranked by effort-to-impact)</h3>
+<ol>
+  <li><strong>Shareable settlement cards (already half-built).</strong> Every winning paper trade or settled pick renders a branded image card (the bot has share_image.go) with one-tap "share to chat / X". P&amp;L porn is the #1 performing format on every community surveyed — make every user's win a Kalmari ad with a deep link.</li>
+  <li><strong>"Paper Trading League" — monthly public competition.</strong> $1,000 paper account, public leaderboard, winner gets a year of Pro + a custom title. Run it as a group/topic so the bot gets installed in group chats. Creators get branded leagues ("Champ's League") — this is the creator reward AND the referral mechanic in one feature.</li>
+  <li><strong>Pundit Accountability Index — the PR engine.</strong> Monthly ranked list of podcast hosts by resolved hit rate. Tag the hosts on X; pitch the dataset to Event Horizon, Prediction News, and mainstream press ("we scored 1,000 podcast predictions with real-money markets"). Hosts who score well will share it themselves — free distribution from people with millions of listeners. (Tag carefully: celebrate winners, let the data shame losers.)</li>
+  <li><strong>Kalshi Builders co-marketing.</strong> Builder-hours demo → builder resources listing → Kalshi Kit feature → a Kalshi retweet. Each step is free and compounds; Kalshi is actively pivoting marketing away from paid influencers, which makes legit ecosystem tools more valuable to them right now.</li>
+  <li><strong>"Claude vs. the crowd" content serial.</strong> Weekly post (Reddit + X + own channel): where the LLM audit disagreed most with market price, and what happened. The r/algotrading "LLM manages a portfolio, Day 4" serial format (146 up/104 c) proves episodic AI-trading content compounds.</li>
+  <li><strong>Open-source a small component</strong> (e.g., the Kalshi settlement-scoring library or transcript→market matcher) to unlock r/algotrading, Hacker News, and GitHub discovery — the only legal lane into the 1.9M-member sub, and exactly how the "$6k Kalshi bot" post won r/PredictionMarkets.</li>
+  <li><strong>ACX Classifieds + Manifold crowd.</strong> Post in the next <a href="https://www.astralcodexten.com/p/acx-classifieds-126">ACX Classifieds</a> "Consume My Product/Service" section with calibration-nerd framing. Cheap, perfectly targeted at forecasting hobbyists.</li>
+  <li><strong>Win-back the dropped Kalshi/Polymarket affiliates.</strong> The platforms' creator programs are being cut <em>this month</em>; a "compliant-by-design partner program" landing page (disclosure required, revenue share, free Desk) aimed at those creators turns their loss into your roster.</li>
+</ol>
 
-<h3>Weeks 1–2 — Foundation</h3>
-<ul class="checklist">
-  <li>Fix launch-precondition list (§5): track-record integrity, live-mode safety, identity/access, backups.</li>
-  <li>Ship pricing rework (§4) + ToS acceptance; rename public surfaces to Kalmari; rewrite landing hero to the track-record frame.</li>
-  <li>Lock the audit cadence; start the public clock on the track record.</li>
+<h2>8. 30-day action calendar</h2>
+<table>
+<tr><th>Week</th><th>Actions</th></tr>
+<tr><td><strong>1</strong></td><td>RSVP builder hours via @KalshiBuilders pinned post; DM Shannon/John Wang (draft b). Post intro in @KalshiEco when approved (draft a). Publish r/Kalshi flagship post (Post 1) — fill in real stats first. Stand up public @kalmari channel + /refer command.</td></tr>
+<tr><td><strong>2</strong></td><td>r/PredictionMarkets post (Post 2). r/Polymarket megathread comment (Post 3). Email Dustin Gouker (story pitch + sponsorship ask). Pitch Prediction Market Movers founder interview. DM YN Signals + PolyAlertHub (draft c).</td></tr>
+<tr><td><strong>3</strong></td><td>Outreach to Champ + TradeWithDesi + DGFantasy ($300–500 + 30%/12mo rev share + free Desk + branded league). DM Domer &amp; Gaeten Dugas with data access, no cash ask. r/sportsbook post (Post 4) if sports stats ready. Ship shareable settlement cards.</td></tr>
+<tr><td><strong>4</strong></td><td>Launch Paper Trading League #1. r/SideProject launch post. First "Pundit Accountability Index" post; pitch it to Event Horizon as data exclusive. SSG podcast outreach via X. Review: signups by source, double down on the top two channels.</td></tr>
+</table>
+
+<h2>9. Compliance notes (read before any paid placement)</h2>
+<div class="warn">
+<ul>
+  <li><strong>FTC disclosure:</strong> Politico (June 5, 2026) documented Polymarket's $2.5M+ in payments to 800+ people, much of it via ≥490 undisclosed posts — ex-FTC counsel says such arrangements generally require disclosure. Every paid Kalmari placement must be tagged #ad / paid partnership, contractually.</li>
+  <li><strong>No performance promises:</strong> creators must not say "guaranteed", "passive income", or project returns. Pre-approve any P&amp;L claims; reference the public track record with the same disclaimer the landing page carries ("past accuracy is not a promise of future results").</li>
+  <li><strong>Kalmari's framing is already the safe one</strong> — signals not autopilot, user places every trade, not investment advice — keep that language verbatim in all partner copy.</li>
+  <li>r/Kalshi bans pay-for-access links: only ever link the free tier there. Sensitivity is elevated post-LA-election mess and the MrBeast-editor insider-trading story (Feb 2026) — avoid election-market hype in paid creative for now.</li>
+</ul>
+</div>
+
+<h2>10. Key sources</h2>
+<ul class="small">
+  <li>NPR, June 7 2026 — <a href="https://www.npr.org/2026/06/07/nx-s1-5846806/kalshi-polymarket-influencers-california-election">Kalshi/Polymarket creator payments (~$500/post) and program pullback</a>; Semafor — <a href="https://www.semafor.com/article/06/05/2026/kalshi-asks-paid-influencers-to-delete-posts-on-la-mayoral-election">Kalshi asks influencers to delete LA-election posts</a></li>
+  <li>Politico investigation (via <a href="https://www.yahoo.com/news/politics/articles/polymarket-paying-social-media-biggest-090000448.html">Yahoo</a>, <a href="https://www.benzinga.com/markets/prediction-markets/26/06/53032745/polymarket-allegedly-paid-controversial-influencers-350000-using-personal-paypal-account">Benzinga</a>, <a href="https://cryptobriefing.com/polymarket-pays-influencers-promote-odds/">CryptoBriefing</a>) — Polymarket's $2.5M influencer spend</li>
+  <li><a href="https://trendspider.com/affiliates/">TrendSpider affiliate program</a> (10/20/30% tiers, 12-month cap) — verified live</li>
+  <li><a href="https://nexteventhorizon.substack.com/about">Event Horizon</a> (3,000+ subs), <a href="https://forecasting.substack.com/about">Forecasting Newsletter</a></li>
+  <li><a href="https://discord.com/invite/kalshi">Kalshi Discord</a> (~30,085 members via Discord invite API), <a href="https://gummysearch.com/r/Kalshi/">r/Kalshi growth data</a></li>
+  <li>Subreddit rules: Wayback snapshots of <a href="http://web.archive.org/web/20251219054750/https://www.reddit.com/r/Kalshi/">r/Kalshi</a>, <a href="http://web.archive.org/web/20251218001939/https://www.reddit.com/r/sportsbook/">r/sportsbook</a>, <a href="http://web.archive.org/web/20260227194909/https://www.reddit.com/r/algotrading/">r/algotrading</a>, <a href="http://web.archive.org/web/20251218102953/https://www.reddit.com/r/quant/">r/quant</a>, <a href="http://web.archive.org/web/20260119113741/https://www.reddit.com/r/Daytrading/">r/Daytrading</a> + live redlib mirrors</li>
+  <li>Tool-launch precedents: <a href="https://reddit.com/r/Polymarket/comments/1td19lo/">PaperPoly on r/Polymarket</a>, <a href="https://reddit.com/r/PredictionMarkets/comments/1thmxnk/">open-sourced Kalshi bot</a>, <a href="https://reddit.com/r/sportsbook/comments/1mnpqzo/">guessinglines on r/sportsbook</a>, <a href="https://reddit.com/r/Kalshi/comments/1pd7955/made_a_mentions_tracker/">kalshiwhisper on r/Kalshi</a></li>
+  <li><a href="https://github.com/aarora4/Awesome-Prediction-Market-Tools">Awesome-Prediction-Market-Tools</a>; <a href="https://influencermarketinghub.com/youtube-influencer-rates/">YouTube sponsorship rate benchmarks</a>; <a href="https://predictionnews.com/learn/accounts-to-follow/">Prediction News accounts-to-follow</a></li>
+  <li>Telegram community data: live MTProto exploration of @KalshiEco, @KalshiBuilders, @theoddspredict, @polymarket_quick_moves, @predictions_analysis, @PredictionMarketsToday (June 10, 2026)</li>
 </ul>
 
-<h3>Weeks 3–4 — Private beta</h3>
-<ul class="checklist">
-  <li>Onboard 20–30 segment-1 users personally; instrument the funnel (§10).</li>
-  <li>Ship the backtest widget and edge-remaining countdowns; fix what beta breaks.</li>
-  <li>Stand up the X account; begin settled-pick posting (manually at first is fine).</li>
-</ul>
+<p class="small meta">Caveats: Reddit member counts via mirrors/trackers (Reddit API blocked); the Polymarket payments dataset is a single journalistic investigation, not adjudicated; Discord/Reddit counts are point-in-time June 8–10, 2026; the Kalshi/Polymarket influencer-program pullback is days old and terms are in flux; Star Spangled Gamblers' dead website may be temporary. Refuted during verification (do not reuse): r/Polymarket "127k members"; SSG "weekly, 278 episodes"; Forecasting Newsletter "monthly"; "28+ Telegram trading bots crowding the space".</p>
 
-<h3>Weeks 5–8 — Soft launch</h3>
-<ul class="checklist">
-  <li>Open access + founding-member pricing; announce in 3–5 Kalshi communities.</li>
-  <li>Content engine to full cadence on X; public Telegram broadcast channel live with delayed picks.</li>
-  <li>Ship outcome notifications and weekly recap share cards.</li>
-  <li>Gate to proceed: ≥100 users, ≥40% activation, ≥20 founding Pros, zero money incidents.</li>
-</ul>
-
-<h3>Weeks 9–12 — Public launch</h3>
-<ul class="checklist">
-  <li>The track-record launch thread + Product Hunt + 2–3 newsletter/podcast placements in the same week.</li>
-  <li>Referral program and paper leagues live; podcast-claim content at per-episode cadence.</li>
-  <li>First monthly methodology post (including anything that went wrong — establish the honesty norm early).</li>
-</ul>
-
-<h3>Week 13 — Review and decide</h3>
-<ul class="checklist">
-  <li>Channel review: keep the top 2 by activation-adjusted acquisition, cut the rest.</li>
-  <li>Decide the phase-3 questions with data: paid tests? Hyperliquid/HIP-4 second venue? Desk-tier feature investment (follow-by-model, API)? Auto-copy legal review?</li>
-</ul>
-
-<hr style="border:none;border-top:1px solid var(--line);margin:48px 0 16px">
-<p class="small">Prepared June 9, 2026 from a code-level product exploration of <code>tg-research/frontrun-bot</code>, the same-day product &amp; code audit (internal), and the June 3 <a href="/kalshi-bot-market/">competitive landscape research</a> (17 sources, adversarially verified). Pricing figures follow the audit's §7 recommendation; targets in §10 are starting hypotheses to be replaced with cohort data. Nothing here is legal advice — the compliance items in §5/§11 need a professional read before public launch.</p>
-
-</main>
 </body>
 </html>
