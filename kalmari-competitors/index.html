@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kalmari — Competitor & Market Research</title>
+<style>
+  :root { --ink:#1a1a1a; --muted:#666; --line:#ddd; --bg:#fff; --accent:#2a4d69;
+          --good:#1a7f37; --bad:#b42318; --warn:#9a6700; --soft:#f6f7f8; }
+  * { box-sizing:border-box; }
+  body { font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+         color:var(--ink); background:var(--bg); line-height:1.55; margin:0;
+         padding:0 20px; -webkit-font-smoothing:antialiased; }
+  main { max-width:980px; margin:0 auto; padding:48px 0 80px; }
+  h1 { font-size:30px; margin:0 0 6px; letter-spacing:-0.5px; }
+  h2 { font-size:21px; margin:48px 0 12px; padding-bottom:6px; border-bottom:2px solid var(--line); }
+  h3 { font-size:16px; margin:26px 0 6px; }
+  p, li { font-size:15px; }
+  .sub { color:var(--muted); font-size:14px; margin:0 0 4px; }
+  .lead { font-size:16px; background:var(--soft); border-left:3px solid var(--accent);
+          padding:14px 18px; border-radius:0 4px 4px 0; }
+  table { border-collapse:collapse; width:100%; margin:16px 0; font-size:13px; }
+  th, td { border:1px solid var(--line); padding:7px 9px; text-align:left; vertical-align:top; }
+  th { background:var(--soft); font-weight:600; }
+  td.c, th.c { text-align:center; }
+  tr.kalmari td { background:#eef5ee; font-weight:500; }
+  code { background:var(--soft); padding:1px 5px; border-radius:3px; font-size:90%; }
+  .yes { color:var(--good); font-weight:600; }
+  .no { color:var(--bad); font-weight:600; }
+  .partial { color:var(--warn); font-weight:600; }
+  .tag { display:inline-block; font-size:11px; padding:2px 8px; border-radius:10px;
+         border:1px solid var(--line); color:var(--muted); margin-right:4px; }
+  .tag.crypto { background:#fdf0ef; border-color:#f3c9c4; color:var(--bad); }
+  .tag.reg { background:#eef5ee; border-color:#c4e0c9; color:var(--good); }
+  .card { border:1px solid var(--line); border-radius:6px; padding:14px 18px; margin:14px 0; }
+  .card h3 { margin-top:0; }
+  .card .meta { font-size:12.5px; color:var(--muted); margin:2px 0 8px; }
+  .sw { display:flex; gap:18px; flex-wrap:wrap; margin-top:8px; }
+  .sw > div { flex:1; min-width:240px; }
+  .sw strong { font-size:13px; }
+  .sw ul { margin:4px 0 0; padding-left:18px; }
+  .sw li { font-size:13.5px; margin:2px 0; }
+  ul.axes { list-style:none; padding-left:0; }
+  ul.axes li { padding:6px 0; border-bottom:1px dashed var(--line); }
+  .note { font-size:13px; color:var(--muted); }
+  .callout { border:1px solid #f3c9c4; background:#fdf0ef; border-radius:6px; padding:12px 16px; margin:16px 0; font-size:14px; }
+  .callout.amber { border-color:#f0dca0; background:#fdf8e8; }
+  a { color:var(--accent); }
+  .src { font-size:12.5px; word-break:break-all; }
+  footer { margin-top:60px; padding-top:18px; border-top:1px solid var(--line);
+           color:var(--muted); font-size:12.5px; }
+  .pill-row { margin:10px 0 4px; }
+</style>
+</head>
+<body>
+<main>
+
+  <p class="sub"><a href="/" style="text-decoration:none">← demos</a></p>
+  <p class="sub">Kalmari · Frontrun Bot · Market Research</p>
+  <h1>Competitor &amp; Market Research</h1>
+  <p class="sub">Pure competitive landscape — who else builds trading bots/tools for Kalshi &amp; Polymarket, and how each compares to Kalmari. Compiled 2026-06-17.</p>
+
+  <div class="callout amber">
+    <strong>Why this document exists.</strong> The <code>research/</code> folder had no standalone market-research artifact — only GTM strategy (<code>GTM_PLAN.html</code>), paid-ads strategy (<code>KALMARI_GOOGLE_ADS_RESEARCH.md</code>, whose §6 was an explicit <em>summary</em> pointing to a "full deep-dive" that was never written), a legal audit, and a code audit. This file is that missing deep-dive: a multi-source, adversarially fact-checked competitor sweep. Findings below survived 3-vote verification; unverified names are flagged, not asserted.
+  </div>
+
+  <h2>1. Executive summary &amp; wedge verdict</h2>
+  <p class="lead">
+    Kalmari's defining wedge is the four-way intersection of <strong>(1) Telegram-native</strong>, <strong>(2) US-regulated Kalshi surface</strong>, <strong>(3) autonomous AI-strategy execution</strong>, and <strong>(4) BYOK / non-custodial</strong>. The verified field splits into two camps that each cover <em>three</em> of these four axes but miss the fourth — leaving the full intersection effectively <strong>unoccupied as a managed commercial product</strong>.
+  </p>
+
+  <ul class="axes">
+    <li><strong>Camp A — Polymarket Telegram bots</strong> (KreoPoly, PolyGun, PolyBot): match Telegram-native + autonomous + non-custodial, but trade on the <span class="bad">crypto/offshore Polymarket surface</span>, <strong>not</strong> US-regulated Kalshi. → miss <strong>axis 2</strong>.</li>
+    <li><strong>Camp B — open-source Kalshi tools</strong> (ryanfrigo/kalshi-ai-trading-bot, OctagonAI/kalshi-trading-bot-cli): match US-regulated Kalshi + autonomous + BYOK, but ship as <strong>CLI / terminal tools</strong>, not Telegram-native, and are self-deploy. → miss <strong>axis 1</strong>.</li>
+    <li><strong>The only literal four-axis overlap</strong> is <code>yllvar/Kalshi-Quant-TeleBot</code> — a Telegram + Kalshi + autonomous + BYOK open-source bot — <strong>but it is unmaintained self-host code you must deploy yourself, not a managed product</strong> (and its "autonomous" claim rests on a README, 2-1 vote).</li>
+    <li><strong>Analytics &amp; EV tools</strong> (Alphascope, OddsJam, Composer): out of category — signals-only, multi-market, or not prediction markets at all.</li>
+  </ul>
+
+  <p><strong>Verdict:</strong> No competitor occupies all four axes simultaneously <em>as a product</em>. The closest managed threats are Camp A (everything but US-regulation) and Camp B CLIs (everything but Telegram-native). Kalmari's specific slot — a <strong>hosted, no-self-deploy Telegram bot on US-regulated Kalshi with AI-strategy (not copy-trade) execution and free unlimited paper trading</strong> — is genuinely empty in the verified data.</p>
+
+  <div class="callout">
+    <strong>Single largest risk to this verdict.</strong> Polymarket is standing up a CFTC-regulated US arm (QCEX / QCX DCM; waitlist reportedly removed May 2026). If Camp A bots (KreoPoly / PolyGun / PolyBot) integrate that regulated arm with fiat rails, they would close Kalmari's US-regulated axis and invade the wedge directly. This is fast-moving and must be re-checked.
+  </div>
+
+  <h2>2. Master comparison matrix</h2>
+  <p class="note">Kalmari row highlighted. "Autonomous" = places live trades by itself (vs signals-only). "BYOK" = non-custodial, user supplies own keys. Pricing left blank where it could not be verified from primary sources.</p>
+  <table>
+    <thead>
+      <tr>
+        <th>Product</th>
+        <th>Surface</th>
+        <th>Markets</th>
+        <th class="c">Autonomous?</th>
+        <th class="c">Non-custodial / BYOK</th>
+        <th class="c">US-regulated</th>
+        <th>Pricing / free tier</th>
+        <th>Traction</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="kalmari">
+        <td><strong>Kalmari</strong></td>
+        <td>Telegram bot (managed)</td>
+        <td>Kalshi only</td>
+        <td class="c yes">Yes (AI strategy)</td>
+        <td class="c yes">Yes</td>
+        <td class="c yes">Yes</td>
+        <td>Free unlimited paper · paid live (TBD)</td>
+        <td>Pre-launch</td>
+      </tr>
+      <tr>
+        <td>KreoPoly</td>
+        <td>Telegram bot</td>
+        <td>Polymarket (Kalshi secondary)</td>
+        <td class="c yes">Yes (copy-trade)</td>
+        <td class="c yes">Yes (Privy/Safe)</td>
+        <td class="c no">No (crypto)</td>
+        <td>Not verified (likely per-trade)</td>
+        <td>Heavy press Feb–Mar 2026</td>
+      </tr>
+      <tr>
+        <td>PolyGun</td>
+        <td>Telegram bot</td>
+        <td>Polymarket</td>
+        <td class="c yes">Yes (copy/sniper)</td>
+        <td class="c yes">Yes</td>
+        <td class="c no">No (crypto)</td>
+        <td>Not verified</td>
+        <td>Active</td>
+      </tr>
+      <tr>
+        <td>PolyBot</td>
+        <td>Telegram bot</td>
+        <td>Polymarket only</td>
+        <td class="c yes">Yes (rules engine)</td>
+        <td class="c yes">Yes (Gnosis Safe)</td>
+        <td class="c no">No (crypto)</td>
+        <td>Not verified · $1 min deposit</td>
+        <td>Active</td>
+      </tr>
+      <tr>
+        <td>ryanfrigo/kalshi-ai-trading-bot</td>
+        <td>CLI + Streamlit (OSS)</td>
+        <td>Kalshi only</td>
+        <td class="c yes">Yes (<code>--live</code>)</td>
+        <td class="c yes">Yes</td>
+        <td class="c yes">Yes</td>
+        <td>Free (open-source)</td>
+        <td>GitHub repo</td>
+      </tr>
+      <tr>
+        <td>OctagonAI/kalshi-trading-bot-cli</td>
+        <td>CLI (OSS, Bun)</td>
+        <td>Kalshi only</td>
+        <td class="c partial">Partial*</td>
+        <td class="c yes">Yes</td>
+        <td class="c yes">Yes</td>
+        <td>Free (open-source)</td>
+        <td>GitHub repo</td>
+      </tr>
+      <tr>
+        <td>yllvar/Kalshi-Quant-TeleBot</td>
+        <td>Telegram bot (OSS, self-host)</td>
+        <td>Kalshi only</td>
+        <td class="c partial">Claimed</td>
+        <td class="c yes">Yes</td>
+        <td class="c yes">Yes</td>
+        <td>Free (MIT)</td>
+        <td>Unknown / unmaintained</td>
+      </tr>
+      <tr>
+        <td>ImMike/polymarket-arbitrage</td>
+        <td>Web dashboard (OSS, FastAPI)</td>
+        <td>Polymarket + Kalshi</td>
+        <td class="c partial">Yes (arb)*</td>
+        <td class="c yes">Yes</td>
+        <td class="c no">No (Polymarket-first)</td>
+        <td>Free (open-source)</td>
+        <td>Skeleton (~4 commits)</td>
+      </tr>
+      <tr>
+        <td>Alphascope</td>
+        <td>Web app</td>
+        <td>Polymarket, Kalshi, Manifold, Opinion</td>
+        <td class="c no">No (signals only)</td>
+        <td class="c">n/a</td>
+        <td class="c">n/a (info tool)</td>
+        <td>Free tier</td>
+        <td>Claims 10,000+ traders</td>
+      </tr>
+      <tr>
+        <td>OddsJam</td>
+        <td>Web/mobile</td>
+        <td>Sportsbooks (not pred-mkts)</td>
+        <td class="c no">No (you place bets)</td>
+        <td class="c">n/a</td>
+        <td class="c">n/a</td>
+        <td>Subscription</td>
+        <td>Established</td>
+      </tr>
+      <tr>
+        <td>Composer</td>
+        <td>Web/mobile</td>
+        <td>Stocks/ETF/crypto/options</td>
+        <td class="c yes">Yes (out of category)</td>
+        <td class="c no">Custodial (Alpaca)</td>
+        <td class="c">n/a</td>
+        <td>Subscription</td>
+        <td>Established</td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="note">* OctagonAI: its claim to generate its own probability estimates and place edge-vs-orderbook orders was <strong>refuted (1-2)</strong> in verification — autonomy depth unconfirmed. ImMike: autonomous-execution detail passed only 2-1; repo is simulation-focused.</p>
+
+  <h2>3. Competitor profiles by tier</h2>
+
+  <h3>Tier 1 — Direct threats (Telegram-native execution bots)</h3>
+
+  <div class="card">
+    <h3>KreoPoly <span class="pill-row"><span class="tag crypto">crypto / Polymarket-first</span></span></h3>
+    <p class="meta">Telegram bot · Polymarket primary, Kalshi secondary · non-custodial (Privy enclaves + Gnosis Safe) · copy-trading</p>
+    <p>The single closest direct threat. A non-custodial Telegram bot that autonomously <strong>copy-trades</strong> prediction markets — mirroring whale wallet trades onto the user's own wallet in real time. Matches Kalmari on 3 axes (Telegram-native, autonomous, non-custodial). Mechanism differs: copy-trading whales vs Kalmari's AI-analyzed strategy signals.</p>
+    <div class="sw">
+      <div><strong>Strengths vs Kalmari</strong><ul><li>Live product, heavy press coverage (Feb–Mar 2026)</li><li>Multi-platform (Polymarket + Kalshi integration)</li><li>Real-time copy-trading of proven wallets</li></ul></div>
+      <div><strong>Weaknesses vs Kalmari</strong><ul><li>Polymarket-primary = crypto/offshore, legally shaky for US retail</li><li>Copy-trade only — no owned, named AI strategy</li><li>"BYOK" is loose (Privy generates keys = managed self-custody)</li></ul></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>PolyGun <span class="tag crypto">crypto / Polymarket-first</span></h3>
+    <p class="meta">Telegram bot · Polymarket · non-custodial · copy + sniper orders</p>
+    <p>A true platform-surface analog to Kalmari: browse, market/limit/sniper orders, portfolio tracking, and autonomous copy-trading entirely inside Telegram. But crypto-first — deposits via autobridging from Polygon, Solana, Ethereum, BNB on the offshore Polymarket surface (CFTC-restricted for US retail). Matches Telegram-native + autonomous + non-custodial; misses US-regulated.</p>
+  </div>
+
+  <div class="card">
+    <h3>PolyBot <span class="tag crypto">crypto / Polymarket-first</span></h3>
+    <p class="meta">Telegram bot · Polymarket only · non-custodial (per-user Gnosis Safe, $1 min) · rules engine</p>
+    <p>The most feature-rich Polymarket bot: time-windowed strategies (5m/15m/1h/4h/24h), an Auto Trader rules engine (entry/exit, take-profit, stop-loss, trailing stops), and leaderboard copy-trading. Self-custodial via per-user Gnosis Safe on Polygon, exportable keys. Matches 3 axes; Polymarket/Polygon only, no Kalshi — misses US-regulated.</p>
+  </div>
+
+  <h3>Tier 2 — Open-source bots (lead-gen, not managed competitors)</h3>
+
+  <div class="card">
+    <h3>ryanfrigo/kalshi-ai-trading-bot <span class="tag reg">US-regulated (Kalshi)</span></h3>
+    <p class="meta">CLI + optional Streamlit · Kalshi only · BYOK (Kalshi API key + RSA key) · paper mode · <code>--live</code> flag</p>
+    <p>The most architecturally relevant open-source tool. AI-automated trading on Kalshi via BYOK, with paper-trading default and live orders gated behind <code>--live</code>. Critically, it ships a <strong>"Safe Compounder"</strong> strategy (NO-side resting maker orders, edge/EV math, no LLM) that closely parallels Kalmari's <strong>"Safe NO Bets."</strong> Matches US-regulated Kalshi + autonomous + BYOK + strategy design; misses Telegram-native, and autonomy is operator-run CLI (cron/manual), not hosted.</p>
+  </div>
+
+  <div class="card">
+    <h3>OctagonAI/kalshi-trading-bot-cli <span class="tag reg">US-regulated (Kalshi)</span></h3>
+    <p class="meta">CLI (Bun runtime) · Kalshi only · BYOK (keys local in <code>~/.kalshi-bot/.env</code>) · Telegram = outbound alerts only</p>
+    <p>An AI-native command-line tool (the seed-list name "kalshi-deep-trading-bot" is a rename of this repo). Polymarket appears only as a GitHub topic tag — no actual support. Has outbound Telegram trade <em>alerts</em>, but that's a notification sink, not a chat interface. Matches US-regulated Kalshi + BYOK; misses Telegram-native. <strong>Its claim to compute its own probabilities and place edge-vs-orderbook orders was refuted in verification</strong> — treat autonomy as unconfirmed.</p>
+  </div>
+
+  <div class="card">
+    <h3>yllvar/Kalshi-Quant-TeleBot <span class="tag reg">US-regulated (Kalshi)</span> &nbsp;<strong>← closest full-wedge analog</strong></h3>
+    <p class="meta">Telegram bot (JS, self-host, MIT) · Kalshi only · BYOK (Kalshi API key + Telegram bot token via env)</p>
+    <p>The only verified competitor that hits <strong>all four axes</strong>: Telegram-native + US-regulated Kalshi + autonomous + BYOK. The catch: it is <strong>unmaintained self-host code the user must deploy themselves</strong> — not a managed product — and its "autonomous/professional-grade" framing rests on README self-description (headline claim passed only 2-1). Maturity, maintenance, and real usage are unknown. This is the name to keep watching: if someone wraps it into a hosted service, the wedge narrows.</p>
+  </div>
+
+  <div class="card">
+    <h3>ImMike/polymarket-arbitrage <span class="tag crypto">Polymarket-first</span></h3>
+    <p class="meta">Web dashboard (Python, FastAPI) · Polymarket + Kalshi · BYOK · simulation-focused</p>
+    <p>An open-source arbitrage bot monitoring both Polymarket and Kalshi (self-claims 10,000+ markets) for cross-platform and intra-platform (YES+NO bundle) inefficiencies. Auto-submits detected signals to an execution engine with dry-run default + live mode. No Telegram — monitoring via local web dashboard. Low-maturity skeleton (~4 commits). Different surface (web) and different job (arbitrage, not strategy) from Kalmari.</p>
+  </div>
+
+  <h3>Tier 3 — Analytics &amp; tangential EV tools (out of category)</h3>
+
+  <div class="card">
+    <h3>Alphascope <span class="tag">multi-market analytics</span></h3>
+    <p class="meta">Web app · Polymarket, Kalshi, Manifold, Opinion · signals/research only</p>
+    <p>A multi-market signals/research web dashboard (Forecast/Predictions/Odds/News) — <strong>not</strong> a Telegram bot and <strong>not</strong> an execution engine. Explicitly states the trader makes the decision: "Alphascope cannot make those decisions for the user." Claims 10,000+ traders; has a Telegram <em>community channel</em> but no trading bot. The category SEO leader. Kalmari's wedge against it: <em>"Alphascope tells you; Kalmari does it."</em></p>
+  </div>
+
+  <div class="card">
+    <h3>OddsJam &amp; Composer <span class="tag">out of category</span></h3>
+    <p class="meta">OddsJam: positive-EV sports-betting tool (you place every bet yourself) · Composer: stocks/ETF/crypto/options algo-trading via Alpaca (custodial)</p>
+    <p><strong>OddsJam</strong> is a signals-only positive-EV/arbitrage <em>sportsbook</em> tool — it tells you the book, game, market and stake, but you place the bet; only automation is tracking/grading. <strong>Composer</strong> trades stocks/ETFs/crypto/options, not prediction markets, with no evidence of a Kalshi pivot as of 2026. Both are reference points, not competitors.</p>
+  </div>
+
+  <h2>4. Regulatory split</h2>
+  <p>The clearest dividing line in the market is regulatory posture — and it maps almost exactly onto which platform a product targets.</p>
+  <table>
+    <thead><tr><th>US-regulated (Kalshi / CFTC DCM)</th><th>Crypto / Polymarket-first (legally shaky for US retail)</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><span class="yes">Kalmari</span>, ryanfrigo/kalshi-ai-trading-bot, OctagonAI/kalshi-trading-bot-cli, yllvar/Kalshi-Quant-TeleBot</td>
+        <td>KreoPoly, PolyGun, PolyBot, ImMike/polymarket-arbitrage</td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="note">Every <em>managed Telegram product</em> in the field (KreoPoly/PolyGun/PolyBot) sits on the crypto side. Every <em>US-regulated</em> tool is open-source/self-deploy. Kalmari is the only entrant proposing a managed product on the regulated side — that is the wedge in one sentence.</p>
+
+  <h2>5. Pricing-band analysis</h2>
+  <ul>
+    <li><strong>Open-source / CLI tools</strong> (ryanfrigo, OctagonAI, yllvar, ImMike): <strong>free</strong> — run-your-own, no subscription. Cost = your time + infra.</li>
+    <li><strong>Analytics</strong> (Alphascope): <strong>free tier</strong>, 10k+ users.</li>
+    <li><strong>Commercial Polymarket bots</strong> (KreoPoly, PolyGun, PolyBot): subscription $ tiers were <strong>not verifiable</strong> from primary sources — these almost certainly monetize via <strong>per-trade or % -of-volume fees</strong> rather than flat subscriptions (PolyBot advertises a $1 min deposit, i.e. crypto-funded, fee-on-trade economics).</li>
+    <li><strong>Tangential</strong> (OddsJam, Composer): conventional SaaS subscriptions.</li>
+  </ul>
+  <p><strong>Implication for Kalmari:</strong> there is no incumbent <em>subscription</em> price to anchor against in the regulated-Kalshi-bot category — it's empty. Kalmari can set the reference price. A <strong>free unlimited paper tier → flat monthly live</strong> model is differentiated against both the free-but-self-deploy OSS tools and the fee-on-trade crypto bots.</p>
+
+  <h2>6. Positioning gaps nobody is claiming</h2>
+  <ol>
+    <li><strong>Managed (hosted, no self-deploy) Telegram bot on US-regulated Kalshi</strong> — the exact empty slot. The only Telegram+Kalshi+autonomous code (yllvar) is self-host OSS; everything hosted is crypto.</li>
+    <li><strong>AI-strategy execution, not copy-trading.</strong> Every managed Telegram bot in the field is a copy-trade/mirror bot. Kalmari's owned, named strategies ("Safe NO Bets," "Rapid Resolution") are a distinct, clearer pitch than "mirror this whale."</li>
+    <li><strong>Free <em>unlimited</em> paper trading.</strong> OSS tools require deployment to paper-trade; copy bots are live-money-first. Unlimited managed sim ("simulate forever, go live when ready") is unclaimed.</li>
+    <li><strong>Public, verifiable live track record.</strong> No competitor — open-source or commercial — publishes an auditable live P&amp;L. This alone is a credibility multiplier.</li>
+    <li><strong>BYOK non-custodial safety story on the regulated surface.</strong> Camp A's "non-custodial" is crypto-wallet non-custodial; Kalmari's is regulated-brokerage BYOK — a cleaner safety narrative for US retail, especially after any TG-bot rug event.</li>
+  </ol>
+
+  <h2>7. Caveats &amp; unverified names</h2>
+  <div class="callout amber">
+    <strong>Did NOT survive verification (existence / positioning unconfirmed — not asserted above):</strong>
+    okbet, KalshiAI, Rainmaker, Polytrader, Polybro, Astron, Billy Bets, Pigeon, Polysights, Verso, TradeFox, Betmoar, Polycule, Polymtrade, Stand, Dome, Adjacent News, RebelBetting, 3Commas, TrendSpider.
+    <br><span class="note">These appeared in the seed list (largely from the prior ads-doc §6 summary) but could not be confirmed as Telegram+Kalshi execution bots from primary sources in this pass. Several may exist in adjacent forms (e.g. RebelBetting/3Commas are real products but out of category); others may be defunct, renamed, or mis-attributed. Worth a targeted re-check before citing any as a live competitor.</span>
+  </div>
+  <ul>
+    <li><strong>Time-sensitivity is high</strong> — this is a fast-moving 2026 market; re-verify quarterly.</li>
+    <li><strong>Camp A facts</strong> lean partly on affiliate/SEO review sites, though each load-bearing fact is also backed by the official product site.</li>
+    <li><strong>Open-source claims are strongest</strong> (primary GitHub READMEs), but README self-descriptions of "autonomous/enterprise-grade" are unaudited against actual code. OctagonAI's autonomous-probability claim was explicitly refuted.</li>
+    <li><strong>yllvar/Kalshi-Quant-TeleBot</strong> — the closest full-wedge analog — rests on a single source with a 2-1 headline vote; maturity/usage unknown.</li>
+    <li><strong>Pricing is the weakest deliverable:</strong> no subscription $ tiers were verified for the commercial Polymarket bots.</li>
+  </ul>
+
+  <h2>8. Open questions to close next</h2>
+  <ul>
+    <li>Exact monetization of KreoPoly / PolyGun / PolyBot — flat fee, per-trade fee, or % of volume?</li>
+    <li>Will those bots integrate Polymarket's new CFTC-regulated US arm (QCEX/QCX) with fiat rails — collapsing Kalmari's US-regulated axis?</li>
+    <li>Real traction/maintenance status of yllvar/Kalshi-Quant-TeleBot — live product or abandoned demo?</li>
+    <li>Do any of the unverified seed names (okbet, KalshiAI, Rainmaker, Polytrader…) actually exist as Telegram+Kalshi execution bots?</li>
+  </ul>
+
+  <h2>9. Sources</h2>
+  <p class="note">Primary sources prioritized (product sites, pricing pages, GitHub repos). 23 sources fetched · 102 claims extracted · 25 verified · 24 confirmed · 1 killed · 11 findings after synthesis.</p>
+  <ul class="src">
+    <li><a href="https://kreopoly.app/">kreopoly.app</a> · <a href="https://kreopoly.app/polymarket-bot/">/polymarket-bot</a> · <a href="https://coincodecap.com/kreo-review-polymarket-kalshi-copy-trading-bot">coincodecap review</a></li>
+    <li><a href="https://polygunsniperbot.com/">polygunsniperbot.com</a> · <a href="https://polygun.xyz/">polygun.xyz</a> · <a href="https://polymarketanalytics.com/copy-trade">polymarketanalytics.com/copy-trade</a></li>
+    <li><a href="https://polybot.trading/">polybot.trading</a> · <a href="https://docs.polybot.trading/docs/what-is-polybot">docs.polybot.trading</a></li>
+    <li><a href="https://github.com/ryanfrigo/kalshi-ai-trading-bot">github.com/ryanfrigo/kalshi-ai-trading-bot</a></li>
+    <li><a href="https://github.com/OctagonAI/kalshi-trading-bot-cli">github.com/OctagonAI/kalshi-trading-bot-cli</a></li>
+    <li><a href="https://github.com/yllvar/Kalshi-Quant-TeleBot">github.com/yllvar/Kalshi-Quant-TeleBot</a></li>
+    <li><a href="https://github.com/ImMike/polymarket-arbitrage">github.com/ImMike/polymarket-arbitrage</a></li>
+    <li><a href="https://www.alphascope.app/">alphascope.app</a></li>
+    <li><a href="https://oddsjam.com/betting-tools/positive-ev">oddsjam.com positive-EV</a></li>
+    <li><a href="https://www.composer.trade/pricing">composer.trade/pricing</a></li>
+    <li><a href="https://www.coindesk.com/policy/2026/04/28/polymarket-seeks-cftc-approval-to-reopen-main-exchange-to-u-s-traders">CoinDesk — Polymarket CFTC approval (regulatory risk)</a></li>
+    <li><a href="https://www.financemagnates.com/trending/prediction-markets-are-turning-into-a-bot-playground/">Finance Magnates — prediction-market bot playground</a></li>
+  </ul>
+
+  <footer>
+    Generated by a multi-agent deep-research run (5 search angles · 105 agents · 3-vote adversarial verification). Findings reflect what was verifiable on 2026-06-17 and will drift — re-check the open questions before relying on any single competitor claim. Companion docs in <code>research/</code>: <code>GTM_PLAN.html</code>, <code>KALMARI_GOOGLE_ADS_RESEARCH.md</code>, <code>KALMARI_LEGAL_AUDIT.html</code>.
+  </footer>
+
+</main>
+</body>
+</html>
