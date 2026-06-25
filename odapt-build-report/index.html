@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ODAPT — What People Built: A Deep Dive</title>
+<style>
+  :root { --ink:#1a1a1a; --muted:#666; --line:#ddd; --accent:#234; --hl:#f6f8fa; --accent2:#7a3b2e; }
+  * { box-sizing: border-box; }
+  body { font-family: Georgia, 'Times New Roman', serif; color: var(--ink); line-height: 1.55; max-width: 840px; margin: 0 auto; padding: 48px 28px 96px; background:#fff; }
+  h1 { font-size: 2rem; margin: 0 0 4px; letter-spacing: -0.01em; }
+  h2 { font-size: 1.32rem; margin: 46px 0 10px; padding-bottom: 6px; border-bottom: 2px solid var(--accent); }
+  h3 { font-size: 1.06rem; margin: 28px 0 6px; color: var(--accent2); }
+  .sub { color: var(--muted); font-size: 0.92rem; margin: 0 0 24px; }
+  p, li { font-size: 1rem; }
+  code { font-family: 'SF Mono', Menlo, Consolas, monospace; font-size: 0.84em; background: var(--hl); padding: 1px 5px; border-radius: 3px; }
+  table { border-collapse: collapse; width: 100%; margin: 14px 0; font-size: 0.9rem; font-family: -apple-system, Helvetica, Arial, sans-serif; }
+  th, td { border: 1px solid var(--line); padding: 6px 10px; text-align: left; vertical-align: top; }
+  th { background: var(--hl); font-weight: 600; }
+  td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 20px 0; }
+  .kpi { border: 1px solid var(--line); border-radius: 6px; padding: 12px 14px; font-family: -apple-system, Helvetica, Arial, sans-serif; }
+  .kpi .v { font-size: 1.45rem; font-weight: 700; color: var(--accent); }
+  .kpi .l { font-size: 0.74rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+  blockquote { border-left: 3px solid var(--accent2); margin: 12px 0; padding: 4px 16px; color: #333; background: var(--hl); font-style: italic; font-size: 0.94rem; }
+  blockquote.plain { font-style: normal; }
+  .callout { border: 1px solid var(--line); border-left: 4px solid var(--accent); background: var(--hl); padding: 12px 16px; margin: 18px 0; border-radius: 4px; }
+  .callout strong { color: var(--accent); }
+  .bar { display: inline-block; height: 11px; background: var(--accent); border-radius: 2px; vertical-align: middle; }
+  footer { margin-top: 60px; padding-top: 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.82rem; }
+  .lead { font-size: 1.08rem; }
+  ul.tight li { margin: 2px 0; }
+</style>
+</head>
+<body>
+
+<h1>What People Built on ODAPT</h1>
+<p class="sub">
+  A deep qualitative + quantitative dive into the 630 apps, 706 generated builds, and ~580 build
+  conversations in the production database · Companion to the database audit · Generated 2026-06-24
+</p>
+
+<p class="lead">
+  This report sets the headline metrics aside and asks one question: <strong>when you give 238 people an
+  AI that turns plain English into working web apps, what do they actually make?</strong> The answer, read
+  straight from their prompts and the HTML the agent generated, falls into a handful of strong patterns —
+  and the two most revealing are exactly the ones worth dwelling on: people quietly building
+  <strong>software for themselves</strong>, and people trying to <strong>launch a product</strong>.
+</p>
+
+<div class="kpis">
+  <div class="kpi"><div class="v">630</div><div class="l">Apps created</div></div>
+  <div class="kpi"><div class="v">469</div><div class="l">Genuine-intent apps</div></div>
+  <div class="kpi"><div class="v">264</div><div class="l">Apps with 5+ pages</div></div>
+  <div class="kpi"><div class="v">180</div><div class="l">Throwaway / test builds</div></div>
+</div>
+
+<h2>1. The Shape of the Corpus</h2>
+<p>
+  Of 630 apps, <strong>180 (29%) are throwaway</strong> — "hello world", "test", "blah", default
+  <code>My Quick App</code> shells, and <code>/load</code> session-restore stubs. That leaves
+  <strong>~469 apps with genuine intent</strong>, and those split cleanly into recognizable categories.
+  Crucially, <strong>37% of all builds produced 5+ distinct pages</strong> and many generated real project
+  scaffolding (<code>service-worker</code>, <code>manifest.json</code>, <code>package.json</code>,
+  <code>README.md</code>) — these were not all toys.
+</p>
+
+<table>
+  <tr><th>Category</th><th class="n">Apps</th><th>What it looks like in the data</th></tr>
+  <tr><td><strong>Websites &amp; commerce</strong></td><td class="n">~47</td><td>Landing pages, agency sites, multi-page furniture e-commerce, <code>site vitrine</code> business sites, online stores</td></tr>
+  <tr><td><strong>Dashboards &amp; data-viz</strong></td><td class="n">~36</td><td>"do a dashboard for my data", company dashboards, PowerBI/TradingView clones, sales/CRM analytics</td></tr>
+  <tr><td><strong>Productivity &amp; internal tools</strong></td><td class="n">~34</td><td>Habit/task trackers, kanban, inventory, expense reports, deal management, purchase orders, HR</td></tr>
+  <tr><td><strong>Education &amp; creative</strong></td><td class="n">~20</td><td>Language teachers (Arabic, English, Tamil), digital finance school, screenwriting/story tools, courses</td></tr>
+  <tr><td><strong>Games</strong></td><td class="n">~24</td><td>geoguessr clones, Tetris, Mario, memory, detective, 2D platformer, tic-tac-toe, Pokémon generator</td></tr>
+  <tr><td><strong>Quizzes &amp; assessments</strong></td><td class="n">~18</td><td>YC quiz, YouTube quiz maker, 30-question generators, exam mock-test simulators</td></tr>
+  <tr><td><strong>Fintech &amp; trading</strong></td><td class="n">~17</td><td>Crypto trading apps, P/L trackers, money transfer, M-Pesa directory, commodity MIS, DeBank tool</td></tr>
+  <tr><td><strong>AI agents &amp; chatbots</strong></td><td class="n">~14</td><td>SaaS-advisor chatbot, pharmacist bot, agentic assistants, research agents</td></tr>
+  <tr><td><strong>Sports betting</strong></td><td class="n">~12</td><td>NBA/MLB prop &amp; parlay builders, football &amp; cricket predictors, fantasy drafts</td></tr>
+  <tr><td><strong>Platform / integration tests</strong></td><td class="n">~20</td><td>"enable Firecrawl", "enable Replicate plugin", YouTube-captions experiments</td></tr>
+</table>
+
+<h2>2. Theme One — People Building Software for Themselves</h2>
+<p>
+  This is the most human pattern in the dataset, and the most commercially interesting. A meaningful slice of
+  users weren't trying to launch anything — they had <strong>a personal or small-business problem and a
+  spreadsheet</strong>, and they wanted a tool. The tell is the possessive: <em>my</em> data, <em>my</em>
+  trading, <em>my</em> company, <em>my</em> staff.
+</p>
+
+<h3>"Do a dashboard for my data" — the bring-your-own-data reflex</h3>
+<p>
+  The single most repeated internal-tool request was some variant of uploading a spreadsheet and getting a
+  dashboard back. It recurs almost verbatim across many different users:
+</p>
+<blockquote class="plain">"I will upload an excel spreadsheet. Do a dashboard from its data"</blockquote>
+<blockquote class="plain">"help me to upload an excel spreadsheet. After uploaded, do a dashboard of its data"</blockquote>
+<blockquote class="plain">"I would like … a web application that imports CRM data via a csv file, that analyses this data and shows the most important [metrics]"</blockquote>
+<blockquote class="plain">"I just uploaded sales data" · "i will upload csv files" · "do a dashboard for my data in excel"</blockquote>
+<p>
+  16+ prompts reference uploading their own Excel/CSV/sales/CRM data; <strong>26 apps generated a dedicated
+  <code>dashboard</code> view</strong>. This is people using ODAPT as a <em>personal BI tool</em> — the
+  "I have data, make it useful" job. One user even pointed it at a specific design system
+  (<code>berrydashboard.io</code>) and asked it to replicate the layout with filters and CSV download.
+</p>
+
+<h3>Personal trackers &amp; one-person business tools</h3>
+<p>These are unmistakably built for the author's own use, not for a market:</p>
+<ul class="tight">
+  <li><strong>Personal trading journal</strong> — "Build me an app where I can track my daily p/l from my trading. It should also track deposits and withdrawals from each of my accounts."</li>
+  <li><strong>Marda Jewelers Inventory</strong> — a named, real small business managing stock</li>
+  <li><strong>MiS for commodity trading</strong>, <strong>purchase order finance application</strong>, <strong>deal management system</strong></li>
+  <li><strong>Expense report for staff</strong> (built twice — iterating), <strong>IT Helpdesk</strong>, <strong>HR development &amp; training site</strong></li>
+  <li><strong>Teams monitoring &amp; managing platform</strong>, <strong>Revenue management calculator for short[-term rentals]</strong></li>
+  <li><strong>M-Pesa PAYBILL directory</strong> (a Kenyan utility), <strong>"A dashboard of my company"</strong></li>
+  <li>Habit trackers, pedometers, daily-task (Eisenhower-matrix) apps, voice-note alarms, photo-cataloguing systems</li>
+</ul>
+
+<div class="callout">
+  <strong>The insight.</strong> The "build for myself" users describe a concrete, often boring, real-world
+  workflow — inventory, P/L, staff expenses, a data file that needs a chart. They convert at higher intent
+  because they already know exactly what they want. This is the <em>internal-tools / personal-software</em>
+  wedge (the Retool / Airtable / "spreadsheet superpowers" job), and it showed up organically without any
+  prompting from the product.
+</div>
+
+<h2>3. Theme Two — People Trying to Launch a Product</h2>
+<p>
+  A second, distinct population treated ODAPT as a <strong>zero-to-one venture machine</strong>. You can spot
+  them two ways: they give the thing a <em>brand name</em>, and they write spec-like, feature-bulleted prompts
+  as if briefing a dev team.
+</p>
+
+<h3>Branded venture attempts</h3>
+<table>
+  <tr><th>Name</th><th>What they were building</th></tr>
+  <tr><td><strong>Spendbase</strong></td><td>Most-iterated named project (8 sessions, ~290 turns) — spend-management / fintech SaaS</td></tr>
+  <tr><td><strong>Adulting AI</strong></td><td>"a home page that tells the story of the product use case for busy adults and parents"</td></tr>
+  <tr><td><strong>Cancer Atlas / CAtlas</strong></td><td>A health/oncology data platform</td></tr>
+  <tr><td><strong>Agency DevWorks AI</strong></td><td>Agency product — the single most-worked app (19 sessions, 512 turns)</td></tr>
+  <tr><td><strong>HobbyHive</strong></td><td>"A hobby discovery app"</td></tr>
+  <tr><td><strong>Cerkana · Resari · Waslo AI · Breakthrough</strong></td><td>Branded early-stage product shells</td></tr>
+  <tr><td><strong>AI-Powered Travel Companion</strong></td><td>Trip-planning consumer app</td></tr>
+</table>
+
+<h3>Spec-driven founder prompts</h3>
+<p>
+  These users wrote the way a PM writes a ticket — scope, core features, user flows. Examples pulled verbatim:
+</p>
+<blockquote class="plain">
+  "Develop a mobile app to manage social media bookmarks. Users can sign up/login via email, Google, or Apple
+  ID, with a password reset feature. The homepage displays recent bookmarks with title, description, tags, and
+  preview image. A category page lets users sort bookmarks by topics…"
+</blockquote>
+<blockquote class="plain">
+  "Create an app for the 2025 NCAA men's March Madness tournament … 8 players each draft 8 teams … points based
+  on the team's seeding … In the next round of the tournament…" (a full fantasy-draft scoring engine, ~829 turns)
+</blockquote>
+<blockquote class="plain">
+  "make an app that allows players to play The Price Is Right … An administrator can list up to 30 items …
+  Players get to play in return for entering their email address." (a lead-gen game with an admin panel)
+</blockquote>
+<p>
+  Several reached for real product infrastructure: <strong>6 apps built genuine login + signup flows</strong>,
+  apps generated <code>register</code>/<code>auth</code>/<code>verify</code>/<code>admin</code>/<code>settings</code>/<code>profile</code>
+  views, and a handful produced PWA scaffolding (<code>manifest</code> + <code>service-worker</code>) so the
+  result could install on a phone. One user explicitly wanted to ship it: "I will most likely add this to my
+  GitHub page and also deploy it on the [association] hosting service… how could I handle the server-side email
+  through GoDaddy hosting?"
+</p>
+
+<h3>The accidental "business consultant" sub-pattern</h3>
+<p>
+  A cluster of Chinese-speaking users (12 prompts) didn't want an app at all — they used the AI as a
+  <strong>startup strategist</strong>, and the agent dutifully rendered their plans as a <code>business_plan</code>
+  view. Real examples (translated): a detailed plan for a <em>BBQ + craft-beer + branded-sauce + livestream</em>
+  business ("I handle marketing, my friend is head chef… start as a street stall, then a storefront, then my own
+  brand, then financial freedom and early retirement — plan it for me in meticulous detail"); a
+  <em>coconut-selling startup</em> "from 0 to 1, as detailed as possible"; and a <em>Xiaohongshu fruit
+  content-commerce</em> plan selling lychee, longan, jackfruit and mango from their hometown.
+</p>
+
+<h2>4. Theme Three — Games &amp; Playful Builds</h2>
+<p>
+  ~24 game apps, skewed toward <strong>recognizable clones</strong> — the fastest way to test "can this thing
+  actually build something interactive?" geoguessr (built repeatedly), Tetris, a Mario game "with mobile
+  controls", memory games, a detective game, a 2D platformer, tic-tac-toe (9×9 variant), a Pokémon card
+  generator, a frisbee-throwing game, nyan cat, and <strong>four separate "tinder swiper" builds</strong>.
+  Games over-index on public visibility (nearly all <code>public</code>) — people built them to show off.
+</p>
+
+<h2>5. Education, Creative &amp; Niche</h2>
+<ul class="tight">
+  <li><strong>Language learning</strong> — Arabic teaching app (×2), English-for-kids app (×2), Tamil ancestry mapping</li>
+  <li><strong>Courses / schools</strong> — "Crea una escuela digital de finanzas" (digital finance school), interactive course builders</li>
+  <li><strong>Creative writing</strong> — screenwriting idea generators, "gangster crime story", a "<em>The Substance</em>" movie script, poems</li>
+  <li><strong>Content tooling</strong> — YouTube summarizer / quiz maker / caption viewer (riding the platform's YouTube-Captions tool), a 5-episode French-Revolution podcast site</li>
+  <li><strong>Civic / data</strong> — "Enable Firecrawl integration — doge.gov" (scraping government spending data)</li>
+</ul>
+
+<h2>6. The Internal Tooling — ODAPT's Own Plugin Layer</h2>
+<p>
+  Apps gained superpowers by attaching <strong>tools</strong> — a manifest/OpenAPI plugin system. Fifteen tools
+  were registered, but the catalog was effectively <strong>team-built, not a user marketplace</strong>: the
+  admin account (<code>admin@odapt.ai</code>) owns the core set, with a few built by early team members
+  (<code>madhav</code>, <code>lucasdawson23</code>, <code>aman</code>). Five tools saw real user adoption:
+</p>
+<table>
+  <tr><th>Tool</th><th class="n">Apps using</th><th>What it does (from its own instructions)</th></tr>
+  <tr><td><strong>Firecrawl</strong></td><td class="n">32</td><td>"Use scrape and extract" — pull/structure web data</td></tr>
+  <tr><td><strong>Postgres</strong></td><td class="n">22</td><td>Real DB; "Admin user has full permissions… app_user can only READ. Admin can configure RLS." Persistent app backends.</td></tr>
+  <tr><td><strong>Replicate</strong></td><td class="n">21</td><td>"access and generate using any open source model" — image/AI generation by model URL</td></tr>
+  <tr><td><strong>YouTube Captions</strong></td><td class="n">17</td><td>"Pull youtube transcripts!" — feeds summarizers/quiz makers</td></tr>
+  <tr><td><strong>SQLite</strong></td><td class="n">2</td><td>Lightweight embedded DB</td></tr>
+</table>
+<p>
+  Read together, the tool mix reveals the platform's real ambition: not static sites, but
+  <strong>data-backed apps</strong> — a generated frontend wired to a live Postgres database, a scraper, and a
+  media-generation model. That's why the dashboard/data-upload and database-backed product requests landed; the
+  plumbing existed. The team also seeded a clever image convention users picked up directly —
+  <code>magicimage.net/&lt;prompt&gt;.jpg</code> for on-the-fly AI images and
+  <code>magicimagesearch.net/&lt;query&gt;.jpg</code> for stock.
+</p>
+
+<h2>7. How Substantial Were the Builds?</h2>
+<p>Structure tells you whether people got something real, not just a single landing page:</p>
+<table>
+  <tr><th>App structure</th><th class="n">Builds</th><th class="n">Share</th></tr>
+  <tr><td>Single-page</td><td class="n">339</td><td class="n">48%</td></tr>
+  <tr><td>2–4 pages</td><td class="n">103</td><td class="n">15%</td></tr>
+  <tr><td>5+ pages</td><td class="n">264</td><td class="n">37%</td></tr>
+</table>
+<p>
+  The agent generated proper page maps — <code>index</code>, <code>dashboard</code>, <code>login</code>,
+  <code>signup</code>, <code>verify</code>, <code>profile</code>, <code>settings</code>, <code>admin</code>,
+  <code>results</code>, <code>feedback</code> — and for the most serious projects, real project files
+  (<code>package.json</code>, <code>README.md</code>, <code>service-worker</code>, <code>utils</code>,
+  <code>main.js</code>, even per-app data modules like <code>tournament-data.js</code>). The deepest single
+  build conversations ran to <strong>300–830 turns</strong>, all concentrated on the product attempts
+  (Agency DevWorks, the March Madness engine, Spendbase, the Spanish data panel, a video-room app).
+</p>
+
+<h2>8. A Global, Multilingual User Base</h2>
+<p>
+  For a six-week-old product, the linguistic spread is striking. Prompts appear in <strong>Chinese</strong> (12
+  — mostly the business-plan strategists), <strong>Spanish</strong> (data panels, finance school, "quiero que
+  me hagas un…"), <strong>French</strong> (<em>site vitrine</em> business sites, an INNOVX company nav,
+  interactive courses), <strong>Vietnamese</strong>, <strong>Indonesian</strong> ("bisakah kamu bantu saya
+  buatkan…"), and <strong>Czech/Slovak</strong> ("potrebujem spravit dashboard…", "chci pomoci led postavit
+  timer"). The product clearly leaked well beyond an English-speaking launch audience.
+</p>
+
+<h2>9. Patterns &amp; Takeaways</h2>
+<ol>
+  <li><strong>Two distinct intents, two distinct user types.</strong> "Build-for-myself" users arrive with a
+      concrete workflow and their own data; "launch-a-product" users arrive with a brand name and a feature
+      spec. They need different onboarding — the former wants data import + dashboards, the latter wants auth,
+      a database, and a publish button.</li>
+  <li><strong>The internal-tools / personal-BI wedge appeared organically.</strong> "Upload my spreadsheet, give
+      me a dashboard" was the most repeated serious request. With a real Postgres tool already in the stack,
+      this was the most defensible, highest-intent job — and it wasn't being merchandised.</li>
+  <li><strong>Clones are the universal capability test.</strong> geoguessr, Tetris, Tinder, Zoopla, Netflix,
+      Price Is Right — people probe a new builder by asking for something they already understand. Nailing a
+      few showcase clones disproportionately drives confidence (and public sharing).</li>
+  <li><strong>The depth was real when intent was real.</strong> 37% of builds were 5+ pages; the top projects
+      sustained hundreds of conversational turns and produced auth flows, PWAs, and project scaffolding. The
+      engine could carry a serious build — the constraint was retention and publishing, not capability.</li>
+  <li><strong>The "AI as consultant," not app, is a latent product.</strong> A whole cohort used it to write
+      business plans and strategy, not software. The agent happily obliged, rendering plans as pages — an
+      unplanned use case that hints at an adjacent market.</li>
+  <li><strong>Global demand, zero localization effort.</strong> Six languages organically, with no evidence of
+      i18n — suggesting the prompt-to-app value prop translates (literally) with almost no friction.</li>
+</ol>
+
+<div class="callout">
+  <strong>Bottom line.</strong> ODAPT's users sorted themselves into builders-for-themselves (internal tools,
+  dashboards, personal trackers) and would-be founders (branded, spec'd products with auth and databases).
+  The richest, most underserved seam was the first group's recurring ask — <em>"here's my data, make me a
+  tool"</em> — which the platform was technically equipped to own but never productized.
+</div>
+
+<h2>Appendix — Method</h2>
+<p>
+  Analysis ran against the full backup restored into a local PostgreSQL instance. App categories were derived
+  by case-insensitive pattern matching over 630 app names (each app's opening prompt) plus full prompt text
+  extracted from ~580 <code>sessions</code> message arrays; counts are approximate and marked with ~ where
+  pattern-based. App structure (page counts, view names, scaffolding) was computed from the
+  <code>build.app_spec→views</code> JSON. All quoted prompts are verbatim from the data (lightly truncated for
+  length). Read-only; no data modified.
+</p>
+
+<footer>
+  ODAPT — What People Built · Generated 2026-06-24 · Source: <code>odapt-latest-db-backup.gz</code> ·
+  Data span 2025-01-18 → 2025-03-03 · Companion to <code>odapt-database-audit-2026-06-24.html</code>.
+</footer>
+
+</body>
+</html>

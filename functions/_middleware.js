@@ -21,6 +21,7 @@ const PROTECTED = {
   '/chris-signalfire-opportunity/': 'PW_CHRIS_SIGNALFIRE',
   '/kalshi-bot-market/': 'PW_KALSHI_BOT_MARKET',
   '/kalmari-gtm/': 'PW_KALMARI_GTM',
+  '/odapt-build-report/': 'PW_ODAPT_BUILD_REPORT',
 };
 
 export const onRequest = async (context) => {
