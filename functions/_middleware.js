@@ -22,6 +22,7 @@ const PROTECTED = {
   '/kalshi-bot-market/': 'PW_KALSHI_BOT_MARKET',
   '/kalmari-gtm/': 'PW_KALMARI_GTM',
   '/odapt-build-report/': 'PW_ODAPT_BUILD_REPORT',
+  '/synjuku-label/': 'PW_SYNJUKU_LABEL',
 };
 
 export const onRequest = async (context) => {

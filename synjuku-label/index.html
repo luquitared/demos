@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Synjuku · Action-Block Labeling — Calibration Task</title>
+<style>
+  :root{
+    --bg:#0f1216; --panel:#171b22; --panel2:#1e242d; --line:#2a323d;
+    --ink:#e7ecf2; --dim:#9aa6b3; --accent:#5b9dff; --good:#3ec28f;
+    --warn:#ff6b6b; --note:#f5b942; --chip:#243042;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+  header{padding:12px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  header h1{font-size:15px;margin:0;font-weight:650;letter-spacing:.2px}
+  header .sub{color:var(--dim);font-size:12px}
+  .spacer{flex:1}
+  button{font:inherit;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:7px;padding:6px 11px;cursor:pointer}
+  button:hover{border-color:var(--accent)}
+  button.primary{background:var(--accent);border-color:var(--accent);color:#06101f;font-weight:650}
+  button.ghost{background:transparent}
+  .wrap{display:grid;grid-template-columns:minmax(420px,1fr) minmax(420px,1.1fr);gap:0;height:calc(100vh - 52px)}
+  .col{overflow:auto;padding:16px}
+  .col.left{border-right:1px solid var(--line)}
+  video{width:100%;border-radius:10px;background:#000;display:block}
+  .vid-controls{display:flex;gap:8px;align-items:center;margin:10px 0;flex-wrap:wrap}
+  .t{font-variant-numeric:tabular-nums;background:var(--panel);padding:4px 9px;border-radius:6px;border:1px solid var(--line)}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:14px}
+  .card h2{font-size:12px;text-transform:uppercase;letter-spacing:.7px;color:var(--dim);margin:0 0 10px}
+  label.f{display:block;font-size:11px;color:var(--dim);margin:8px 0 3px;text-transform:uppercase;letter-spacing:.4px}
+  input[type=text],input[type=number],textarea,select{width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--ink);border-radius:6px;padding:7px 9px;font:inherit}
+  textarea{resize:vertical;min-height:38px}
+  .row{display:flex;gap:8px}.row>*{flex:1}
+  .seg{display:flex;gap:0;border:1px solid var(--line);border-radius:7px;overflow:hidden}
+  .seg button{border:0;border-radius:0;background:var(--panel2);flex:1;padding:7px 4px;font-size:13px}
+  .seg button.on{background:var(--accent);color:#06101f;font-weight:650}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+  .chip{background:var(--chip);border:1px solid var(--line);border-radius:14px;padding:4px 10px;font-size:12.5px;cursor:pointer;user-select:none}
+  .chip.on{background:var(--accent);color:#06101f;border-color:var(--accent);font-weight:600}
+  .chip.custom.on{background:var(--note);border-color:var(--note)}
+  .chipgroup{margin-bottom:6px}
+  .chipgroup .gl{font-size:10.5px;color:var(--dim);text-transform:uppercase;letter-spacing:.4px;margin:7px 0 2px}
+  .hands{display:flex;gap:10px}
+  .hand{flex:1;background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:9px}
+  .hand .hl{font-size:11px;color:var(--dim);text-transform:uppercase}
+  .hand .hv{font-weight:650;margin-top:2px}
+  .hand .hv.holding{color:var(--good)}
+  .warn-item{padding:8px 10px;border-radius:7px;margin-bottom:7px;font-size:12.5px;border-left:3px solid}
+  .warn-item.warn{background:rgba(255,107,107,.10);border-color:var(--warn)}
+  .warn-item.note{background:rgba(245,185,66,.10);border-color:var(--note)}
+  .warn-item.ok{background:rgba(62,194,143,.10);border-color:var(--good);color:var(--good)}
+  .blk{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:9px 11px;margin-bottom:8px;font-size:13px}
+  .blk .bt{font-variant-numeric:tabular-nums;color:var(--dim);font-size:11.5px}
+  .blk .bd{margin:3px 0}
+  .blk .meta{font-size:11px;color:var(--dim);display:flex;gap:10px;flex-wrap:wrap}
+  .blk .ba{display:flex;gap:6px;margin-top:6px}
+  .blk .ba button{padding:3px 8px;font-size:11.5px}
+  .tag{display:inline-block;padding:1px 7px;border-radius:10px;font-size:11px;background:var(--chip);border:1px solid var(--line)}
+  .tag.acquire{color:#7fd1ff}.tag.release{color:#ffb3b3}.tag.transfer{color:var(--note)}.tag.manipulate{color:#b7f0d3}
+  details summary{cursor:pointer;color:var(--accent);font-size:12.5px;margin-bottom:8px}
+  .brief{font-size:12.5px;color:var(--dim)}
+  .brief b{color:var(--ink)}
+  .brief ul{margin:6px 0 0;padding-left:18px}
+  .pill{font-size:11px;color:var(--note)}
+  .filehint{font-size:11.5px;color:var(--dim);margin-top:6px}
+</style>
+</head>
+<body>
+<header>
+  <h1>Synjuku · Action-Block Labeling</h1>
+  <span class="sub">Calibration task — segment the clip into sequential action blocks</span>
+  <span class="spacer"></span>
+  <button class="ghost" id="loadBtn">Load video file…</button>
+  <button id="copyBtn">Copy JSON</button>
+  <button class="primary" id="dlBtn">Download JSON</button>
+  <input type="file" id="fileIn" accept="video/*" style="display:none">
+</header>
+
+<div class="wrap">
+  <!-- LEFT: video + episode meta + brief -->
+  <div class="col left">
+    <video id="vid" src="/synjuku-label/task_clip.mp4" controls preload="metadata"></video>
+    <div class="filehint" id="fileHint">If the video doesn't load, click “Load video file…” and pick the clip we sent.</div>
+    <div class="vid-controls">
+      <span class="t" id="curT">0:00.000</span>
+      <button id="ssStart">Set start ⟵ now</button>
+      <button id="ssEnd">Set end ⟵ now</button>
+      <button id="back">−0.1s</button><button id="fwd">+0.1s</button>
+      <select id="speed" style="width:auto">
+        <option value="0.25">0.25×</option><option value="0.5">0.5×</option>
+        <option value="1" selected>1×</option><option value="1.5">1.5×</option><option value="2">2×</option>
+      </select>
+    </div>
+
+    <div class="card">
+      <h2>Episode summary</h2>
+      <label class="f">Episode ID</label>
+      <input type="text" id="epId" value="SE-TASK-01">
+      <label class="f">Overall task (one sentence)</label>
+      <textarea id="overall" placeholder="e.g. Washing knives and cleaning the kitchen sink and countertop."></textarea>
+      <div class="row">
+        <div><label class="f">Environment</label>
+          <select id="env">
+            <option>Residential (interior)</option><option>Commercial kitchen</option>
+            <option>Office (interior)</option><option>Retail / shop</option><option>Other</option>
+          </select></div>
+        <div><label class="f">Quality issues with the footage</label>
+          <input type="text" id="qissues" value="none" placeholder="none / blur / occlusion…"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <details>
+        <summary>▸ Task brief &amp; labeling rules (read me first)</summary>
+        <div class="brief">
+          Watch the whole clip, then break it into <b>sequential action blocks</b> that cover the
+          timeline with <b>no gaps</b>. One dominant hand action per block.
+          <ul>
+            <li><b>Name objects from the picker</b>, not free text. Use the same object name every time
+              you refer to it — pick “other” only when nothing fits.</li>
+            <li><b>Conserve object identity.</b> A hand can hold only one thing at a time. If a hand is
+              already holding something, you must <b>release</b> or <b>transfer</b> it before it picks
+              up the next object.</li>
+            <li><b>Label hand-to-hand transfers</b> as their own block (type = transfer) whenever an
+              object moves between hands.</li>
+            <li><b>Completion signal must reference the same object</b> as the description.</li>
+            <li><b>Mark outcome &amp; confidence honestly</b> — not everything is “success / High”. Use
+              partial / failure and lower confidence when the view is unclear.</li>
+          </ul>
+          The panel on the right tracks what each hand is holding and flags inconsistencies live.
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- RIGHT: editor + live state + blocks -->
+  <div class="col">
+    <div class="card">
+      <h2 id="editorTitle">Add action block</h2>
+      <div class="row">
+        <div><label class="f">Start (s)</label><input type="number" id="bStart" step="0.001" min="0"></div>
+        <div><label class="f">End (s)</label><input type="number" id="bEnd" step="0.001" min="0"></div>
+      </div>
+      <label class="f">Acting hand</label>
+      <div class="seg" id="handSeg">
+        <button data-v="left">Left</button><button data-v="right">Right</button><button data-v="both">Both</button>
+      </div>
+      <label class="f">Action type</label>
+      <div class="seg" id="typeSeg">
+        <button data-v="acquire">Acquire (pick up)</button>
+        <button data-v="release">Release (put down)</button>
+        <button data-v="transfer">Transfer (hand→hand)</button>
+        <button data-v="manipulate">Manipulate / use</button>
+      </div>
+      <label class="f">Object(s) <span class="pill">pick from list — “other” adds a custom chip</span></label>
+      <div id="objChips"></div>
+      <label class="f">Description (full sentence)</label>
+      <textarea id="bDesc" placeholder="e.g. The right hand picks up the kitchen knife with a black handle from the knife block."></textarea>
+      <label class="f">Completion signal</label>
+      <textarea id="bSignal" placeholder="e.g. The kitchen knife is fully lifted from the knife block."></textarea>
+      <div class="row">
+        <div><label class="f">Outcome</label>
+          <div class="seg" id="outSeg">
+            <button data-v="success">Success</button><button data-v="partial">Partial</button><button data-v="failure">Failure</button>
+          </div></div>
+      </div>
+      <div class="row">
+        <div><label class="f">Confidence</label>
+          <div class="seg" id="confSeg">
+            <button data-v="High">High</button><button data-v="Medium">Medium</button><button data-v="Low">Low</button>
+          </div></div>
+      </div>
+      <label class="f">Notes (optional)</label>
+      <input type="text" id="bNotes">
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button class="primary" id="addBtn" style="flex:1">Add block</button>
+        <button class="ghost" id="cancelEdit" style="display:none">Cancel edit</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Hand state (live)</h2>
+      <div class="hands">
+        <div class="hand"><div class="hl">Left hand</div><div class="hv" id="hLeft">empty</div></div>
+        <div class="hand"><div class="hl">Right hand</div><div class="hv" id="hRight">empty</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Consistency checks <span id="warnCount" class="pill"></span></h2>
+      <div id="warnings"></div>
+    </div>
+
+    <div class="card">
+      <h2>Blocks (<span id="blkCount">0</span>) · coverage <span id="coverage" class="pill"></span></h2>
+      <div id="blocks"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ------- EDITABLE controlled object vocabulary (swap in the canonical Synjuku list) ------- */
+const VOCAB = {
+  "Knives & blades": ["kitchen knife","kitchen cleaver","small knife","knife block"],
+  "Cleaning items": ["dish sponge","cleaning cloth","paper napkin","napkin holder","spray bottle","oil bottle","whetstone / sharpening stone"],
+  "Fixtures": ["stainless steel sink","faucet / tap","countertop","drying rack","trash bin","wall hook"],
+  "Containers & dishes": ["bowl","plate","glass","cup","utensil holder"],
+  "Tools": ["spatula","scraper"]
+};
+/* ----------------------------------------------------------------------------------------- */
+
+const vid = document.getElementById('vid');
+let blocks = [];          // {start,end,hand,type,objects:[],custom:[],desc,signal,outcome,conf,notes}
+let editIdx = -1;
+const draft = {hand:'right', type:'acquire', outcome:'success', conf:'High', objects:new Set(), custom:new Set()};
+
+const fmt = t => { t=Math.max(0,t||0); const m=Math.floor(t/60), s=(t-60*m); return m+':'+s.toFixed(3).padStart(6,'0'); };
+
+/* ---- video controls ---- */
+vid.addEventListener('timeupdate',()=>document.getElementById('curT').textContent=fmt(vid.currentTime));
+vid.addEventListener('error',()=>document.getElementById('fileHint').style.color='var(--warn)');
+document.getElementById('ssStart').onclick=()=>{document.getElementById('bStart').value=vid.currentTime.toFixed(3)};
+document.getElementById('ssEnd').onclick=()=>{document.getElementById('bEnd').value=vid.currentTime.toFixed(3)};
+document.getElementById('back').onclick=()=>vid.currentTime=Math.max(0,vid.currentTime-0.1);
+document.getElementById('fwd').onclick=()=>vid.currentTime+=0.1;
+document.getElementById('speed').onchange=e=>vid.playbackRate=parseFloat(e.target.value);
+document.getElementById('loadBtn').onclick=()=>document.getElementById('fileIn').click();
+document.getElementById('fileIn').onchange=e=>{const f=e.target.files[0]; if(f){vid.src=URL.createObjectURL(f);document.getElementById('fileHint').textContent='Loaded: '+f.name;}};
+
+/* ---- segmented controls ---- */
+function wireSeg(id,key){
+  const seg=document.getElementById(id);
+  seg.querySelectorAll('button').forEach(b=>b.onclick=()=>{
+    seg.querySelectorAll('button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on'); draft[key]=b.dataset.v;
+  });
+  // default
+  const def=seg.querySelector('[data-v="'+draft[key]+'"]'); if(def)def.classList.add('on');
+}
+wireSeg('handSeg','hand'); wireSeg('typeSeg','type'); wireSeg('outSeg','outcome'); wireSeg('confSeg','conf');
+
+/* ---- object chips ---- */
+function renderChips(){
+  const wrap=document.getElementById('objChips'); wrap.innerHTML='';
+  for(const [grp,items] of Object.entries(VOCAB)){
+    const g=document.createElement('div'); g.className='chipgroup';
+    g.innerHTML='<div class="gl">'+grp+'</div>';
+    items.forEach(o=>{
+      const c=document.createElement('span'); c.className='chip'+(draft.objects.has(o)?' on':''); c.textContent=o;
+      c.onclick=()=>{draft.objects.has(o)?draft.objects.delete(o):draft.objects.add(o); renderChips();};
+      g.appendChild(c);
+    });
+    wrap.appendChild(g);
+  }
+  // custom chips + add-other
+  const cg=document.createElement('div'); cg.className='chipgroup';
+  cg.innerHTML='<div class="gl">Other (custom)</div>';
+  [...draft.custom].forEach(o=>{
+    const c=document.createElement('span'); c.className='chip custom on'; c.textContent=o+' ✕';
+    c.onclick=()=>{draft.custom.delete(o); renderChips();};
+    cg.appendChild(c);
+  });
+  const add=document.createElement('span'); add.className='chip'; add.textContent='＋ other';
+  add.onclick=()=>{const v=prompt('Custom object name (use only if nothing in the list fits):'); if(v){draft.custom.add(v.trim().toLowerCase());renderChips();}};
+  cg.appendChild(add); wrap.appendChild(cg);
+}
+renderChips();
+
+/* ---- add / edit block ---- */
+function resetDraft(){
+  draft.objects=new Set(); draft.custom=new Set();
+  ['bStart','bEnd','bDesc','bSignal','bNotes'].forEach(i=>document.getElementById(i).value='');
+  renderChips();
+}
+document.getElementById('addBtn').onclick=()=>{
+  const start=parseFloat(document.getElementById('bStart').value);
+  const end=parseFloat(document.getElementById('bEnd').value);
+  if(isNaN(start)||isNaN(end)||end<=start){alert('Set a valid start and end (end > start). Use the “Set start/end ⟵ now” buttons.');return;}
+  const objs=[...draft.objects], cust=[...draft.custom];
+  if(draft.type!=='manipulate' && objs.length+cust.length===0){if(!confirm('No object selected. Add block anyway?'))return;}
+  const b={start,end,hand:draft.hand,type:draft.type,objects:objs,custom:cust,
+           desc:document.getElementById('bDesc').value.trim(),
+           signal:document.getElementById('bSignal').value.trim(),
+           outcome:draft.outcome,conf:draft.conf,notes:document.getElementById('bNotes').value.trim()};
+  if(editIdx>=0){blocks[editIdx]=b; editIdx=-1; document.getElementById('addBtn').textContent='Add block'; document.getElementById('cancelEdit').style.display='none'; document.getElementById('editorTitle').textContent='Add action block';}
+  else blocks.push(b);
+  blocks.sort((a,b)=>a.start-b.start);
+  resetDraft(); render();
+};
+document.getElementById('cancelEdit').onclick=()=>{editIdx=-1;document.getElementById('addBtn').textContent='Add block';document.getElementById('cancelEdit').style.display='none';document.getElementById('editorTitle').textContent='Add action block';resetDraft();};
+
+function editBlock(i){
+  const b=blocks[i]; editIdx=i;
+  document.getElementById('bStart').value=b.start; document.getElementById('bEnd').value=b.end;
+  document.getElementById('bDesc').value=b.desc; document.getElementById('bSignal').value=b.signal; document.getElementById('bNotes').value=b.notes;
+  draft.hand=b.hand;draft.type=b.type;draft.outcome=b.outcome;draft.conf=b.conf;
+  draft.objects=new Set(b.objects);draft.custom=new Set(b.custom);
+  ['handSeg|hand','typeSeg|type','outSeg|outcome','confSeg|conf'].forEach(p=>{const[id,k]=p.split('|');const seg=document.getElementById(id);seg.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x.dataset.v===draft[k]));});
+  renderChips();
+  document.getElementById('addBtn').textContent='Save edit'; document.getElementById('cancelEdit').style.display='block'; document.getElementById('editorTitle').textContent='Editing block '+(i+1);
+  window.scrollTo(0,0);
+}
+function delBlock(i){blocks.splice(i,1);render();}
+
+/* ---- consistency engine (encodes the pilot's failure modes) ---- */
+function objLabel(b){return (b.objects[0]||b.custom[0]||'object');}
+function allObjs(b){return [...b.objects,...b.custom];}
+function analyze(){
+  const held={left:null,right:null}; const warns=[];
+  const sorted=[...blocks];
+  sorted.forEach((b,i)=>{
+    const tag='block '+(i+1)+' @'+fmt(b.start);
+    const hands = b.hand==='both'?['left','right']:[b.hand];
+    if(b.type==='acquire'){
+      hands.forEach(h=>{ if(held[h]) warns.push(['warn',tag+': '+h+' hand acquires “'+objLabel(b)+'” but is already holding “'+held[h]+'”. Add a release or transfer first.']); held[h]=objLabel(b); });
+    } else if(b.type==='release'){
+      hands.forEach(h=>{ if(!held[h]) warns.push(['warn',tag+': '+h+' hand releases but is holding nothing — is a pick-up block missing?']); held[h]=null; });
+    } else if(b.type==='transfer'){
+      const to = b.hand==='both'?null:b.hand; const from = to==='left'?'right':to==='right'?'left':null;
+      if(!from){warns.push(['note',tag+': transfer — set the acting hand to the hand that RECEIVES the object.']);}
+      else if(!held[from]){warns.push(['warn',tag+': transfer to '+to+' hand, but the '+from+' hand holds nothing to pass.']);}
+      else {held[to]=held[from];held[from]=null;}
+    } else if(b.type==='manipulate'){
+      const o=objLabel(b);
+      const heldNow = held.left===o||held.right===o;
+      if(allObjs(b).length && !heldNow && (b.objects.length||b.custom.length)) warns.push(['note',tag+': manipulating “'+o+'” but no hand is recorded holding it (ok if it stays on the surface).']);
+    }
+    // completion signal must reference the labeled object
+    if(b.signal){
+      const sl=b.signal.toLowerCase();
+      const named=allObjs(b).filter(o=>o.split(/[ /]/).some(w=>w.length>2&&sl.includes(w)));
+      if(allObjs(b).length && named.length===0) warns.push(['warn',tag+': completion signal doesn’t mention the labeled object(s) — description and signal may be about different things.']);
+    }
+  });
+  // leftover held
+  ['left','right'].forEach(h=>{ if(held[h]) warns.push(['note','End of clip: '+h+' hand still holding “'+held[h]+'”. Expected, or is a final place missing?']); });
+  // coverage gaps / overlaps
+  for(let i=1;i<sorted.length;i++){
+    const gap=sorted[i].start-sorted[i-1].end;
+    if(gap>0.1) warns.push(['note','Gap '+fmt(sorted[i-1].end)+'–'+fmt(sorted[i].start)+' ('+gap.toFixed(2)+'s) is uncovered.']);
+    if(gap<-0.1) warns.push(['note','Blocks '+i+' and '+(i+1)+' overlap by '+(-gap).toFixed(2)+'s (ok only for true two-handed simultaneous actions).']);
+  }
+  // uniformity nudge
+  if(blocks.length>=8 && blocks.every(b=>b.outcome==='success') && blocks.every(b=>b.conf==='High'))
+    warns.push(['note','Every block is success / High confidence. Please mark partials/failures and lower confidence where the action isn’t clearly visible.']);
+  return {held,warns};
+}
+
+function render(){
+  const {held,warns}=analyze();
+  // hands
+  const L=document.getElementById('hLeft'),R=document.getElementById('hRight');
+  L.textContent=held.left||'empty'; L.className='hv'+(held.left?' holding':'');
+  R.textContent=held.right||'empty'; R.className='hv'+(held.right?' holding':'');
+  // warnings
+  const wc=document.getElementById('warnings'); wc.innerHTML='';
+  if(!warns.length){wc.innerHTML='<div class="warn-item ok">No inconsistencies detected. ✓</div>';}
+  warns.forEach(([sev,msg])=>{const d=document.createElement('div');d.className='warn-item '+sev;d.textContent=msg;wc.appendChild(d);});
+  const nW=warns.filter(w=>w[0]==='warn').length;
+  document.getElementById('warnCount').textContent=warns.length?(nW+' to fix · '+(warns.length-nW)+' to review'):'';
+  // blocks
+  const bc=document.getElementById('blocks'); bc.innerHTML=''; document.getElementById('blkCount').textContent=blocks.length;
+  blocks.forEach((b,i)=>{
+    const d=document.createElement('div'); d.className='blk';
+    const objs=allObjs(b).map(o=>'<span class="tag">'+o+'</span>').join(' ');
+    d.innerHTML='<div class="bt">'+fmt(b.start)+' – '+fmt(b.end)+'  ·  <span class="tag '+b.type+'">'+b.type+'</span>  ·  '+b.hand+' hand</div>'+
+      '<div class="bd">'+(b.desc||'<i style=color:#777>no description</i>')+'</div>'+
+      '<div style="margin:3px 0">'+objs+'</div>'+
+      '<div class="meta"><span>✓ '+(b.signal||'—')+'</span></div>'+
+      '<div class="meta"><span>outcome: '+b.outcome+'</span><span>confidence: '+b.conf+'</span>'+(b.notes?'<span>note: '+b.notes+'</span>':'')+'</div>'+
+      '<div class="ba"><button data-e="'+i+'">Edit</button><button data-d="'+i+'">Delete</button></div>';
+    bc.appendChild(d);
+  });
+  bc.querySelectorAll('[data-e]').forEach(x=>x.onclick=()=>editBlock(+x.dataset.e));
+  bc.querySelectorAll('[data-d]').forEach(x=>x.onclick=()=>delBlock(+x.dataset.d));
+  // coverage
+  if(blocks.length){const cov=blocks[blocks.length-1].end-blocks[0].start;document.getElementById('coverage').textContent=fmt(blocks[0].start)+'→'+fmt(blocks[blocks.length-1].end);}
+  else document.getElementById('coverage').textContent='';
+}
+render();
+
+/* ---- export ---- */
+function buildJSON(){
+  const usedObjs=[...new Set(blocks.flatMap(b=>allObjs(b)))];
+  return {
+    episode_id:document.getElementById('epId').value,
+    overall_task:document.getElementById('overall').value,
+    primary_objects:usedObjs.join(', '),
+    environment_type:document.getElementById('env').value,
+    quality_issues:document.getElementById('qissues').value,
+    labeled_with:'synjuku-action-block-tool-v1',
+    blocks:blocks.map(b=>({
+      block_type:b.type==='manipulate'?'action':b.type, action_type:b.type,
+      start:fmt(b.start), end:fmt(b.end), acting_hand:b.hand,
+      objects:allObjs(b), description:b.desc, completion_signal:b.signal,
+      outcome:b.outcome, confidence:b.conf, notes:b.notes
+    }))
+  };
+}
+document.getElementById('dlBtn').onclick=()=>{
+  const blob=new Blob([JSON.stringify(buildJSON(),null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download=(document.getElementById('epId').value||'labels')+'.json'; a.click();
+};
+document.getElementById('copyBtn').onclick=async()=>{
+  await navigator.clipboard.writeText(JSON.stringify(buildJSON(),null,2));
+  document.getElementById('copyBtn').textContent='Copied ✓'; setTimeout(()=>document.getElementById('copyBtn').textContent='Copy JSON',1200);
+};
+</script>
+</body>
+</html>
