@@ -1,0 +1,962 @@
+{
+ "episodes": [
+  {
+   "task_id": "0010",
+   "episode_id": "0010_ER_20260512_091053_b784e1",
+   "clip": "out_review/clips_web/0010.mp4",
+   "spans": [
+    {
+     "start": 0.0,
+     "end": 12.1,
+     "label": "open drawer at cabinet and pick bottle from drawer"
+    },
+    {
+     "start": 12.1,
+     "end": 16.0,
+     "label": "pull drawer along track to open drawer"
+    },
+    {
+     "start": 16.0,
+     "end": 18.0,
+     "label": "pick chopsticks from drawer and place chopsticks on counter"
+    },
+    {
+     "start": 18.0,
+     "end": 22.5,
+     "label": "pick knife from drawer and place knife on edge of drawer"
+    },
+    {
+     "start": 22.5,
+     "end": 24.5,
+     "label": "pick chopsticks from inside drawer and place chopsticks outside drawer"
+    },
+    {
+     "start": 24.5,
+     "end": 32.7,
+     "label": "remove plate from inside drawer and place plate on lap"
+    },
+    {
+     "start": 32.7,
+     "end": 40.8,
+     "label": "pick chopsticks from inside drawer and place in hand"
+    },
+    {
+     "start": 40.8,
+     "end": 45.6,
+     "label": "pick chopsticks from drawer and place chopsticks on countertop"
+    },
+    {
+     "start": 45.6,
+     "end": 47.8,
+     "label": "pick chopsticks from drawer and place chopsticks in hand"
+    },
+    {
+     "start": 47.8,
+     "end": 51.0,
+     "label": "pick chopsticks from drawer and place chopsticks in hand"
+    },
+    {
+     "start": 51.0,
+     "end": 54.2,
+     "label": "place chopsticks inside drawer and release chopsticks from hand"
+    },
+    {
+     "start": 54.2,
+     "end": 58.5,
+     "label": "pick cutlery from drawer and place cutlery inside drawer"
+    },
+    {
+     "start": 58.5,
+     "end": 63.2,
+     "label": "pick nail clipper from drawer and place nail clipper in hand"
+    },
+    {
+     "start": 63.2,
+     "end": 65.2,
+     "label": "push drawer closed along cabinet path until fully closed"
+    },
+    {
+     "start": 65.2,
+     "end": 67.1,
+     "label": "lift bowl from bottom of drawer and place on lap"
+    },
+    {
+     "start": 67.1,
+     "end": 69.6,
+     "label": "pick up spoon from inside drawer and hold spoon in hand"
+    },
+    {
+     "start": 69.6,
+     "end": 74.3,
+     "label": "pick ceramic spoon from drawer and place in hand"
+    },
+    {
+     "start": 74.3,
+     "end": 78.1,
+     "label": "pick item with chopsticks from bottom of drawer and place item on plate"
+    },
+    {
+     "start": 78.1,
+     "end": 83.1,
+     "label": "pick up butter knife from drawer and hold butter knife in hand"
+    },
+    {
+     "start": 83.1,
+     "end": 87.2,
+     "label": "place knife inside drawer and grasp knife from drawer"
+    },
+    {
+     "start": 87.2,
+     "end": 89.5,
+     "label": "pick chopsticks from drawer and place chopsticks on drawer"
+    },
+    {
+     "start": 89.5,
+     "end": 92.3,
+     "label": "pick utensil from bottom of drawer and place utensil inside drawer"
+    },
+    {
+     "start": 92.3,
+     "end": 96.3,
+     "label": "pick chopsticks from drawer and place chopsticks into bowl"
+    },
+    {
+     "start": 96.3,
+     "end": 100.0,
+     "label": "pick spoon from drawer and place spoon inside drawer"
+    },
+    {
+     "start": 100.0,
+     "end": 102.0,
+     "label": "pick bottle from bottom of drawer and place bottle on top of drawer"
+    },
+    {
+     "start": 102.0,
+     "end": 107.0,
+     "label": "pick bowl from inside drawer and place bowl inside drawer"
+    },
+    {
+     "start": 107.0,
+     "end": 110.1,
+     "label": "place chopsticks on top edge of drawer from inside drawer and place chopsticks inside drawer"
+    },
+    {
+     "start": 110.1,
+     "end": 113.3,
+     "label": "pick measuring spoon from drawer and place into drawer"
+    },
+    {
+     "start": 113.3,
+     "end": 118.2,
+     "label": "pick chopsticks inside drawer and place chopsticks outside drawer"
+    },
+    {
+     "start": 118.2,
+     "end": 122.2,
+     "label": "place chopsticks into drawer"
+    },
+    {
+     "start": 122.2,
+     "end": 125.0,
+     "label": "pick plastic wrap roll from drawer and place in hand"
+    },
+    {
+     "start": 125.0,
+     "end": 128.8,
+     "label": "pick plastic wrap roll from hand and place inside drawer"
+    },
+    {
+     "start": 128.8,
+     "end": 142.0,
+     "label": "pick utensil from inside drawer and place utensil aside"
+    },
+    {
+     "start": 142.0,
+     "end": 148.0,
+     "label": "close cabinet door along hinge until fully shut"
+    },
+    {
+     "start": 148.0,
+     "end": 150.3,
+     "label": "open drawer at handle from cabinet and place rolling pin and aluminum foil inside drawer"
+    },
+    {
+     "start": 150.3,
+     "end": 153.3,
+     "label": "pick rolling pin from drawer and pick spatula from drawer"
+    },
+    {
+     "start": 153.3,
+     "end": 162.2,
+     "label": "open drawer at front side of cabinet and lift drawer open and grasp spice bottles and place spice bottles inside drawer"
+    },
+    {
+     "start": 162.2,
+     "end": 171.0,
+     "label": "pick various items inside drawer from drawer and place items inside drawer in organized manner"
+    },
+    {
+     "start": 171.0,
+     "end": 175.0,
+     "label": "pick spoons and chopsticks from drawer and place spoons and chopsticks in bowl"
+    },
+    {
+     "start": 175.0,
+     "end": 187.3,
+     "label": "pick utensils from bottom of drawer and place utensils on top edge of drawer"
+    },
+    {
+     "start": 187.3,
+     "end": 195.5,
+     "label": "pick spoons and ladle from drawer and place spoons and plates inside drawer"
+    },
+    {
+     "start": 195.5,
+     "end": 203.6,
+     "label": "lift plate from inside drawer and place plate outside drawer"
+    },
+    {
+     "start": 203.6,
+     "end": 209.6,
+     "label": "pick up wooden spatula from top of white drawer and lift it"
+    },
+    {
+     "start": 209.6,
+     "end": 219.3,
+     "label": "pick knife by handle from drawer and lift knife"
+    },
+    {
+     "start": 219.3,
+     "end": 228.7,
+     "label": "close drawer with knife inside along drawer track and fully closed"
+    },
+    {
+     "start": 228.7,
+     "end": 238.1,
+     "label": "pick spice jar from drawer and place spice jar in hand"
+    },
+    {
+     "start": 238.1,
+     "end": 239.8,
+     "label": "pick spice bottle from drawer and place spice bottle in hand"
+    }
+   ],
+   "card": {
+    "name": "Organize Kitchen Utensils",
+    "environment": "kitchen",
+    "required_objects": [
+     "ladle",
+     "fork",
+     "knife",
+     "plate",
+     "bowl"
+    ],
+    "steps": [
+     "Pick up the ladle",
+     "Pick up the fork",
+     "Pick up the knife",
+     "Organize the plate",
+     "Organize the bowl",
+     "Arrange the cups",
+     "Organize the spice jars",
+     "Consolidate kitchen utensils"
+    ],
+    "initial": "Kitchen utensils are messy and scattered in different places.",
+    "final": "Kitchen utensils are neatly arranged on the kitchen rack for easy use."
+   },
+   "summary_ungrounded": "The person organizes, retrieves, and arranges various kitchen utensils, cutlery, and containers by repeatedly opening drawers, selecting items, and placing them on surfaces or back inside the drawers.",
+   "summary_grounded": "The person organizes a variety of kitchen utensils, cutlery, and containers by sorting, rearranging, and placing them neatly inside kitchen drawers and on nearby surfaces."
+  },
+  {
+   "task_id": "0180",
+   "episode_id": "0180_ET_20260617_162453_9573bd",
+   "clip": "out_review/clips_web/0180.mp4",
+   "spans": [
+    {
+     "start": 0.0,
+     "end": 4.3,
+     "label": "place cloth on rack beside sink and counter and place cloth on rack"
+    },
+    {
+     "start": 4.3,
+     "end": 12.5,
+     "label": "push bottle on sink counter into sink basin along downward path"
+    },
+    {
+     "start": 12.5,
+     "end": 20.8,
+     "label": "turn faucet handle over sink clockwise to turn off water flow"
+    },
+    {
+     "start": 20.8,
+     "end": 29.3,
+     "label": "pick bidet nozzle from toilet and place bidet nozzle in hand"
+    },
+    {
+     "start": 29.3,
+     "end": 37.8,
+     "label": "turn on bidet nozzle handle along its axis and activate water flow"
+    },
+    {
+     "start": 37.8,
+     "end": 39.8,
+     "label": "walk away from toilet along bathroom floor"
+    },
+    {
+     "start": 39.8,
+     "end": 42.5,
+     "label": "move body forward along floor path toward bathroom sink"
+    },
+    {
+     "start": 42.5,
+     "end": 45.6,
+     "label": "push lamp head on tripod along vertical path"
+    },
+    {
+     "start": 45.6,
+     "end": 53.8,
+     "label": "turn on the light on the stand along the vertical path and reach the on state"
+    },
+    {
+     "start": 53.8,
+     "end": 66.5,
+     "label": "pick two bottles from countertop and place them on sink"
+    },
+    {
+     "start": 66.5,
+     "end": 72.8,
+     "label": "remove light bulb from socket and hold light bulb in hand"
+    },
+    {
+     "start": 72.8,
+     "end": 76.8,
+     "label": "pick lotion bottle from countertop and place lotion bottle on countertop"
+    },
+    {
+     "start": 76.8,
+     "end": 85.7,
+     "label": "pick remote control from countertop and place remote control in hand"
+    },
+    {
+     "start": 85.7,
+     "end": 89.2,
+     "label": "cover hand over camera path blocking view and causing darkness"
+    },
+    {
+     "start": 89.2,
+     "end": 94.0,
+     "label": "turn on the light switch on the lamp stand along the vertical path and turn the lamp on"
+    },
+    {
+     "start": 94.0,
+     "end": 104.1,
+     "label": "wash hands under faucet and sink with water until clean"
+    },
+    {
+     "start": 104.1,
+     "end": 108.8,
+     "label": "rub hands under faucet and above sink until clean"
+    },
+    {
+     "start": 108.8,
+     "end": 120.5,
+     "label": "rub hands under faucet water until clean"
+    },
+    {
+     "start": 120.5,
+     "end": 128.2,
+     "label": "wring cloth by hand over sink and achieve wrung condition"
+    },
+    {
+     "start": 128.2,
+     "end": 135.8,
+     "label": "rub cloth on left palm and right hand together to clean"
+    },
+    {
+     "start": 135.8,
+     "end": 142.5,
+     "label": "place cloth on top of paper towel dispenser and place cloth on paper towel dispenser"
+    },
+    {
+     "start": 142.5,
+     "end": 150.8,
+     "label": "point finger at mirror along upward path and hold position"
+    },
+    {
+     "start": 150.8,
+     "end": 159.3,
+     "label": "turn faucet handle on sink clockwise to off position and stop water flow"
+    },
+    {
+     "start": 159.3,
+     "end": 174.0,
+     "label": "pick soap dispenser from sink counter and place soap dispenser on sink counter"
+    },
+    {
+     "start": 174.0,
+     "end": 176.0,
+     "label": "walk away from toilet along floor"
+    },
+    {
+     "start": 176.0,
+     "end": 180.1,
+     "label": "turn on lamp switch on lamp stand and illuminate lamp"
+    },
+    {
+     "start": 180.1,
+     "end": 182.1,
+     "label": "rotate light fixture on stand along vertical axis and adjust angle to illuminate sink area"
+    },
+    {
+     "start": 182.1,
+     "end": 190.8,
+     "label": "press liquid soap dispenser pump over sink and dispense soap"
+    },
+    {
+     "start": 190.8,
+     "end": 199.7,
+     "label": "dispense liquid soap from dispenser into hands and complete dispensing"
+    },
+    {
+     "start": 199.7,
+     "end": 201.6,
+     "label": "pick black object from tripod and place black object on sink counter"
+    },
+    {
+     "start": 201.6,
+     "end": 203.6,
+     "label": "push hand over camera lens along path toward camera to cover lens"
+    },
+    {
+     "start": 203.6,
+     "end": 207.5,
+     "label": "push hand over camera lens along path to cover lens"
+    },
+    {
+     "start": 207.5,
+     "end": 210.6,
+     "label": "pick card on top of paper on sink counter and place card on sink counter"
+    },
+    {
+     "start": 210.6,
+     "end": 214.3,
+     "label": "dispense liquid soap into sink and target condition soap is in the sink"
+    },
+    {
+     "start": 214.3,
+     "end": 217.3,
+     "label": "pick cloth from sink edge and place cloth on sink counter"
+    },
+    {
+     "start": 217.3,
+     "end": 226.5,
+     "label": "wring cloth under faucet and sink until damp"
+    },
+    {
+     "start": 226.5,
+     "end": 235.6,
+     "label": "pick glove from sink edge and place on countertop"
+    },
+    {
+     "start": 235.6,
+     "end": 238.6,
+     "label": "push paper sheet on sink counter towards edge"
+    },
+    {
+     "start": 238.6,
+     "end": 239.8,
+     "label": "push hand over camera lens along path to cover lens completely"
+    }
+   ],
+   "card": {
+    "name": "Bathroom Light Control Task",
+    "environment": "bathroom",
+    "required_objects": [
+     "bathroom light switch",
+     "sink",
+     "mirror",
+     "towel rack",
+     "shower head"
+    ],
+    "steps": [
+     "Turn on the light",
+     "Wash hands",
+     "Dry hands",
+     "Check the mirror",
+     "Prepare for shower",
+     "Switch off the light",
+     "Organize items",
+     "Turn off the light"
+    ],
+    "initial": "The bathroom light is off, and items are cluttered.",
+    "final": "The bathroom light is off, and items are organized."
+   },
+   "summary_ungrounded": "A person cleans and organizes items in a bathroom, including washing hands, handling soap and cloths, adjusting lighting, and tidying objects on the sink and countertop.",
+   "summary_grounded": "The person organizes and cleans a cluttered bathroom by washing hands, handling various items, adjusting lighting, and tidying objects around the sink and countertop."
+  },
+  {
+   "task_id": "0824",
+   "episode_id": "0824_ER_20260608_113433_450f57",
+   "clip": "out_review/clips_web/0824.mp4",
+   "spans": [
+    {
+     "start": 0.0,
+     "end": 9.8,
+     "label": "pull window blind chain downwards along vertical path and lower the blind"
+    },
+    {
+     "start": 9.8,
+     "end": 19.7,
+     "label": "pull window blind cord upwards along vertical path and raise the window blind"
+    },
+    {
+     "start": 19.7,
+     "end": 21.7,
+     "label": "pick fan from floor and lift it"
+    },
+    {
+     "start": 21.7,
+     "end": 23.8,
+     "label": "pick spotlight from floor and place it on floor near cabinet"
+    },
+    {
+     "start": 23.8,
+     "end": 38.1,
+     "label": "pick up light fixture from floor and hold in hand"
+    },
+    {
+     "start": 38.1,
+     "end": 52.5,
+     "label": "turn knob on coffee grinder along rotational path and tighten"
+    },
+    {
+     "start": 52.5,
+     "end": 66.8,
+     "label": "pick lamp head from table and place lamp head on floor"
+    },
+    {
+     "start": 66.8,
+     "end": 77.5,
+     "label": "plug power cord of lamp into power strip on floor near cabinet and sofa until connected"
+    },
+    {
+     "start": 77.5,
+     "end": 88.3,
+     "label": "pick up light bulb from floor and place in hand"
+    },
+    {
+     "start": 88.3,
+     "end": 90.5,
+     "label": "attach light to stand by inserting and securing the mount and ensuring the light is stable"
+    },
+    {
+     "start": 90.5,
+     "end": 95.2,
+     "label": "place lamp head on tripod base near floor and grasp lamp head from air and place lamp head on tripod base near floor"
+    },
+    {
+     "start": 95.2,
+     "end": 99.7,
+     "label": "place fan on floor beside cabinet and lift hand away"
+    },
+    {
+     "start": 99.7,
+     "end": 102.5,
+     "label": "pick remote control from floor and place remote control on table"
+    },
+    {
+     "start": 102.5,
+     "end": 104.5,
+     "label": "push remote control on floor beside white box across floor"
+    },
+    {
+     "start": 104.5,
+     "end": 108.1,
+     "label": "slide book on floor towards right side on floor"
+    },
+    {
+     "start": 108.1,
+     "end": 122.8,
+     "label": "push remote control on floor towards cabinet along floor"
+    },
+    {
+     "start": 122.8,
+     "end": 137.5,
+     "label": "pick remote control from hand and hold in hand"
+    },
+    {
+     "start": 137.5,
+     "end": 152.2,
+     "label": "push fan stand on floor along floor towards window"
+    },
+    {
+     "start": 152.2,
+     "end": 166.8,
+     "label": "walk forward holding remote control in hand along floor path"
+    },
+    {
+     "start": 166.8,
+     "end": 169.3,
+     "label": "place remote on top surface of white table"
+    },
+    {
+     "start": 169.3,
+     "end": 172.3,
+     "label": "pick card from floor and place on table"
+    },
+    {
+     "start": 172.3,
+     "end": 177.1,
+     "label": "pick up fan from floor and place fan in hand"
+    },
+    {
+     "start": 177.1,
+     "end": 183.7,
+     "label": "turn knob on fan clockwise along circular path and tighten"
+    },
+    {
+     "start": 183.7,
+     "end": 197.3,
+     "label": "turn knob on device clockwise along rotational path to adjust setting"
+    },
+    {
+     "start": 197.3,
+     "end": 199.3,
+     "label": "walk forward past scattered books on floor along wooden floor path"
+    },
+    {
+     "start": 199.3,
+     "end": 201.3,
+     "label": "pick up book from floor and hold book in hands"
+    },
+    {
+     "start": 201.3,
+     "end": 204.6,
+     "label": "place book on table from hands and release book on table"
+    },
+    {
+     "start": 204.6,
+     "end": 207.5,
+     "label": "pick book cover from table and place book in front of person"
+    },
+    {
+     "start": 207.5,
+     "end": 210.0,
+     "label": "place book on floor beside person and release book from hands"
+    },
+    {
+     "start": 210.0,
+     "end": 212.8,
+     "label": "place yellow book on front cover on table"
+    },
+    {
+     "start": 212.8,
+     "end": 215.1,
+     "label": "push book onto floor from table along downward path"
+    },
+    {
+     "start": 215.1,
+     "end": 217.2,
+     "label": "pick up book from floor and place book in hands"
+    },
+    {
+     "start": 217.2,
+     "end": 219.5,
+     "label": "place book on table near window"
+    },
+    {
+     "start": 219.5,
+     "end": 221.7,
+     "label": "flip pages of book on table until open"
+    },
+    {
+     "start": 221.7,
+     "end": 223.7,
+     "label": "push book off table onto floor along downward path"
+    },
+    {
+     "start": 223.7,
+     "end": 225.8,
+     "label": "pick up book from floor and place book in hands"
+    },
+    {
+     "start": 225.8,
+     "end": 227.8,
+     "label": "hold book with both hands in front of torso while walking forward"
+    },
+    {
+     "start": 227.8,
+     "end": 233.8,
+     "label": "pick book from hands and place book on table"
+    },
+    {
+     "start": 233.8,
+     "end": 235.8,
+     "label": "push book off table onto floor along vertical downward path"
+    },
+    {
+     "start": 235.8,
+     "end": 237.8,
+     "label": "pick up book from floor and place in hands"
+    },
+    {
+     "start": 237.8,
+     "end": 239.8,
+     "label": "hold book with both hands in front of torso and walk forward"
+    }
+   ],
+   "card": {
+    "name": "Adjust Bedroom Lighting",
+    "environment": "bedroom",
+    "required_objects": [
+     "table lamp",
+     "curtain",
+     "light bulb",
+     "remote control",
+     "socket"
+    ],
+    "steps": [
+     "Open the curtains",
+     "Check the light bulb",
+     "Adjust the table lamp",
+     "Use the remote control",
+     "Readjust the table lamp",
+     "Organize the books",
+     "Arrange the plant",
+     "Check the overall effect"
+    ],
+    "initial": "The bedroom is dimly lit, the curtains are not drawn, and the table lamp is not turned on.",
+    "final": "The bedroom is bright, the curtains are drawn, and the table lamp is adjusted to an appropriate brightness."
+   },
+   "summary_ungrounded": "A person organizes and sets up various household items\u2014including lamps, fans, books, and remote controls\u2014by assembling, plugging in, adjusting, and moving them between the floor, tables, and other locations.",
+   "summary_grounded": "The person adjusts the bedroom lighting by assembling and positioning lamps, plugging them in, manipulating blinds, using a remote control, and organizing books and other items around the room."
+  },
+  {
+   "task_id": "3289",
+   "episode_id": "3289_ER_20260604_160243_ce6865",
+   "clip": "out_review/clips_web/3289.mp4",
+   "spans": [
+    {
+     "start": 0.0,
+     "end": 4.3,
+     "label": "type laptop keyboard with fingers on keyboard surface in typing motion and input text"
+    },
+    {
+     "start": 4.3,
+     "end": 6.5,
+     "label": "press laptop keyboard with fingers on keyboard and open printer lid with hand along path to open position"
+    },
+    {
+     "start": 6.5,
+     "end": 10.3,
+     "label": "open photocopier lid upwards to open position"
+    },
+    {
+     "start": 10.3,
+     "end": 13.0,
+     "label": "lift copier lid along vertical path and open"
+    },
+    {
+     "start": 13.0,
+     "end": 15.0,
+     "label": "pick printed paper from printer output tray and place printed paper in hand"
+    },
+    {
+     "start": 15.0,
+     "end": 17.0,
+     "label": "pick paper from output tray of printer and place paper on desk"
+    },
+    {
+     "start": 17.0,
+     "end": 19.0,
+     "label": "remove paper from output tray of printer and place paper on desk"
+    },
+    {
+     "start": 19.0,
+     "end": 21.8,
+     "label": "slide paper under printer on desk from right to left"
+    },
+    {
+     "start": 21.8,
+     "end": 23.8,
+     "label": "pick paper from printer output tray and place paper on desk"
+    },
+    {
+     "start": 23.8,
+     "end": 26.3,
+     "label": "lift printer cover upwards and backwards to open the printer lid"
+    },
+    {
+     "start": 26.3,
+     "end": 34.5,
+     "label": "open copier lid upward to open position and expose inside"
+    },
+    {
+     "start": 34.5,
+     "end": 39.1,
+     "label": "open copier lid upwards and backwards to open position"
+    },
+    {
+     "start": 39.1,
+     "end": 41.1,
+     "label": "pick paper from output tray of printer and place paper on desk"
+    },
+    {
+     "start": 41.1,
+     "end": 43.5,
+     "label": "pick paper sheet from desk and place paper sheet near printer"
+    },
+    {
+     "start": 43.5,
+     "end": 46.3,
+     "label": "pick paper sheet from desk and place paper sheet on desk"
+    },
+    {
+     "start": 46.3,
+     "end": 49.3,
+     "label": "pick paper from desk and place into printer"
+    },
+    {
+     "start": 49.3,
+     "end": 51.5,
+     "label": "operate laminator machine handle downward to laminate paper"
+    },
+    {
+     "start": 51.5,
+     "end": 54.7,
+     "label": "slide paper into laminator through slot"
+    },
+    {
+     "start": 54.7,
+     "end": 69.3,
+     "label": "press laminator machine handle downwards along vertical path and release to laminate paper"
+    },
+    {
+     "start": 69.3,
+     "end": 81.6,
+     "label": "press laminator handle down along vertical path and hold down"
+    },
+    {
+     "start": 81.6,
+     "end": 94.0,
+     "label": "operate laminator machine handle downward"
+    },
+    {
+     "start": 94.0,
+     "end": 106.5,
+     "label": "slide paper through laminator on desk from front to back"
+    },
+    {
+     "start": 106.5,
+     "end": 108.5,
+     "label": "slide laminator on desk to the right along desk surface"
+    },
+    {
+     "start": 108.5,
+     "end": 110.8,
+     "label": "press laptop keyboard with hand on keyboard"
+    },
+    {
+     "start": 110.8,
+     "end": 122.0,
+     "label": "type on laptop keyboard on desk from start to end with fingers moving and screen unlocking"
+    },
+    {
+     "start": 122.0,
+     "end": 133.2,
+     "label": "type fingers on laptop keyboard over the keyboard in a repetitive manner ensuring input on the laptop"
+    },
+    {
+     "start": 133.2,
+     "end": 144.6,
+     "label": "type fingers on laptop keyboard over the keys in a repetitive manner to input text"
+    },
+    {
+     "start": 144.6,
+     "end": 156.8,
+     "label": "close laptop screen from open position to closed position"
+    },
+    {
+     "start": 156.8,
+     "end": 169.0,
+     "label": "type laptop keyboard on desk with fingers and hands in place"
+    },
+    {
+     "start": 169.0,
+     "end": 181.3,
+     "label": "type fingers on laptop keyboard over the keys in a repetitive manner and maintain typing rhythm to input text"
+    },
+    {
+     "start": 181.3,
+     "end": 183.3,
+     "label": "pick paper from keyboard of laptop and place paper on desk"
+    },
+    {
+     "start": 183.3,
+     "end": 185.3,
+     "label": "pick printed paper from the printer and place printed paper in the person's hand"
+    },
+    {
+     "start": 185.3,
+     "end": 195.3,
+     "label": "pick paper from output tray of printer and place paper on desk"
+    },
+    {
+     "start": 195.3,
+     "end": 205.3,
+     "label": "pick paper from top of printer and place paper in hand"
+    },
+    {
+     "start": 205.3,
+     "end": 215.5,
+     "label": "pick paper from desk and place paper on laptop"
+    },
+    {
+     "start": 215.5,
+     "end": 217.8,
+     "label": "pick up paper from desk and hold paper in front of body"
+    },
+    {
+     "start": 217.8,
+     "end": 220.3,
+     "label": "place paper sheet on top surface of printer near the left side of the desk"
+    },
+    {
+     "start": 220.3,
+     "end": 230.0,
+     "label": "place paper on laptop keyboard from hand and place paper on laptop keyboard"
+    },
+    {
+     "start": 230.0,
+     "end": 239.8,
+     "label": "insert paper into laminator slot and push through to complete lamination"
+    }
+   ],
+   "card": {
+    "name": "Office Equipment Functionality Test",
+    "environment": "private_office",
+    "required_objects": [
+     "printer",
+     "copier",
+     "scanner",
+     "calculator",
+     "laptop"
+    ],
+    "steps": [
+     "Check the printer",
+     "Print a test page",
+     "Confirm the print result",
+     "Check the copier",
+     "Copy the document",
+     "Confirm the copy effect",
+     "Check the scanner",
+     "Scan the document"
+    ],
+    "initial": "The office equipment has not undergone a comprehensive functional test.",
+    "final": "All equipment functions normally, and test results are recorded."
+   },
+   "summary_ungrounded": "A person types on a laptop, prints and collects papers, prepares and inserts them into a laminator, and operates the laminator to laminate the documents.",
+   "summary_grounded": "A person tests the functionality of office equipment in a private office by operating a laptop, printer, copier, and laminator, handling documents, and recording results."
+  }
+ ]
+}

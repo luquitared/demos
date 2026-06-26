@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Task-Card Match Check</title>
+<style>
+:root{--seal:#B64D3D;--ink:#2D2D2B;--muted:rgba(45,45,43,.55);--faint:rgba(45,45,43,.12);
+  --rice:#F1F2EC;--panel:#FBFBF8;--tint:#E8E9E2;--green:#6F8C5A;--green-bg:#F0F4EC;--red:#B64D3D;--red-bg:#FBF1EE;--grey:#8A8A85;--grey-bg:#EFEFEA;}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Inter',-apple-system,system-ui,sans-serif;background:var(--rice);color:var(--ink);font-size:14px;line-height:1.5;height:100vh;overflow:hidden;display:flex;flex-direction:column}
+.mono{font-family:'JetBrains Mono',monospace}
+header{display:flex;align-items:center;gap:18px;padding:10px 18px;background:var(--panel);border-bottom:1px solid var(--faint);flex-wrap:wrap}
+header h1{font-size:15px;font-weight:600;margin:0}
+header h1 .tag{color:var(--seal)}
+.stats{display:flex;gap:16px;font-size:12px;color:var(--muted)}.stats b{color:var(--ink)}
+.spacer{flex:1}
+button{font:inherit;font-size:12px;border:1px solid var(--faint);background:var(--panel);color:var(--ink);border-radius:6px;padding:6px 11px;cursor:pointer}
+button:hover{background:var(--tint)}
+.main{flex:1;display:flex;min-height:0}
+.list{width:240px;border-right:1px solid var(--faint);overflow-y:auto;background:var(--panel)}
+.row{padding:8px 12px;border-bottom:1px solid var(--faint);cursor:pointer;display:flex;gap:8px;align-items:center}
+.row:hover{background:var(--tint)}.row.sel{background:var(--rice);box-shadow:inset 3px 0 0 var(--seal)}
+.row .id{font-size:11px;color:var(--muted);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dot{width:9px;height:9px;border-radius:50%;flex:none}
+.dot.match{background:var(--green)}.dot.wrong{background:var(--red)}.dot.unsure{background:var(--grey)}
+.detail{flex:1;overflow-y:auto;padding:20px 26px;max-width:900px}
+.crumbs{font-size:12px;color:var(--muted);margin-bottom:10px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.frames img{width:100%;border-radius:8px;border:1px solid var(--faint);margin-bottom:8px}
+.card{border:1px solid var(--faint);border-radius:8px;padding:16px 18px;background:var(--panel)}
+.card .kicker{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+.card h2{font-size:20px;margin:4px 0 2px;letter-spacing:-.01em}
+.card .env{display:inline-block;font-size:12px;background:var(--tint);border-radius:5px;padding:2px 8px;margin:4px 0 12px;font-weight:600}
+.card .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-top:12px;font-weight:600}
+.card .objs{display:flex;gap:6px;flex-wrap:wrap;margin-top:5px}
+.card .obj{font-size:12px;background:var(--green-bg);color:var(--green);border-radius:5px;padding:2px 8px}
+.card .steps{font-size:12px;color:var(--ink);margin:5px 0 0;padding-left:1.1em}.card .steps li{margin:2px 0}
+.card .state{font-size:12px;color:var(--muted);margin-top:4px}
+.q{margin:20px 0 0;font-size:15px;font-weight:600}
+.vbtns{display:flex;gap:10px;margin:10px 0}
+.vbtns button{flex:1;padding:12px;font-size:14px;font-weight:600;border-radius:8px}
+.vbtns button.match.act{background:var(--green);color:#fff;border-color:var(--green)}
+.vbtns button.wrong.act{background:var(--red);color:#fff;border-color:var(--red)}
+.vbtns button.unsure.act{background:var(--grey);color:#fff;border-color:var(--grey)}
+textarea{width:100%;border:1px solid var(--faint);border-radius:6px;padding:8px;font:inherit;font-size:12px;margin-top:8px;min-height:40px;resize:vertical}
+.help{font-size:11px;color:var(--muted);margin-top:16px}kbd{font-family:monospace;background:var(--tint);border:1px solid var(--faint);border-bottom-width:2px;border-radius:4px;padding:0 5px}
+.empty{color:var(--muted);padding:40px;text-align:center}
+</style></head>
+<body><a href="/" style="position:fixed;bottom:10px;left:10px;z-index:999;font:12px sans-serif;color:#888;text-decoration:none;background:rgba(255,255,255,.8);padding:3px 9px;border-radius:6px;border:1px solid #ddd">← demos</a>
+<header>
+  <h1>Task-Card <span class="tag">Match Check</span></h1>
+  <div class="stats" id="stats"></div>
+  <div class="spacer"></div>
+  <button id="btnExport">⤓ export verdicts</button>
+</header>
+<div class="main">
+  <div class="list" id="list"></div>
+  <div class="detail" id="detail"><div class="empty">loading…</div></div>
+</div>
+<script>
+const V=["match","wrong","unsure"];
+let DATA=null,REC=[],cur=0;
+let MARKS=JSON.parse(localStorage.getItem("cardcheck")||"{}");
+const save=()=>localStorage.setItem("cardcheck",JSON.stringify(MARKS));
+
+async function boot(){
+  try{ DATA=await (await fetch("out_verify/verify_data.json",{cache:"no-store"})).json(); }
+  catch(e){ document.getElementById("detail").innerHTML='<div class="empty">Run <code>python build_card_verify.py</code> first, then serve from the repo root.</div>'; return; }
+  REC=DATA.records;
+  document.getElementById("btnExport").onclick=exportV;
+  renderList(); select(0); renderStats();
+}
+function renderStats(){
+  const m=REC.filter(r=>MARKS[r.episode_id]);
+  const c={match:0,wrong:0,unsure:0}; m.forEach(r=>c[MARKS[r.episode_id].v]++);
+  document.getElementById("stats").innerHTML=
+    `<span><b>${REC.length}</b> episodes</span><span>checked <b>${m.length}</b></span>`+
+    `<span style="color:var(--green)">match <b>${c.match}</b></span>`+
+    `<span style="color:var(--seal)">wrong <b>${c.wrong}</b></span>`+
+    `<span style="color:var(--grey)">unsure <b>${c.unsure}</b></span>`;
+}
+function renderList(){
+  document.getElementById("list").innerHTML=REC.map((r,i)=>{
+    const mk=MARKS[r.episode_id];
+    return `<div class="row ${i===cur?'sel':''}" data-i="${i}">
+      <span class="dot ${mk?mk.v:''}"></span>
+      <span class="id mono">${r.task_id} · ${r.card.environment}</span></div>`;
+  }).join("");
+  document.querySelectorAll(".row").forEach(r=>r.onclick=()=>select(+r.dataset.i));
+}
+function select(i){
+  cur=Math.max(0,Math.min(i,REC.length-1));
+  const r=REC[cur],c=r.card,mk=MARKS[r.episode_id];
+  renderList();
+  const row=document.querySelector(`.row[data-i="${cur}"]`); if(row)row.scrollIntoView({block:"nearest"});
+  document.getElementById("detail").innerHTML=`
+    <div class="crumbs mono">task ${r.task_id} · episode ${r.episode_id}</div>
+    <div class="cols">
+      <div class="frames">${r.frames.map(f=>`<img src="${f}">`).join("")||'<div class="empty">no frames</div>'}</div>
+      <div class="card">
+        <div class="kicker">resolved card (task ${r.task_id})</div>
+        <h2>${c.name}</h2><span class="env">${c.environment}</span>
+        <div class="lbl">required objects</div>
+        <div class="objs">${(c.required_objects||[]).map(o=>`<span class="obj">${o}</span>`).join("")}</div>
+        ${c.steps&&c.steps.length?`<div class="lbl">steps</div><ol class="steps">${c.steps.map(s=>`<li>${s}</li>`).join("")}</ol>`:""}
+        <div class="lbl">expected start / end</div>
+        <div class="state">▸ ${c.initial}</div><div class="state">▸ ${c.final}</div>
+      </div>
+    </div>
+    <div class="q">Do the video frames match this card?</div>
+    <div class="vbtns">
+      ${V.map(v=>`<button class="${v} ${mk&&mk.v===v?'act':''}" onclick="mark('${v}')">${v==='match'?'✓ matches':v==='wrong'?'✗ wrong card':'? unsure'}</button>`).join("")}
+    </div>
+    <textarea id="note" placeholder="notes (what's actually in the clip, if wrong)…" oninput="setNote(this.value)">${mk&&mk.note?mk.note:""}</textarea>
+    <div class="help"><kbd>M</kbd> matches · <kbd>W</kbd> wrong · <kbd>U</kbd> unsure · <kbd>↑</kbd>/<kbd>↓</kbd> navigate</div>`;
+}
+function mark(v){
+  const r=REC[cur]; MARKS[r.episode_id]=Object.assign({},MARKS[r.episode_id],{v,task_id:r.task_id}); save();
+  renderList(); renderStats();
+  document.querySelectorAll(".vbtns button").forEach(b=>b.classList.toggle("act",b.classList.contains(v)));
+  setTimeout(()=>select(cur+1),140);
+}
+function setNote(t){ const r=REC[cur]; MARKS[r.episode_id]=Object.assign({v:null},MARKS[r.episode_id],{note:t}); save(); }
+function exportV(){
+  const rows=REC.filter(r=>MARKS[r.episode_id]).map(r=>({
+    task_id:r.task_id, episode_id:r.episode_id, card_name:r.card.name, environment:r.card.environment,
+    verdict:MARKS[r.episode_id].v, note:MARKS[r.episode_id].note||""}));
+  const b=new Blob([JSON.stringify(rows,null,2)],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="card_match_verdicts.json";a.click();
+}
+document.addEventListener("keydown",e=>{
+  if(e.target.tagName==="TEXTAREA")return;
+  const k=e.key.toLowerCase();
+  if(k==="m")mark("match");else if(k==="w")mark("wrong");else if(k==="u")mark("unsure");
+  else if(k==="arrowdown"||k==="j"){e.preventDefault();select(cur+1);}
+  else if(k==="arrowup"||k==="k"){e.preventDefault();select(cur-1);}
+});
+boot();
+</script></body></html>

@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Synjuku QC · Layer 2 Explorer</title>
+<style>
+:root{
+  --seal:#B64D3D; --ink:#2D2D2B; --muted:rgba(45,45,43,.55); --faint:rgba(45,45,43,.12);
+  --rice:#F1F2EC; --panel:#FBFBF8; --tint:#E8E9E2;
+  --green:#6F8C5A; --green-bg:#F0F4EC; --amber:#C68A2E; --amber-bg:#FBF4E5;
+  --red:#B64D3D; --red-bg:#FBF1EE; --grey:#8A8A85; --grey-bg:#EFEFEA;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  background:var(--rice);color:var(--ink);font-size:14px;line-height:1.5;height:100vh;overflow:hidden;display:flex;flex-direction:column}
+.mono{font-family:'JetBrains Mono','Cascadia Code',Consolas,monospace}
+header{display:flex;align-items:center;gap:18px;padding:10px 18px;background:var(--panel);
+  border-bottom:1px solid var(--faint);flex-wrap:wrap}
+header h1{font-size:15px;font-weight:600;margin:0;letter-spacing:-.01em}
+header h1 .tag{color:var(--seal)}
+.stats{display:flex;gap:16px;font-size:12px;color:var(--muted)}
+.stats b{color:var(--ink);font-weight:600}
+.spacer{flex:1}
+.filters{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+select,button{font:inherit;font-size:12px;border:1px solid var(--faint);background:var(--panel);
+  color:var(--ink);border-radius:6px;padding:5px 9px;cursor:pointer}
+button:hover{background:var(--tint)}
+button.on{background:var(--ink);color:var(--rice);border-color:var(--ink)}
+.main{flex:1;display:flex;min-height:0}
+/* list */
+.list{width:340px;border-right:1px solid var(--faint);overflow-y:auto;background:var(--panel)}
+.row{padding:8px 12px;border-bottom:1px solid var(--faint);cursor:pointer;display:flex;gap:8px;align-items:flex-start}
+.row:hover{background:var(--tint)}
+.row.sel{background:var(--amber-bg);box-shadow:inset 3px 0 0 var(--seal)}
+.row .id{font-size:11px;color:var(--muted);width:62px;flex-shrink:0}
+.row .lbl{font-size:12px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chip{font-size:10px;font-weight:600;padding:1px 6px;border-radius:10px;white-space:nowrap}
+.chip.supported{background:var(--green-bg);color:var(--green)}
+.chip.contradicted{background:var(--red-bg);color:var(--red)}
+.chip.unverifiable{background:var(--grey-bg);color:var(--grey)}
+.chip.dot{width:8px;height:8px;padding:0;border-radius:50%;align-self:center;margin-top:4px}
+/* detail */
+.detail{flex:1;overflow-y:auto;padding:20px 26px;max-width:760px}
+.detail .crumbs{font-size:12px;color:var(--muted);margin-bottom:4px}
+video{width:100%;max-width:560px;background:#000;border-radius:8px;border:1px solid var(--faint)}
+.noclip{width:100%;max-width:560px;aspect-ratio:4/3;background:var(--tint);border-radius:8px;
+  display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px;text-align:center;padding:20px}
+.frames{display:flex;gap:6px;flex-wrap:wrap}.frames img{height:150px;border-radius:6px;border:1px solid var(--faint)}
+.label-big{font-size:18px;font-weight:600;margin:14px 0 2px;letter-spacing:-.01em}
+.time{font-size:12px;color:var(--muted)}
+.card{border:1px solid var(--faint);border-radius:8px;padding:12px 14px;margin:14px 0;background:var(--panel)}
+.card h3{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 8px;font-weight:600}
+.verdict-line{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.badges{display:flex;gap:6px}
+.badge{font-size:11px;padding:2px 7px;border-radius:5px;border:1px solid var(--faint)}
+.badge.ok{background:var(--green-bg);color:var(--green)}.badge.bad{background:var(--red-bg);color:var(--red)}
+.reason{margin-top:8px;font-size:13px;color:var(--ink)}
+.meta-sm{font-size:11px;color:var(--muted);margin-top:6px}
+.summary-ctx{font-size:12px;color:var(--muted);font-style:italic;margin:6px 0 0}
+/* labeling */
+.lab-btns{display:flex;gap:8px;margin:8px 0}
+.lab-btns button{flex:1;padding:10px;font-size:13px;font-weight:600;border-radius:7px}
+.lab-btns button.supported.act{background:var(--green);color:#fff;border-color:var(--green)}
+.lab-btns button.contradicted.act{background:var(--red);color:#fff;border-color:var(--red)}
+.lab-btns button.unverifiable.act{background:var(--grey);color:#fff;border-color:var(--grey)}
+.issue-sel{width:100%;margin-top:8px}
+.issue-tag{font-size:11px;color:var(--amber);align-self:center}
+.agree{font-size:12px;margin-top:8px;font-weight:600}
+.agree.match{color:var(--green)}.agree.mismatch{color:var(--seal)}
+textarea{width:100%;border:1px solid var(--faint);border-radius:6px;padding:7px;font:inherit;font-size:12px;resize:vertical;min-height:42px;margin-top:6px}
+kbd{font-family:monospace;background:var(--tint);border:1px solid var(--faint);border-bottom-width:2px;border-radius:4px;padding:0 5px;font-size:11px}
+.help{font-size:11px;color:var(--muted);margin-top:14px;line-height:1.8}
+.empty{color:var(--muted);padding:40px;text-align:center}
+</style>
+</head>
+<body><a href="/" style="position:fixed;bottom:10px;left:10px;z-index:999;font:12px sans-serif;color:#888;text-decoration:none;background:rgba(255,255,255,.8);padding:3px 9px;border-radius:6px;border:1px solid #ddd">← demos</a>
+<header>
+  <h1>Synjuku QC · <span class="tag">Layer 2</span> Explorer</h1>
+  <div class="stats" id="stats"></div>
+  <div class="spacer"></div>
+  <div class="filters">
+    <select id="fEpisode"></select>
+    <select id="fVerdict" title="filter by the pipeline's verdict">
+      <option value="">pipeline: all</option>
+      <option value="contradicted">pipeline: flagged</option>
+      <option value="supported">pipeline: supported</option>
+      <option value="unverifiable">pipeline: unverifiable</option>
+    </select>
+    <select id="fMyLabel" title="filter by your own label">
+      <option value="">you: all</option>
+      <option value="supported">you: supported</option>
+      <option value="contradicted">you: contradicted</option>
+      <option value="unverifiable">you: unverifiable</option>
+    </select>
+    <button id="fDisagree" title="pipeline got the clip wrong — verdict differs, OR you tagged a disqualifying artifact the pipeline accepted">my disagreements</button>
+    <button id="fDisqualified" title="clips you tagged as a capture artifact (camera covered / recalibration)">artifacts</button>
+    <button id="fUnlabeled" title="spans you haven't labeled yet">unlabeled</button>
+    <span style="width:1px;height:20px;background:var(--faint)"></span>
+    <button id="btnSaveRepo" title="write labels into the git-tracked out/human_labels.json (needs serve.py)">⇧ save→repo</button>
+    <button id="btnLoadRepo" title="load the labels committed in the repo">⇩ load←repo</button>
+    <button id="btnExport" title="download labels as a file">⤓ export</button>
+    <button id="btnImport" title="load labels from a file">⇪ import</button>
+    <input type="file" id="fileImport" accept="application/json" style="display:none">
+  </div>
+</header>
+<div class="main">
+  <div class="list" id="list"></div>
+  <div class="detail" id="detail"><div class="empty">loading…</div></div>
+</div>
+
+<script>
+const VERDICTS = ["supported","contradicted","unverifiable"];
+const ISSUE_TYPES = [
+  ["","— issue type (optional) —"],
+  ["caption_wrong","caption wrong (different action/object)"],
+  ["action_not_in_clip","action not in clip (idle / cut off / only hovering)"],
+  ["camera_occluded","camera covered by hand"],
+  ["camera_recalibration","camera recalibration"],
+  ["ambiguous","ambiguous / can't tell"],
+];
+let DATA=null, FILTERED=[], curId=null;
+let LABELS = JSON.parse(localStorage.getItem("synjuku_labels")||"{}");
+
+function saveLabels(){ localStorage.setItem("synjuku_labels", JSON.stringify(LABELS)); }
+
+function fmtPct(x){ return x==null?"–":(x*100).toFixed(1)+"%"; }
+
+async function boot(){
+  try{
+    DATA = await (await fetch("out/viewer_data.json",{cache:"no-store"})).json();
+  }catch(e){
+    document.getElementById("detail").innerHTML =
+      '<div class="empty">Could not load <code>out/viewer_data.json</code>.<br>Run <code>python make_viewer_data.py</code> and serve from the repo root.</div>';
+    return;
+  }
+  const s=DATA.summary;
+  document.getElementById("stats").innerHTML =
+    `<span><b>${s.spans_sampled}</b> spans</span>`+
+    `<span>flag rate <b>${fmtPct(s.flag_rate)}</b></span>`+
+    `<span><b>${s.contradicted}</b> flagged · ${s.supported} ok · ${s.unverifiable} unv</span>`+
+    `<span class="mono">${s.model}</span>`+
+    `<span>$${s.cost_usd_this_run}</span>`+
+    `<span id="agreeStat"></span>`;
+  const ep=document.getElementById("fEpisode");
+  ep.innerHTML='<option value="">all episodes</option>'+
+    Object.keys(DATA.episodes).map(e=>`<option value="${e}">ep ${e} — ${fmtPct(DATA.episodes[e].flag_rate)} flagged</option>`).join("");
+  ["fEpisode","fVerdict","fMyLabel"].forEach(id=>document.getElementById(id).onchange=applyFilters);
+  ["fDisagree","fDisqualified","fUnlabeled"].forEach(id=>document.getElementById(id).onclick=e=>{e.target.classList.toggle("on");applyFilters();});
+  document.getElementById("btnExport").onclick=exportLabels;
+  document.getElementById("btnImport").onclick=()=>document.getElementById("fileImport").click();
+  document.getElementById("fileImport").onchange=onFilePicked;
+  document.getElementById("btnSaveRepo").onclick=saveToRepo;
+  document.getElementById("btnLoadRepo").onclick=loadFromRepo;
+  applyFilters();
+  if(FILTERED.length) select(FILTERED[0].id);
+}
+
+function applyFilters(){
+  const ep=document.getElementById("fEpisode").value;
+  const vd=document.getElementById("fVerdict").value;
+  const myv=document.getElementById("fMyLabel").value;
+  const dis=document.getElementById("fDisagree").classList.contains("on");
+  const dq=document.getElementById("fDisqualified").classList.contains("on");
+  const unl=document.getElementById("fUnlabeled").classList.contains("on");
+  FILTERED = DATA.spans.filter(s=>{
+    if(s.status!=="checked") return false;
+    if(ep!==""&&String(s.episode_index)!==ep) return false;
+    if(vd!==""&&s.verdict!==vd) return false;
+    const my=LABELS[s.id];
+    if(myv!==""&&(!my||my.verdict!==myv)) return false;
+    const isDisq = my && DISQUALIFYING_ISSUES.includes(my.issue);
+    if(dq && !isDisq) return false;
+    // a "disagreement" = the pipeline got the clip wrong on EITHER axis:
+    //   verdict differs, OR you tagged a disqualifying artifact the pipeline accepted.
+    const disagree = my && (my.verdict!==s.verdict || (isDisq && s.verdict!=="contradicted"));
+    if(dis && !disagree) return false;
+    if(unl && my) return false;
+    return true;
+  });
+  renderList(); renderAgreement();
+}
+
+function chip(v){ return `<span class="chip ${v}">${v}</span>`; }
+
+function renderList(){
+  const el=document.getElementById("list");
+  if(!FILTERED.length){ el.innerHTML='<div class="empty">no spans match</div>'; return; }
+  el.innerHTML=FILTERED.map(s=>{
+    const my=LABELS[s.id];
+    const myDot=my&&my.verdict?`<span class="chip dot ${my.verdict}" title="your label: ${my.verdict}"></span>`:"";
+    const issueTag=my&&my.issue?`<span class="issue-tag" title="${my.issue}">⚑</span>`:"";
+    return `<div class="row ${s.id===curId?'sel':''}" data-id="${s.id}">
+      <span class="id mono">ep${s.episode_index}·s${s.span_index}</span>
+      ${chip(s.verdict)}${myDot}${issueTag}
+      <span class="lbl">${s.label}</span></div>`;
+  }).join("");
+  el.querySelectorAll(".row").forEach(r=>r.onclick=()=>select(r.dataset.id));
+}
+
+function select(id){
+  curId=id;
+  const s=DATA.spans.find(x=>x.id===id);
+  renderList();
+  const row=document.querySelector(`.row[data-id="${id}"]`); if(row) row.scrollIntoView({block:"nearest"});
+  const ctx=DATA.episodes[String(s.episode_index)];
+  const my=LABELS[id];
+  const dur=(s.end_time-s.start_time).toFixed(1);
+  let media;
+  if(s.clip) media=`<video src="${s.clip}" autoplay loop muted controls onerror="this.outerHTML='<div class=\\'noclip\\'>clip not on disk — gitignored. Re-run the pipeline or run make_viewer_data.py after a run.</div>'"></video>`;
+  else if(s.frames&&s.frames.length) media=`<div class="frames">${s.frames.map(f=>`<img src="${f}">`).join("")}</div>`;
+  else media=`<div class="noclip">no media for this span</div>`;
+
+  const SOA=(k,v)=>`<span class="badge ${v?'ok':'bad'}">${k} ${v?'✓':'✗'}</span>`;
+  document.getElementById("detail").innerHTML=`
+    <div class="crumbs">episode ${s.episode_index} · span ${s.span_index} · <span class="mono">${s.id}</span></div>
+    ${media}
+    <div class="label-big">"${s.label}"</div>
+    <div class="time mono">${s.start_time.toFixed(1)}s → ${s.end_time.toFixed(1)}s · ${dur}s</div>
+    <div class="summary-ctx">episode: ${ctx?ctx.summary:""}</div>
+
+    <div class="card">
+      <h3>Pipeline verdict</h3>
+      <div class="verdict-line">${chip(s.verdict)}
+        <span class="meta-sm">confidence ${s.confidence} · ${s.passes||1} pass${(s.passes||1)>1?'es':''}${s.votes?` · votes ${JSON.stringify(s.votes)}`:''}</span>
+        <div class="badges">${SOA("scene",s.scene_ok)} ${SOA("object",s.objects_ok)} ${SOA("action",s.action_ok)}</div>
+      </div>
+      <div class="reason">${s.reason||""}</div>
+    </div>
+
+    <div class="card">
+      <h3>Your label</h3>
+      <div class="lab-btns">
+        ${VERDICTS.map(v=>`<button class="${v} ${my&&my.verdict===v?'act':''}" onclick="setLabel('${v}')">${v}</button>`).join("")}
+      </div>
+      <div id="agreeRow"></div>
+      <select id="issueSel" class="issue-sel" onchange="setIssue(this.value)">
+        ${ISSUE_TYPES.map(([v,lbl])=>`<option value="${v}" ${my&&my.issue===v?'selected':''}>${lbl}</option>`).join("")}
+      </select>
+      <textarea id="note" placeholder="notes (optional)…" oninput="setNote(this.value)">${my&&my.note?my.note:""}</textarea>
+    </div>
+
+    <div class="help">
+      <kbd>S</kbd> supported · <kbd>C</kbd> contradicted · <kbd>U</kbd> unverifiable · <kbd>A</kbd> agree w/ pipeline ·
+      <kbd>↑</kbd>/<kbd>↓</kbd> or <kbd>J</kbd>/<kbd>K</kbd> navigate · <kbd>R</kbd> replay
+    </div>`;
+  renderAgreeRow();
+}
+
+function renderAgreeRow(){
+  const s=DATA.spans.find(x=>x.id===curId); const my=LABELS[curId];
+  const el=document.getElementById("agreeRow"); if(!el) return;
+  if(!my){ el.innerHTML='<div class="agree" style="color:var(--muted)">not labeled yet</div>'; return; }
+  const match=my.verdict===s.verdict;
+  el.innerHTML=`<div class="agree ${match?'match':'mismatch'}">${match?'✓ agrees with pipeline':'✗ differs from pipeline ('+s.verdict+')'}</div>`;
+}
+
+function setLabel(v){
+  if(!curId) return;
+  LABELS[curId]=Object.assign({}, LABELS[curId], {verdict:v, ts:Date.now()});
+  saveLabels(); renderAgreeRow();
+  const row=document.querySelector(`.row[data-id="${curId}"]`);
+  if(row){ const old=row.querySelector(".chip.dot"); if(old) old.remove();
+    row.children[1].insertAdjacentHTML("afterend",`<span class="chip dot ${v}"></span>`); }
+  renderAgreement();
+  setTimeout(next,150);
+}
+function setNote(t){ if(!curId) return; LABELS[curId]=Object.assign({verdict:null},LABELS[curId],{note:t}); saveLabels(); }
+// issue type is an independent tag — does NOT auto-advance, so you can add it to
+// already-labeled spans without jumping away.
+function setIssue(v){ if(!curId) return; LABELS[curId]=Object.assign({verdict:null},LABELS[curId],{issue:v||undefined}); saveLabels();
+  const row=document.querySelector(`.row[data-id="${curId}"]`); if(row) renderList(); }
+
+function next(d=1){
+  const i=FILTERED.findIndex(s=>s.id===curId);
+  const j=Math.min(Math.max(i+d,0),FILTERED.length-1);
+  if(FILTERED[j]) select(FILTERED[j].id);
+}
+
+// capture artifacts disqualify a clip regardless of verdict (it's bad data even
+// if the caption faithfully describes the occlusion).
+const DISQUALIFYING_ISSUES = ["camera_occluded","camera_recalibration"];
+function renderAgreement(){
+  const labeled=DATA.spans.filter(s=>s.status==="checked"&&LABELS[s.id]&&LABELS[s.id].verdict);
+  const agree=labeled.filter(s=>LABELS[s.id].verdict===s.verdict).length;
+  // good data = you marked it supported AND it isn't a disqualified capture artifact
+  const good=labeled.filter(s=>LABELS[s.id].verdict==="supported" && !DISQUALIFYING_ISSUES.includes(LABELS[s.id].issue)).length;
+  const el=document.getElementById("agreeStat");
+  if(el) el.innerHTML = labeled.length
+    ? `you: <b>${labeled.length}</b> labeled · <b>${fmtPct(agree/labeled.length)}</b> agree · good data <b>${fmtPct(good/labeled.length)}</b>`
+    : "";
+}
+
+function buildRows(){
+  return DATA.spans.filter(s=>LABELS[s.id]&&(LABELS[s.id].verdict||LABELS[s.id].issue)).map(s=>({
+    id:s.id, episode_index:s.episode_index, span_index:s.span_index,
+    label:s.label, start_time:s.start_time, end_time:s.end_time,
+    pipeline_verdict:s.verdict, pipeline_reason:s.reason,
+    human_verdict:LABELS[s.id].verdict, human_issue:LABELS[s.id].issue||"",
+    human_note:LABELS[s.id].note||"",
+    ts:LABELS[s.id].ts||null,
+    agree:LABELS[s.id].verdict===s.verdict
+  }));
+}
+
+function exportLabels(){
+  const blob=new Blob([JSON.stringify(buildRows(),null,2)],{type:"application/json"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
+  a.download="human_labels.json"; a.click();
+}
+
+// Merge an array of exported rows into LABELS. Incoming wins on conflict;
+// labels for spans not present in the import are left untouched.
+function importRows(rows){
+  if(!Array.isArray(rows)) throw new Error("expected a JSON array of label rows");
+  let added=0, updated=0, unchanged=0;
+  for(const r of rows){
+    const id=r.id, v=r.human_verdict;
+    if(!id||!v) continue;
+    const prev=LABELS[id];
+    if(!prev) added++;
+    else if(prev.verdict!==v||(prev.note||"")!==(r.human_note||"")) updated++;
+    else { unchanged++; continue; }
+    LABELS[id]={verdict:v, note:r.human_note||"", ts:r.ts||Date.now()};
+  }
+  saveLabels(); applyFilters(); if(curId) select(curId);
+  return {added, updated, unchanged, total:rows.length};
+}
+
+function onFilePicked(e){
+  const file=e.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{ const r=importRows(JSON.parse(reader.result));
+      alert(`Imported ${r.added+r.updated} labels from file\n  ${r.added} new · ${r.updated} updated · ${r.unchanged} unchanged`);
+    }catch(err){ alert("Import failed: "+err.message); }
+  };
+  reader.readAsText(file);
+  e.target.value="";   // allow re-importing the same file
+}
+
+async function loadFromRepo(){
+  try{
+    const rows=await (await fetch("out/human_labels.json",{cache:"no-store"})).json();
+    const r=importRows(rows);
+    alert(`Loaded ${r.added+r.updated} labels from repo (out/human_labels.json)\n  ${r.added} new · ${r.updated} updated · ${r.unchanged} unchanged`);
+  }catch(err){ alert("Load from repo failed (is out/human_labels.json committed?): "+err.message); }
+}
+
+async function saveToRepo(){
+  try{
+    const res=await fetch("/save-labels",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify(buildRows(),null,2)});
+    if(!res.ok) throw new Error("HTTP "+res.status);
+    const j=await res.json();
+    alert(`Saved ${buildRows().length} labels → ${j.path}\nNow: git add ${j.path} && git commit && git push`);
+  }catch(err){ alert("Save to repo failed (run via serve.py, not file://): "+err.message); }
+}
+
+document.addEventListener("keydown",e=>{
+  if(e.target.tagName==="TEXTAREA"||e.target.tagName==="SELECT") return;
+  const k=e.key.toLowerCase();
+  if(k==="s")setLabel("supported"); else if(k==="c")setLabel("contradicted");
+  else if(k==="u")setLabel("unverifiable");
+  else if(k==="a"){const s=DATA.spans.find(x=>x.id===curId); if(s)setLabel(s.verdict);}
+  else if(k==="j"||e.key==="ArrowDown"){e.preventDefault();next(1);}
+  else if(k==="k"||e.key==="ArrowUp"){e.preventDefault();next(-1);}
+  else if(k==="r"){const v=document.querySelector("video"); if(v){v.currentTime=0;v.play();}}
+});
+boot();
+</script>
+</body>
+</html>

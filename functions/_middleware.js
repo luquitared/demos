@@ -23,6 +23,7 @@ const PROTECTED = {
   '/kalmari-gtm/': 'PW_KALMARI_GTM',
   '/odapt-build-report/': 'PW_ODAPT_BUILD_REPORT',
   '/synjuku-label/': 'PW_SYNJUKU_LABEL',
+  '/synjuku-qc/': 'PW_SYNJUKU_QC',
 };
 
 export const onRequest = async (context) => {

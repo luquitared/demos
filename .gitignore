@@ -7,3 +7,7 @@ node_modules/
 # the HTML would expose its full text on GitHub). Wrangler still uploads these
 # on `pages deploy` (it does not consult .gitignore), so they stay live.
 /chris-signalfire-opportunity/
+
+# synjuku-qc demo: large video assets (deployed via wrangler, not committed)
+synjuku-qc/out_review/clips_web/
+synjuku-qc/out/clips/
