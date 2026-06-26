@@ -50,7 +50,7 @@ export const onRequest = async (context) => {
     if (sep !== -1) {
       const supplied = decoded.slice(sep + 1); // username ignored; shared password
       if (timingSafeEqual(supplied, expected)) {
-        return next(); // correct → serve the protected asset
+        return serveWithRange(request, next); // correct → serve (honoring Range)
       }
     }
   }
@@ -64,6 +64,40 @@ export const onRequest = async (context) => {
     },
   });
 };
+
+// Serve a protected asset while honoring HTTP Range requests. Pages' next()
+// returns the full asset (200) even for a Range request when it's routed through
+// a Function, which breaks <video> seeking. We slice the body into a 206 here.
+// Fine for the small media in these demos; very large assets would want a
+// streaming approach instead of buffering.
+async function serveWithRange(request, next) {
+  const resp = await next();
+  const range = request.headers.get('Range');
+  if (!range || resp.status !== 200 || !resp.body) {
+    // Advertise range support so the player knows it can seek next time.
+    const h = new Headers(resp.headers);
+    if (resp.status === 200) h.set('Accept-Ranges', 'bytes');
+    return new Response(resp.body, { status: resp.status, headers: h });
+  }
+  const m = /^bytes=(\d*)-(\d*)/.exec(range.trim());
+  if (!m) return resp;
+  const buf = await resp.arrayBuffer();
+  const size = buf.byteLength;
+  let start = m[1] ? parseInt(m[1], 10) : 0;
+  let end = m[2] ? parseInt(m[2], 10) : size - 1;
+  if (Number.isNaN(start) || Number.isNaN(end)) return new Response(buf, resp);
+  end = Math.min(end, size - 1);
+  if (start > end || start >= size) {
+    return new Response('Range Not Satisfiable', {
+      status: 416, headers: { 'Content-Range': `bytes */${size}` },
+    });
+  }
+  const headers = new Headers(resp.headers);
+  headers.set('Accept-Ranges', 'bytes');
+  headers.set('Content-Range', `bytes ${start}-${end}/${size}`);
+  headers.set('Content-Length', String(end - start + 1));
+  return new Response(buf.slice(start, end + 1), { status: 206, headers });
+}
 
 // Constant-time comparison so response timing can't be used to guess the
 // password character by character.
