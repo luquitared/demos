@@ -178,6 +178,9 @@ table caption b{font-weight:700;}
 .div-legend{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
 .div-grad{height:10px;flex:0 0 140px;background:linear-gradient(to right,var(--rice) 0%,rgba(182,77,61,0.22) 15%,rgba(182,77,61,0.55) 50%,rgba(182,77,61,1) 100%);border:1px solid var(--rule);}
 .div-legend-lbl{font-size:11px;font-family:var(--font-mono);color:var(--ink-muted);}
+
+/* QA table — long results wrap, never stretch the grid */
+.qa-tbl tbody td{white-space:normal;line-height:1.45;}
 </style>
 </head>
 <body>
@@ -428,23 +431,31 @@ table caption b{font-weight:700;}
     </div>
     <div class="main">
       <div class="prose">
-        <p>Most auto-annotated datasets ship their labels unaudited. Here, <span class="b">every label was individually checked against the video segment it describes</span>. Labels found to be wrong were re-written from the footage and re-checked; labels that could not be confirmed were deleted rather than delivered. The result is a smaller but fully verified label set: coverage averages 86% of each clip, and every remaining label has passed verification.</p>
+        <p>Labels are automated captions, so a fraction is inevitably wrong. To control this, we
+built a <span class="b">240-span human-annotated evaluation set</span> and measured our automated
+checker against it: when the checker rejects a label, human reviewers agree
+<span class="b">91%</span> of the time. We then ran the validated checker over
+<span class="b">every label in the sample</span> — labels that failed were re-captioned from the
+footage and re-checked; labels that could not be confirmed were removed rather than delivered.</p>
       </div>
-      <table>
+      <table class="qa-tbl">
         <caption><b>Table.</b> Measured QA results for this sample.</caption>
         <colgroup><col style="width:calc(4*var(--ccol))"><col style="width:calc(5*var(--ccol))"></colgroup>
         <thead><tr><th>What was checked</th><th>Result</th></tr></thead>
         <tbody>
-          <tr><td>Video streams — technical checks</td><td>2,400 / 2,400 passed (resolution, frame rate, duration, corruption, black/frozen frames, end-to-end file-integrity verification)</td></tr>
-          <tr><td>Known exception</td><td>8 streams (0.3%) — the bonus exocentric view runs at 23.98 fps instead of 29.97</td></tr>
-          <tr><td>Labels — checked against their footage</td><td>All 9,384 delivered labels</td></tr>
-          <tr><td>Final audit of delivered labels</td><td>1,800 labels randomly re-checked (3 per episode): 0 found incorrect</td></tr>
-          <tr><td>Checker validated against humans</td><td>The automated checker agrees with human reviewers on a 240-label reference set; when it rejects a label it is right 91% of the time</td></tr>
-          <tr><td>Stated label accuracy</td><td>90–95% — stated conservatively, because automated checking can miss subtle errors that humans catch</td></tr>
+          <tr><td>Human evaluation set</td><td>240 spans, double-annotated</td></tr>
+          <tr><td>Checker vs. human reviewers</td><td>91% agreement on rejections</td></tr>
+          <tr><td>Labels screened by the checker</td><td>9,384 / 9,384 — failures re-captioned or removed</td></tr>
+          <tr><td>Final audit (1,800 random labels)</td><td>0 flagged</td></tr>
+          <tr><td>Stated label accuracy</td><td>90–95%, conservative</td></tr>
+          <tr><td>Video streams — technical checks</td><td>2,400 / 2,400 pass · 8 exceptions (exo view at 23.98 fps)</td></tr>
         </tbody>
       </table>
       <div class="prose">
-        <p>Re-written labels are provenance-marked in the annotation files, so original and corrected labels are always distinguishable, and every annotation change is logged across versioned snapshots (v1.0 → v1.4).</p>
+        <p>Accuracy is stated below the audit result because automated checking can miss subtle
+errors humans catch. Re-captioned labels are provenance-marked, and every annotation change is
+logged across versioned snapshots (v1.0 → v1.4). Label coverage averages 86% of each clip after
+removals.</p>
       </div>
       <table>
         <caption><b>Table.</b> Tracking detection rates across all 600 episodes.</caption>
