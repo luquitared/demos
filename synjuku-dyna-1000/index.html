@@ -193,7 +193,7 @@ table caption b{font-weight:700;}
     <div class="meta">2026.07.02 · External</div>
   </div>
 
-  <p class="lead" style="max-width:none;"><span class="drop">1,121 hours of multi-camera egocentric human-demonstration video.</span> Every episode is captured on a synchronized four-camera rig — egocentric, exocentric, and both wrists — and ships with hand-pose tracking and action-level annotations on a single 29.97 fps timeline.</p>
+  <p class="lead" style="max-width:none;"><span class="drop">1,121 hours of multi-camera egocentric human-demonstration video.</span> Every episode is captured on a synchronized four-camera rig — egocentric, exocentric, and both wrists — and ships with action-level annotations on a single 29.97 fps timeline.</p>
 
   <!-- ===== 01 · At a glance ===== -->
   <div class="sec" id="glance">
@@ -225,7 +225,7 @@ table caption b{font-weight:700;}
         </div>
       </div>
 
-      <p>1,534 episodes (mean 43.9 minutes, continuous single-session recordings), each carrying hand-pose tracking and action annotations on the same 29.97 fps timeline as the video. Captured 2026-05-12 → 2026-06-18 across 232 scripted tasks at 9 venues.</p>
+      <p>1,534 episodes (mean 43.9 minutes, continuous single-session recordings), each carrying action annotations on the same 29.97 fps timeline as the video. Captured 2026-05-12 → 2026-06-18 across 232 scripted tasks at 9 venues.</p>
     </div>
   </div>
 
@@ -328,7 +328,7 @@ table caption b{font-weight:700;}
   <div class="sec" id="specs">
     <div class="side">
       <div class="shead"><span class="snum"></span><span class="sname">Technical specifications</span></div>
-      <span class="note">Capture and annotation share one 29.97 fps timeline, so video and hand pose stay frame-aligned.</span>
+      <span class="note">Capture and annotation share one 29.97 fps timeline, so video and labels stay frame-aligned.</span>
     </div>
     <div class="main">
       <div class="ti-grid">
@@ -351,7 +351,7 @@ table caption b{font-weight:700;}
             <dt>Video codec</dt><dd>H.264 · yuv420p</dd>
           </dl>
           <dl class="last">
-            <dt>Hand pose</dt><dd>MediaPipe · 21 × 3 / hand</dd>
+            <dt>Annotations</dt><dd>Action spans · free-text</dd>
           </dl>
         </div>
       </div>
@@ -400,10 +400,6 @@ table caption b{font-weight:700;}
           <tr><td><span class="mono">frame_index</span></td><td><span class="mono">int64</span></td><td>Frame position within the episode</td></tr>
           <tr><td><span class="mono">timestamp</span></td><td><span class="mono">float64</span></td><td>Seconds from episode start (29.97 fps)</td></tr>
           <tr><td><span class="mono">task_index</span></td><td><span class="mono">int64</span></td><td>Task label · resolves via meta/tasks</td></tr>
-          <tr><td><span class="mono">left_hand/tracks</span></td><td><span class="mono">float32 [21,3]</span></td><td>Left-hand MediaPipe landmarks (image-space)</td></tr>
-          <tr><td><span class="mono">right_hand/tracks</span></td><td><span class="mono">float32 [21,3]</span></td><td>Right-hand MediaPipe landmarks (image-space)</td></tr>
-          <tr><td><span class="mono">left_hand/tracks/timestamp</span></td><td><span class="mono">int64</span></td><td>Left-hand landmark timestamp (ns)</td></tr>
-          <tr><td><span class="mono">right_hand/tracks/timestamp</span></td><td><span class="mono">int64</span></td><td>Right-hand landmark timestamp (ns)</td></tr>
         </tbody>
       </table>
 
