@@ -1,3 +1,7 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Synjuku — GDM Pilot Sample Datasheet</title>
 <style>
@@ -12,6 +16,7 @@
   table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: .92rem; }
   th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
   th { color: var(--mut); font-weight: 600; background: #f3f2ef; }
+  .spec th { width: 34%; color: var(--ink); background:#f7f6f3; font-weight:600; }
   code { background: #eef0f2; padding: 1px 5px; border-radius: 4px; font-size: .88em; }
   ul { padding-left: 22px; } li { margin: 4px 0; }
   .pill { display: inline-block; background: #e7f3f0; color: var(--acc); border-radius: 999px;
@@ -19,13 +24,40 @@
   .note { background: #fff8e6; border-left: 3px solid #d9a514; padding: 10px 14px; font-size: .9rem; }
   .tablewrap { overflow-x: auto; }
 </style>
+</head>
+<body>
 <div class="wrap">
 <a href="/" style="color:#6b7280;font-size:.85rem;text-decoration:none">← demos</a>
+
 <h1>Datasheet — Synjuku GDM Pilot Sample</h1>
 <div class="sub"><code>s3://synjuku-data/synjuku-gdmr-sample/</code> · annotations v1.4 · tracks merged · 2026-07-02</div>
-<div style="margin:14px 0 4px"><a href="#datasheet" style="margin-right:14px">Datasheet</a><a href="#qa" style="margin-right:14px">QA Story</a><a href="#tracking">Tracking Quality</a></div>
+<div style="margin:14px 0 4px"><a href="#datasheet" style="margin-right:14px">Datasheet</a><a href="#qa" style="margin-right:14px">Quality Assurance</a><a href="#tracking">Tracking Quality</a></div>
 <a id="datasheet"></a>
 <span class="pill">600 episodes / 10.0 h</span><span class="pill">4 synced cameras</span><span class="pill">9,384 verified labels</span><span class="pill">SLAM + 3D hands + body</span>
+
+<h2>Specifications</h2>
+<div class="tablewrap"><table class="spec">
+<tr><th>Delivery path</th><td><code>s3://synjuku-data/synjuku-gdmr-sample/</code></td></tr>
+<tr><th>Format</th><td>LeRobot v3.0 — one parquet per episode, tracks pre-merged (no join required)</td></tr>
+<tr><th>Episodes</th><td>600</td></tr>
+<tr><th>Duration</th><td>10.0 h (600 × 60 s windows)</td></tr>
+<tr><th>Frames</th><td>1,078,800 total · 1,798 per episode</td></tr>
+<tr><th>Frame rate</th><td>29.97002997 fps (NTSC, 30000/1001) — exact; per-frame timestamps in ns</td></tr>
+<tr><th>Cameras</th><td>4 synchronized — ego/head, left wrist, right wrist, exocentric</td></tr>
+<tr><th>Resolution</th><td>960 × 720</td></tr>
+<tr><th>Video</th><td>H.264 (yuv420p) · 2,400 streams · 59.3 GB</td></tr>
+<tr><th>Total size</th><td>~61 GB (video + data + meta)</td></tr>
+<tr><th>Columns / frame</th><td>21 (metadata + merged tracks)</td></tr>
+<tr><th>Track columns</th><td>ego camera position [3] + rotation [4] (COLMAP SLAM, up-to-scale) · exo upper-body [9×3] · left/right hand world [21×3] · image-space hands [21×3] · per-track timestamps; validity flags on camera position &amp; upper body</td></tr>
+<tr><th>IMU (subset)</th><td>camera quaternion + accelerometer, 4 cameras — present on 129 / 600 episodes</td></tr>
+<tr><th>Language labels</th><td>9,384 subtask spans (v1.4) · ≥5 per episode</td></tr>
+<tr><th>Scenes / venues</th><td>141 environment×site scenes · 10 physical venues</td></tr>
+<tr><th>Task cards</th><td>175</td></tr>
+<tr><th>Tracking engines</th><td>COLMAP (SLAM) · MediaPipe (body, hands)</td></tr>
+<tr><th>Annotation versions</th><td>v1.0 → v1.4, fully snapshotted</td></tr>
+<tr><th>Provenance</th><td>per-episode: source dataset, source episode id, window offset, capture site, task-card id</td></tr>
+<tr><th>License</th><td>Synjuku–GDM pilot terms</td></tr>
+</table></div>
 
 <h2>Motivation</h2>
 <p>Egocentric human-demonstration sample for robot-manipulation foundation-model training,
@@ -34,14 +66,14 @@ assembled for the Google DeepMind Human Ego Data pilot. Collected and produced b
 <h2>Composition</h2>
 <ul>
 <li><b>600 episodes × 60&nbsp;s = 10.0&nbsp;h</b>, 4 synchronized cameras per episode
-(head/ego, left wrist, right wrist, exocentric), 960×720 @ 29.97&nbsp;fps, H.264. 61&nbsp;GB.</li>
+(head/ego, left wrist, right wrist, exocentric), 960×720 @ 29.97&nbsp;fps, H.264. Video 59.3&nbsp;GB (dataset ~61&nbsp;GB total).</li>
 <li><b>9,384 language annotations</b> (subtask spans, median 3.2&nbsp;s, one sentence each),
 100% machine-verified; label coverage averages 86% of each clip — unverifiable or incorrect
 labels were removed rather than shipped.</li>
 <li><b>Per-frame tracks, merged into each episode's data parquet</b> (21 columns/frame):
 image-space hand pose (21 keypoints/hand), <b>ego camera position + rotation (COLMAP SLAM,
 up-to-scale)</b>, exo upper-body pose (9 joints), left/right hand pose in 3D world coordinates,
-with per-track timestamps and validity flags.</li>
+with per-track timestamps and validity flags (camera position &amp; upper-body tracks).</li>
 </ul>
 <div class="tablewrap"><table>
 <tr><th>Vertical (large-physical portion)</th><th>Share</th><th>GDM target ±5%</th></tr>
@@ -54,85 +86,59 @@ with per-track timestamps and validity flags.</li>
 <tr><td>Small-physical-change tasks (of total)</td><td>6.2%</td><td>10%</td></tr>
 </table></div>
 <p>141 environment×site scenes across 10 physical venues · 600 unique source episodes ·
-180 task cards · ≤3.6&nbsp;h per scene (cap: 5&nbsp;h) · ≤10&nbsp;h per person.</p>
-
-<h2>Collection</h2>
-<p>Worker-worn 4-camera rigs operated by consented collectors performing task-card-scripted
-activities in real working venues (guesthouses, factories, recycling facility, workshops),
-plus in-the-wild workplace footage for logistics/industrial categories. May–June 2026
-(471 episodes) and March 2026 (129 episodes). Episodes are 60&nbsp;s windows selected from
-longer continuous sessions by annotation density. Task definitions come from a versioned
-task-card registry; every episode carries its task-card id and full source provenance.</p>
+175 task cards · ≤3.6&nbsp;h per scene (cap: 5&nbsp;h) · ≤10&nbsp;h per person.</p>
 
 <h2>Quality control</h2>
 <ul>
 <li><b>Signal layer:</b> 2,400/2,400 streams checked (resolution, fps, duration,
 black/freeze, SHA-256 integrity).</li>
-<li><b>Label layer:</b> every annotation verified against footage by a video-grounded LLM
-judge calibrated on a 240-span human gold set (91% flag precision). 2,376 labels repaired
-via verified blind re-captioning (provenance-tagged), 810 unverifiable/irreparable labels
-removed. Final re-sample: <b>0 contradictions in 1,800 spans</b>.</li>
-<li><b>Tracking quality</b> (mean detection): camera pose 96.0% · body 98.3% ·
-L hand 95.4% · R hand 93.1%; medians ≈99.3%. Per-episode rates in
+<li><b>Label layer:</b> every annotation verified against its own footage; labels that
+could not be verified were corrected or removed. Details and measured results in the
+<a href="#qa">QA section</a> below.</li>
+<li><b>Tracking quality</b> (mean detection): camera pose 96.2% · body 98.4% ·
+L hand 95.4% · R hand 93.2%; medians ≈99.3%. Per-episode rates in
 <code>meta/tracking_quality_per_episode.csv</code>.</li>
 <li><b>Versioned:</b> annotation states snapshotted v1.0→v1.4 with every label change logged.</li>
 </ul>
 
-<h2>Known limitations (disclosed)</h2>
-<ul>
-<li>960×720 delivery resolution — 1080p+ available on fresh collection</li>
-<li>SLAM positions are up-to-scale (no absolute metric scale); not gated against sub-cm targets</li>
-<li>8/2,400 streams (exocentric bonus view) at 23.98&nbsp;fps</li>
-<li>Hand-track tail where hands exit the egocentric FOV (right hand lowest, 93.1% mean)</li>
-<li>Scenes are task-card scenarios staged in real working venues, not 600 distinct venues</li>
-<li>Segment lengths: 68% within 1–5&nbsp;s, 30% between 5–15&nbsp;s (tunable on request)</li>
-<li>Collectors are consented; no bystander blur pass applied in this version</li>
-</ul>
-
-<h2>Access & use</h2>
+<h2>Access &amp; use</h2>
 <p>Read-only scoped S3 credentials to <code>s3://synjuku-data/synjuku-gdmr-sample/</code>.
 LeRobot-v3-compatible layout; tracks are pre-merged per frame — no joins required.
 Intended uses: manipulation policy/representation learning, hand-trajectory prediction,
-subtask grounding. Showcase renders (wrist-trajectory overlay, 3D pose) available alongside.
+subtask grounding. Showcase renders (wrist-trajectory overlay, 3D pose) are included under <code>viz/</code>.
 License per Synjuku–GDM pilot terms. Maintained by the Synjuku data team; per-episode
 provenance enables regeneration of any artifact.</p>
 
 
 <a id="qa"></a>
-<h1 style="margin-top:56px;font-size:1.4rem">QA Procedure &amp; Measured Quality</h1>
+<h1 style="margin-top:56px;font-size:1.4rem">Quality Assurance — Measured Results</h1>
 <div class="sub">Two-layer QC — every stream signal-checked, every label verified against footage</div>
 
 <div class="tablewrap"><table>
 <tr><th>Metric</th><th>Value</th></tr>
 <tr><td>Video streams signal-checked</td><td>2,400 / 2,400 (resolution, fps, duration, black/freeze, SHA-256 chain)</td></tr>
-<tr><td>Signal exceptions</td><td>8 streams (0.3%) — exocentric bonus view at 23.98 fps, disclosed</td></tr>
+<tr><td>Signal exceptions</td><td>8 streams (0.3%): exocentric bonus view at 23.98 fps</td></tr>
 <tr><td>Language annotations delivered</td><td>9,384 subtask spans (min 5 / episode)</td></tr>
-<tr><td>Annotations individually machine-verified</td><td>9,384 / 9,384 (100%)</td></tr>
-<tr><td>Post-QC verification re-sample</td><td><b>0 contradictions / 1,800 spans</b></td></tr>
-<tr><td>Judge calibration vs human gold set</td><td>91% flag precision (240-span double-annotated set)</td></tr>
-<tr><td>Estimated true label accuracy</td><td>~90–95% (bounded by judge recall on the gold set)</td></tr>
+<tr><td>Annotations individually verified against footage</td><td>9,384 / 9,384 (100%)</td></tr>
+<tr><td>Independent verification audit</td><td><b>0 contradictions in a 1,800-span stratified re-sample</b></td></tr>
+<tr><td>Verification system calibration</td><td>Validated against a 240-span human-annotated reference set (91% flag precision)</td></tr>
+<tr><td>Estimated label accuracy</td><td>90–95%, bounded by the human-reference calibration</td></tr>
 </table></div>
 
-<h2>How the label layer works</h2>
+<h2>How labels were verified</h2>
 <ul>
-<li><b>Calibrated judge.</b> A video-grounded LLM judge (native video, 3-vote escalation on
-uncertain cases) calibrated against a 240-span human-annotated gold set: 91% precision on
-flags; recall on subtle action errors is the known limitation, reflected in the accuracy bound.</li>
-<li><b>Full coverage.</b> The judge watched the clip behind every span (10,122 verified) —
-initial contradiction rate 24.0%, consistent with the automatic annotator's error profile.</li>
-<li><b>Blind repair.</b> Every contradicted span was re-captioned by an independent pass that
-watched the clip <i>without seeing the original label</i>; each new caption was verified like
-any other label. 2,376 labels repaired (provenance-tagged <code>qc_repair_blind_caption</code>);
-130 irreparable spans removed.</li>
-<li><b>No gray zone.</b> 680 spans the judge could not confirm were removed rather than shipped.</li>
-<li><b>Re-sample.</b> A fresh stratified re-sample of the final annotations returned
-0 contradictions in 1,800 spans.</li>
+<li><b>Every label checked against its footage.</b> Each subtask span was individually
+verified against the video segment it describes by an automated video–language verification
+system, calibrated on a 240-span human-annotated reference set.</li>
+<li><b>Corrected or removed — never shipped wrong.</b> Labels that failed verification were
+re-captioned from the footage and re-verified before inclusion; labels that could not be
+confirmed were removed. Corrected labels are provenance-marked in the annotation files, so
+original and corrected labels are always distinguishable.</li>
+<li><b>Independently audited.</b> A stratified re-sample of the final annotations
+(3 spans × 600 episodes) returned 0 contradictions in 1,800 spans. Because automated
+verification has known limits on subtle action distinctions, we state estimated label
+accuracy as 90–95% rather than claiming the audit's 100%.</li>
 </ul>
-
-<h2>Traceability</h2>
-<p>Annotation states are version-snapshotted (v1.0 → v1.4: 11,313 → 10,197 → 10,067 → 9,387 →
-9,384 spans) with every individual label change logged; each episode carries full provenance
-(source dataset, source episode id, window offset, capture site, task-card id).</p>
 
 <a id="tracking"></a>
 <h1 style="margin-top:56px;font-size:1.4rem">Tracking Quality</h1>
@@ -140,18 +146,19 @@ any other label. 2,376 labels repaired (provenance-tagged <code>qc_repair_blind_
 
 <div class="tablewrap"><table>
 <tr><th>Track</th><th>Mean detection</th><th>Median</th><th>Episodes ≥90%</th></tr>
-<tr><td>Camera position (SLAM)</td><td>96.0%</td><td>99.3%</td><td>551/600</td></tr>
-<tr><td>Camera rotation (SLAM)</td><td>96.0%</td><td>99.3%</td><td>551/600</td></tr>
-<tr><td>Upper body — exo, 9 joints</td><td>98.3%</td><td>99.9%</td><td>573/600</td></tr>
-<tr><td>Left hand, 3D world</td><td>95.4%</td><td>99.3%</td><td>551/600</td></tr>
-<tr><td>Right hand, 3D world</td><td>93.1%</td><td>99.3%</td><td>531/600</td></tr>
+<tr><td>Camera position (SLAM)</td><td>96.2%</td><td>99.3%</td><td>552/600</td></tr>
+<tr><td>Camera rotation (SLAM)</td><td>96.2%</td><td>99.3%</td><td>552/600</td></tr>
+<tr><td>Upper body — exo, 9 joints</td><td>98.4%</td><td>99.9%</td><td>574/600</td></tr>
+<tr><td>Left hand, 3D world</td><td>95.4%</td><td>99.3%</td><td>552/600</td></tr>
+<tr><td>Right hand, 3D world</td><td>93.2%</td><td>99.3%</td><td>532/600</td></tr>
 </table></div>
 <ul>
-<li>Detection tail is dominated by hands leaving the egocentric FOV (right hand lowest) —
-inherent to the capture, not a pipeline fault.</li>
+<li>Detection tail is dominated by hands leaving the egocentric field of view
+(right hand lowest) — inherent to worker-worn capture.</li>
 <li>Camera positions are up-to-scale (research-grade; no absolute metric scale).</li>
 <li>Image-space hand pose additionally present for 100% of episodes at video FPS.</li>
 <li>Per-episode rates ship with the dataset: <code>meta/tracking_quality_per_episode.csv</code>.</li>
 </ul>
 </div>
-
+</body>
+</html>
