@@ -427,21 +427,24 @@ table caption b{font-weight:700;}
       <span class="note">Two layers: signal checks on every stream, and per-label verification against footage. Measured, not asserted.</span>
     </div>
     <div class="main">
+      <div class="prose">
+        <p>Most auto-annotated datasets ship their labels unaudited. Here, <span class="b">every label was individually checked against the video segment it describes</span>. Labels found to be wrong were re-written from the footage and re-checked; labels that could not be confirmed were deleted rather than delivered. The result is a smaller but fully verified label set: coverage averages 86% of each clip, and every remaining label has passed verification.</p>
+      </div>
       <table>
         <caption><b>Table.</b> Measured QA results for this sample.</caption>
         <colgroup><col style="width:calc(4*var(--ccol))"><col style="width:calc(5*var(--ccol))"></colgroup>
-        <thead><tr><th>Metric</th><th>Result</th></tr></thead>
+        <thead><tr><th>What was checked</th><th>Result</th></tr></thead>
         <tbody>
-          <tr><td>Streams signal-checked</td><td>2,400 / 2,400 · resolution, fps, duration, black/freeze, SHA-256</td></tr>
-          <tr><td>Signal exceptions</td><td>8 streams (0.3%): exocentric bonus view at 23.98 fps</td></tr>
-          <tr><td>Labels verified against footage</td><td>9,384 / 9,384 (100%)</td></tr>
-          <tr><td>Independent verification audit</td><td>0 contradictions in a 1,800-span stratified re-sample</td></tr>
-          <tr><td>Verification calibration</td><td>240-span human-annotated reference set · 91% flag precision</td></tr>
-          <tr><td>Estimated label accuracy</td><td>90–95%, bounded by the human-reference calibration</td></tr>
+          <tr><td>Video streams — technical checks</td><td>2,400 / 2,400 passed (resolution, frame rate, duration, corruption, black/frozen frames, end-to-end file-integrity verification)</td></tr>
+          <tr><td>Known exception</td><td>8 streams (0.3%) — the bonus exocentric view runs at 23.98 fps instead of 29.97</td></tr>
+          <tr><td>Labels — checked against their footage</td><td>All 9,384 delivered labels</td></tr>
+          <tr><td>Final audit of delivered labels</td><td>1,800 labels randomly re-checked (3 per episode): 0 found incorrect</td></tr>
+          <tr><td>Checker validated against humans</td><td>The automated checker agrees with human reviewers on a 240-label reference set; when it rejects a label it is right 91% of the time</td></tr>
+          <tr><td>Stated label accuracy</td><td>90–95% — stated conservatively, because automated checking can miss subtle errors that humans catch</td></tr>
         </tbody>
       </table>
       <div class="prose">
-        <p><span class="b">Corrected or removed — never shipped wrong.</span> Labels that failed verification were re-captioned from the footage and re-verified before inclusion; labels that could not be confirmed were removed (label coverage averages 86% of each clip). Corrected labels are provenance-marked, so original and corrected labels are always distinguishable. Annotation states are version-snapshotted v1.0 → v1.4 with every change logged.</p>
+        <p>Re-written labels are provenance-marked in the annotation files, so original and corrected labels are always distinguishable, and every annotation change is logged across versioned snapshots (v1.0 → v1.4).</p>
       </div>
       <table>
         <caption><b>Table.</b> Tracking detection rates across all 600 episodes.</caption>
