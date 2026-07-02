@@ -181,6 +181,9 @@ table caption b{font-weight:700;}
 
 /* QA table — long results wrap, never stretch the grid */
 .qa-tbl tbody td{white-space:normal;line-height:1.45;}
+/* fields table — long mono identifiers break instead of overflowing */
+.fields-tbl tbody td{white-space:normal;line-height:1.45;}
+.fields-tbl .mono{word-break:break-all;}
 </style>
 </head>
 <body>
@@ -352,7 +355,7 @@ table caption b{font-weight:700;}
 └── viz/                           # showcase renders: wrist-trajectory · 3D pose</pre>
       </div>
       <div class="sub-side"><span class="abc">B</span>Per-frame track fields · data/…parquet</div>
-      <table>
+      <table class="fields-tbl">
         <caption><b>Table.</b> Track columns in each per-frame record (plus index, episode, frame, timestamp, task fields).</caption>
         <colgroup><col style="width:calc(3*var(--ccol))"><col style="width:calc(2*var(--ccol))"><col style="width:calc(4*var(--ccol))"></colgroup>
         <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
