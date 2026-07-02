@@ -1,0 +1,100 @@
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Synjuku — GDM Pilot Sample Datasheet</title>
+<style>
+  :root { --ink:#1a1d21; --mut:#6b7280; --line:#e5e7eb; --acc:#0f6f5c; --bg:#fbfaf8; }
+  body { font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; color: var(--ink);
+         background: var(--bg); margin: 0; line-height: 1.55; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 40px 24px 80px; }
+  h1 { font-size: 1.7rem; margin: 0 0 4px; }
+  .sub { color: var(--mut); margin-bottom: 28px; font-size: .95rem; }
+  h2 { font-size: 1.12rem; margin: 34px 0 10px; color: var(--acc);
+       border-bottom: 1px solid var(--line); padding-bottom: 6px; }
+  table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: .92rem; }
+  th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--mut); font-weight: 600; background: #f3f2ef; }
+  code { background: #eef0f2; padding: 1px 5px; border-radius: 4px; font-size: .88em; }
+  ul { padding-left: 22px; } li { margin: 4px 0; }
+  .pill { display: inline-block; background: #e7f3f0; color: var(--acc); border-radius: 999px;
+          padding: 2px 10px; font-size: .8rem; font-weight: 600; margin-right: 6px; }
+  .note { background: #fff8e6; border-left: 3px solid #d9a514; padding: 10px 14px; font-size: .9rem; }
+  .tablewrap { overflow-x: auto; }
+</style>
+<div class="wrap">
+<a href="/" style="color:#6b7280;font-size:.85rem;text-decoration:none">← demos</a>
+<h1>Datasheet — Synjuku GDM Pilot Sample</h1>
+<div class="sub"><code>s3://synjuku-data/synjuku-gdmr-sample/</code> · annotations v1.4 · tracks merged · 2026-07-02</div>
+<span class="pill">600 episodes / 10.0 h</span><span class="pill">4 synced cameras</span><span class="pill">9,384 verified labels</span><span class="pill">SLAM + 3D hands + body</span>
+
+<h2>Motivation</h2>
+<p>Egocentric human-demonstration sample for robot-manipulation foundation-model training,
+assembled for the Google DeepMind Human Ego Data pilot. Collected and produced by Synjuku.</p>
+
+<h2>Composition</h2>
+<ul>
+<li><b>600 episodes × 60&nbsp;s = 10.0&nbsp;h</b>, 4 synchronized cameras per episode
+(head/ego, left wrist, right wrist, exocentric), 960×720 @ 29.97&nbsp;fps, H.264. 61&nbsp;GB.</li>
+<li><b>9,384 language annotations</b> (subtask spans, median 3.2&nbsp;s, one sentence each),
+100% machine-verified; label coverage averages 86% of each clip — unverifiable or incorrect
+labels were removed rather than shipped.</li>
+<li><b>Per-frame tracks, merged into each episode's data parquet</b> (21 columns/frame):
+image-space hand pose (21 keypoints/hand), <b>ego camera position + rotation (COLMAP SLAM,
+up-to-scale)</b>, exo upper-body pose (9 joints), left/right hand pose in 3D world coordinates,
+with per-track timestamps and validity flags.</li>
+</ul>
+<div class="tablewrap"><table>
+<tr><th>Vertical (large-physical portion)</th><th>Share</th><th>GDM target ±5%</th></tr>
+<tr><td>Others (office / conference / outdoor)</td><td>22.4%</td><td>20%</td></tr>
+<tr><td>Home</td><td>19.9%</td><td>15%</td></tr>
+<tr><td>Retail (retail floor, café)</td><td>17.6%</td><td>15%</td></tr>
+<tr><td>Hospitality (hotel lobby, reception, restaurant kitchen)</td><td>17.2%</td><td>15%</td></tr>
+<tr><td>Logistics (packing, storage)</td><td>12.4%</td><td>15%</td></tr>
+<tr><td>Industrial (recycling, workstations)</td><td>10.5%</td><td>10%</td></tr>
+<tr><td>Small-physical-change tasks (of total)</td><td>6.2%</td><td>10%</td></tr>
+</table></div>
+<p>141 environment×site scenes across 10 physical venues · 600 unique source episodes ·
+180 task cards · ≤3.6&nbsp;h per scene (cap: 5&nbsp;h) · ≤10&nbsp;h per person.</p>
+
+<h2>Collection</h2>
+<p>Worker-worn 4-camera rigs operated by consented collectors performing task-card-scripted
+activities in real working venues (guesthouses, factories, recycling facility, workshops),
+plus in-the-wild workplace footage for logistics/industrial categories. May–June 2026
+(471 episodes) and March 2026 (129 episodes). Episodes are 60&nbsp;s windows selected from
+longer continuous sessions by annotation density. Task definitions come from a versioned
+task-card registry; every episode carries its task-card id and full source provenance.</p>
+
+<h2>Quality control</h2>
+<ul>
+<li><b>Signal layer:</b> 2,400/2,400 streams checked (resolution, fps, duration,
+black/freeze, SHA-256 integrity).</li>
+<li><b>Label layer:</b> every annotation verified against footage by a video-grounded LLM
+judge calibrated on a 240-span human gold set (91% flag precision). 2,376 labels repaired
+via verified blind re-captioning (provenance-tagged), 810 unverifiable/irreparable labels
+removed. Final re-sample: <b>0 contradictions in 1,800 spans</b>.</li>
+<li><b>Tracking quality</b> (mean detection): camera pose 96.0% · body 98.3% ·
+L hand 95.4% · R hand 93.1%; medians ≈99.3%. Per-episode rates in
+<code>meta/tracking_quality_per_episode.csv</code>.</li>
+<li><b>Versioned:</b> annotation states snapshotted v1.0→v1.4 with every label change logged.</li>
+</ul>
+
+<h2>Known limitations (disclosed)</h2>
+<ul>
+<li>960×720 delivery resolution — 1080p+ available on fresh collection</li>
+<li>SLAM positions are up-to-scale (no absolute metric scale); not gated against sub-cm targets</li>
+<li>8/2,400 streams (exocentric bonus view) at 23.98&nbsp;fps</li>
+<li>Hand-track tail where hands exit the egocentric FOV (right hand lowest, 93.1% mean)</li>
+<li>Scenes are task-card scenarios staged in real working venues, not 600 distinct venues</li>
+<li>Segment lengths: 68% within 1–5&nbsp;s, 30% between 5–15&nbsp;s (tunable on request)</li>
+<li>Collectors are consented; no bystander blur pass applied in this version</li>
+</ul>
+
+<h2>Access & use</h2>
+<p>Read-only scoped S3 credentials to <code>s3://synjuku-data/synjuku-gdmr-sample/</code>.
+LeRobot-v3-compatible layout; tracks are pre-merged per frame — no joins required.
+Intended uses: manipulation policy/representation learning, hand-trajectory prediction,
+subtask grounding. Showcase renders (wrist-trajectory overlay, 3D pose) available alongside.
+License per Synjuku–GDM pilot terms. Maintained by the Synjuku data team; per-episode
+provenance enables regeneration of any artifact.</p>
+
+<div class="note"><b>Companion documents:</b> QA_STORY.md (full QC methodology + measured
+numbers) and TRACKING_QUALITY.md ship with the dataset.</div>
+</div>
