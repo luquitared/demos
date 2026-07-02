@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Synjuku — 1,000-Hour Egocentric Manipulation Dataset</title>
+<style>
+  :root { --ink:#1a1d21; --mut:#6b7280; --line:#e5e7eb; --acc:#0f6f5c; --bg:#fbfaf8; }
+  body { font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; color: var(--ink);
+         background: var(--bg); margin: 0; line-height: 1.55; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 40px 24px 80px; }
+  h1 { font-size: 1.7rem; margin: 0 0 4px; }
+  .sub { color: var(--mut); margin-bottom: 28px; font-size: .95rem; }
+  h2 { font-size: 1.12rem; margin: 34px 0 10px; color: var(--acc);
+       border-bottom: 1px solid var(--line); padding-bottom: 6px; }
+  table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: .92rem; }
+  th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--mut); font-weight: 600; background: #f3f2ef; }
+  .spec th { width: 34%; color: var(--ink); background:#f7f6f3; font-weight:600; }
+  code { background: #eef0f2; padding: 1px 5px; border-radius: 4px; font-size: .88em; }
+  ul { padding-left: 22px; } li { margin: 4px 0; }
+  .pill { display: inline-block; background: #e7f3f0; color: var(--acc); border-radius: 999px;
+          padding: 2px 10px; font-size: .8rem; font-weight: 600; margin-right: 6px; }
+  .tablewrap { overflow-x: auto; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<a href="/" style="color:#6b7280;font-size:.85rem;text-decoration:none">← demos</a>
+<h1>Datasheet — Synjuku 1,000-Hour Egocentric Manipulation Dataset</h1>
+<div class="sub"><code>s3://synjuku-data/synjuku-D1-v3/</code> · production delivery D1 · 2026-07-02</div>
+<span class="pill">1,534 episodes / 1,121 h</span><span class="pill">4 synced cameras</span><span class="pill">655,192 subtask labels</span><span class="pill">121M frames</span>
+
+<h2>Specifications</h2>
+<div class="tablewrap"><table class="spec">
+<tr><th>Delivery path</th><td><code>s3://synjuku-data/synjuku-D1-v3/</code></td></tr>
+<tr><th>Format</th><td>LeRobot v3.0 — per-episode parquet + per-camera H.264 video</td></tr>
+<tr><th>Episodes</th><td>1,534 continuous work sessions</td></tr>
+<tr><th>Duration</th><td>1,121.3 h total · mean 43.9 min per episode (range 2.5–47 min)</td></tr>
+<tr><th>Frames</th><td>120,983,593 total</td></tr>
+<tr><th>Frame rate</th><td>29.97002997 fps (NTSC, 30000/1001) — exact; per-frame timestamps</td></tr>
+<tr><th>Cameras</th><td>4 synchronized — ego/head, left wrist, right wrist, exocentric</td></tr>
+<tr><th>Resolution</th><td>960 × 720, H.264 (yuv420p)</td></tr>
+<tr><th>Total size</th><td>15.7 TB</td></tr>
+<tr><th>Hand tracking</th><td>Image-space hand pose, 21 keypoints × 3 per hand, every frame (NaN when out of frame)</td></tr>
+<tr><th>Language labels</th><td>655,192 subtask spans (start / end / one-sentence description) · ~427 per episode</td></tr>
+<tr><th>Task cards</th><td>232 distinct scripted tasks, from a versioned task-card registry</td></tr>
+<tr><th>Environments</th><td>15 environment types · 128 environment×site scenes · 9 physical venues</td></tr>
+<tr><th>Capture window</th><td>2026-05-12 → 2026-06-18 (31 collection days)</td></tr>
+<tr><th>Provenance</th><td>per-episode: task-card id, capture site, recording date embedded in episode id</td></tr>
+<tr><th>License</th><td>Per delivery agreement</td></tr>
+</table></div>
+
+<h2>Motivation</h2>
+<p>Large-scale egocentric human-demonstration corpus for robot-manipulation foundation-model
+training: continuous, multi-view first-person work sessions with synchronized wrist and
+exocentric views, per-frame hand tracking, and dense subtask language labels. Collected and
+produced by Synjuku.</p>
+
+<h2>Composition</h2>
+<div class="tablewrap"><table>
+<tr><th>Environment</th><th>Hours</th><th>Environment</th><th>Hours</th></tr>
+<tr><td>Living room</td><td>157.1</td><td>Private office</td><td>77.2</td></tr>
+<tr><td>Bedroom</td><td>151.7</td><td>Retail floor</td><td>73.0</td></tr>
+<tr><td>Bathroom</td><td>149.3</td><td>Reception</td><td>73.0</td></tr>
+<tr><td>Conference room</td><td>82.1</td><td>Café</td><td>71.2</td></tr>
+<tr><td>Hotel lobby</td><td>79.5</td><td>Kitchen</td><td>55.7</td></tr>
+<tr><td>Dining room</td><td>79.4</td><td>Patio / garden / sports field</td><td>46.4</td></tr>
+<tr><td colspan="2">Restaurant kitchen</td><td colspan="2">25.6</td></tr>
+</table></div>
+<p>By category: home 53% · office &amp; conference 18% · hospitality 16% · retail 13%.
+Every environment type is captured at up to 9 different physical venues, and every episode
+is a single continuous session — no cuts, no concatenation.</p>
+
+<h2>Collection</h2>
+<p>Worker-worn 4-camera rigs operated by consented collectors performing task-card-scripted
+activities in real working venues. Each of the 232 tasks is defined by a versioned task card
+(objects, initial/final state, step list), giving controlled coverage of manipulation skills
+across environments. Multi-camera synchronization via audio-correlation alignment at capture
+processing time.</p>
+
+<h2>Quality control</h2>
+<ul>
+<li><b>Delivery gates (per episode):</b> camera coverage across all wearable angles,
+cross-camera synchronization, minimum duration, file-integrity (SHA-256 verified at upload,
+storage, and delivery), black/corrupt-stream rejection. Episodes failing any gate were
+rejected before delivery.</li>
+<li><b>Hand tracking:</b> per-frame, with explicit NaN marking when hands leave frame —
+no interpolated or fabricated values.</li>
+<li><b>Language labels</b> are automatically generated, video-grounded subtask annotations
+produced alongside collection and spot-audited. A per-span verified-label edition of any
+subset is available on request (see the GDM pilot sample for the verified-label methodology
+and its measured results).</li>
+</ul>
+
+<h2>Access &amp; use</h2>
+<p>Read-only scoped S3 credentials to <code>s3://synjuku-data/synjuku-D1-v3/</code>.
+Intended uses: manipulation policy and representation learning at scale, hand-trajectory
+prediction, long-horizon subtask segmentation, multi-view learning. Continuous ~44-minute
+sessions make this corpus suited to long-context training in addition to clip-level use;
+windowed exports (e.g. 60&nbsp;s clips) can be produced on request. Maintained by the
+Synjuku data team.</p>
+</div>
+</body>
+</html>
