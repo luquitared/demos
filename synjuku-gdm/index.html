@@ -23,6 +23,8 @@
 <a href="/" style="color:#6b7280;font-size:.85rem;text-decoration:none">← demos</a>
 <h1>Datasheet — Synjuku GDM Pilot Sample</h1>
 <div class="sub"><code>s3://synjuku-data/synjuku-gdmr-sample/</code> · annotations v1.4 · tracks merged · 2026-07-02</div>
+<div style="margin:14px 0 4px"><a href="#datasheet" style="margin-right:14px">Datasheet</a><a href="#qa" style="margin-right:14px">QA Story</a><a href="#tracking">Tracking Quality</a></div>
+<a id="datasheet"></a>
 <span class="pill">600 episodes / 10.0 h</span><span class="pill">4 synced cameras</span><span class="pill">9,384 verified labels</span><span class="pill">SLAM + 3D hands + body</span>
 
 <h2>Motivation</h2>
@@ -95,6 +97,61 @@ subtask grounding. Showcase renders (wrist-trajectory overlay, 3D pose) availabl
 License per Synjuku–GDM pilot terms. Maintained by the Synjuku data team; per-episode
 provenance enables regeneration of any artifact.</p>
 
-<div class="note"><b>Companion documents:</b> QA_STORY.md (full QC methodology + measured
-numbers) and TRACKING_QUALITY.md ship with the dataset.</div>
+
+<a id="qa"></a>
+<h1 style="margin-top:56px;font-size:1.4rem">QA Procedure &amp; Measured Quality</h1>
+<div class="sub">Two-layer QC — every stream signal-checked, every label verified against footage</div>
+
+<div class="tablewrap"><table>
+<tr><th>Metric</th><th>Value</th></tr>
+<tr><td>Video streams signal-checked</td><td>2,400 / 2,400 (resolution, fps, duration, black/freeze, SHA-256 chain)</td></tr>
+<tr><td>Signal exceptions</td><td>8 streams (0.3%) — exocentric bonus view at 23.98 fps, disclosed</td></tr>
+<tr><td>Language annotations delivered</td><td>9,384 subtask spans (min 5 / episode)</td></tr>
+<tr><td>Annotations individually machine-verified</td><td>9,384 / 9,384 (100%)</td></tr>
+<tr><td>Post-QC verification re-sample</td><td><b>0 contradictions / 1,800 spans</b></td></tr>
+<tr><td>Judge calibration vs human gold set</td><td>91% flag precision (240-span double-annotated set)</td></tr>
+<tr><td>Estimated true label accuracy</td><td>~90–95% (bounded by judge recall on the gold set)</td></tr>
+</table></div>
+
+<h2>How the label layer works</h2>
+<ul>
+<li><b>Calibrated judge.</b> A video-grounded LLM judge (native video, 3-vote escalation on
+uncertain cases) calibrated against a 240-span human-annotated gold set: 91% precision on
+flags; recall on subtle action errors is the known limitation, reflected in the accuracy bound.</li>
+<li><b>Full coverage.</b> The judge watched the clip behind every span (10,122 verified) —
+initial contradiction rate 24.0%, consistent with the automatic annotator's error profile.</li>
+<li><b>Blind repair.</b> Every contradicted span was re-captioned by an independent pass that
+watched the clip <i>without seeing the original label</i>; each new caption was verified like
+any other label. 2,376 labels repaired (provenance-tagged <code>qc_repair_blind_caption</code>);
+130 irreparable spans removed.</li>
+<li><b>No gray zone.</b> 680 spans the judge could not confirm were removed rather than shipped.</li>
+<li><b>Re-sample.</b> A fresh stratified re-sample of the final annotations returned
+0 contradictions in 1,800 spans.</li>
+</ul>
+
+<h2>Traceability</h2>
+<p>Annotation states are version-snapshotted (v1.0 → v1.4: 11,313 → 10,197 → 10,067 → 9,387 →
+9,384 spans) with every individual label change logged; each episode carries full provenance
+(source dataset, source episode id, window offset, capture site, task-card id).</p>
+
+<a id="tracking"></a>
+<h1 style="margin-top:56px;font-size:1.4rem">Tracking Quality</h1>
+<div class="sub">Per-frame tracks merged into each episode's data parquet · engines: COLMAP (SLAM), MediaPipe (body, hands)</div>
+
+<div class="tablewrap"><table>
+<tr><th>Track</th><th>Mean detection</th><th>Median</th><th>Episodes ≥90%</th></tr>
+<tr><td>Camera position (SLAM)</td><td>96.0%</td><td>99.3%</td><td>551/600</td></tr>
+<tr><td>Camera rotation (SLAM)</td><td>96.0%</td><td>99.3%</td><td>551/600</td></tr>
+<tr><td>Upper body — exo, 9 joints</td><td>98.3%</td><td>99.9%</td><td>573/600</td></tr>
+<tr><td>Left hand, 3D world</td><td>95.4%</td><td>99.3%</td><td>551/600</td></tr>
+<tr><td>Right hand, 3D world</td><td>93.1%</td><td>99.3%</td><td>531/600</td></tr>
+</table></div>
+<ul>
+<li>Detection tail is dominated by hands leaving the egocentric FOV (right hand lowest) —
+inherent to the capture, not a pipeline fault.</li>
+<li>Camera positions are up-to-scale (research-grade; no absolute metric scale).</li>
+<li>Image-space hand pose additionally present for 100% of episodes at video FPS.</li>
+<li>Per-episode rates ship with the dataset: <code>meta/tracking_quality_per_episode.csv</code>.</li>
+</ul>
 </div>
+
