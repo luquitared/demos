@@ -354,21 +354,42 @@ table caption b{font-weight:700;}
 │   └── {camera}/chunk-000/file-NNNNNN.mp4     # H.264, one per camera
 └── viz/                           # showcase renders: wrist-trajectory · 3D pose</pre>
       </div>
-      <div class="sub-side"><span class="abc">B</span>Per-frame track fields · data/…parquet</div>
-      <table class="fields-tbl">
-        <caption><b>Table.</b> Track columns in each per-frame record (plus index, episode, frame, timestamp, task fields).</caption>
-        <colgroup><col style="width:calc(3*var(--ccol))"><col style="width:calc(2*var(--ccol))"><col style="width:calc(4*var(--ccol))"></colgroup>
-        <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
-        <tbody>
-          <tr><td><span class="mono">base_0_camera/position</span></td><td><span class="mono">float32 [3]</span></td><td>Ego camera position (SLAM, up-to-scale) + validity flag</td></tr>
-          <tr><td><span class="mono">base_0_camera/slam_quaternion_xyzw</span></td><td><span class="mono">float32 [4]</span></td><td>Ego camera rotation (SLAM)</td></tr>
-          <tr><td><span class="mono">upper_body/tracks</span></td><td><span class="mono">float32 [9,3]</span></td><td>Exocentric upper-body joints + validity flag</td></tr>
-          <tr><td><span class="mono">left_hand/world</span></td><td><span class="mono">float32 [21,3]</span></td><td>Left hand, 3D world coordinates</td></tr>
-          <tr><td><span class="mono">right_hand/world</span></td><td><span class="mono">float32 [21,3]</span></td><td>Right hand, 3D world coordinates</td></tr>
-          <tr><td><span class="mono">left_hand/tracks</span></td><td><span class="mono">float32 [21,3]</span></td><td>Left hand, image-space landmarks</td></tr>
-          <tr><td><span class="mono">right_hand/tracks</span></td><td><span class="mono">float32 [21,3]</span></td><td>Right hand, image-space landmarks</td></tr>
-        </tbody>
-      </table>
+      <div class="sub-side"><span class="abc">B</span>Per-frame fields · data/…parquet</div>
+      <div class="codeblock">
+        <div class="cb-label">// per-frame record — one parquet per episode · 1,798 rows @ 29.97 fps · 21 columns</div>
+<pre>data/chunk-000/file-NNNNNN.parquet
+│
+│  # frame metadata
+├─ index                                  int64           # global frame index across the dataset
+├─ episode_index                          int64           # episode this frame belongs to
+├─ frame_index                            int64           # frame position within the episode · JOIN KEY
+├─ timestamp                              float64         # seconds from episode start
+├─ task_index                             int64           # resolves via meta/tasks.parquet → task-card id
+│
+│  # hands — image-space landmarks (NaN when hand out of frame)
+├─ left_hand/tracks                       float32 [21,3]  # 21 MediaPipe landmarks · x,y,z
+├─ right_hand/tracks                      float32 [21,3]
+├─ left_hand/tracks/timestamp             int64           # per-track capture timestamp (ns)
+├─ right_hand/tracks/timestamp            int64
+│
+│  # ego camera — SLAM, up-to-scale world frame
+├─ base_0_camera/position                 float32 [3]     # camera position
+├─ base_0_camera/position/timestamp       int64
+├─ base_0_camera/position/valid           bool            # per-frame validity flag
+├─ base_0_camera/slam_quaternion_xyzw     float32 [4]     # camera rotation (quaternion)
+├─ base_0_camera/slam_quaternion_xyzw/timestamp  int64
+│
+│  # body — from the exocentric view
+├─ upper_body/tracks                      float32 [9,3]   # 9 upper-body joints
+├─ upper_body/tracks/timestamp            int64
+├─ upper_body/tracks/valid                bool
+│
+│  # hands — 3D world coordinates (same frame as camera SLAM)
+├─ left_hand/world                        float32 [21,3]
+├─ left_hand/world/timestamp              int64
+├─ right_hand/world                       float32 [21,3]
+└─ right_hand/world/timestamp             int64</pre>
+      </div>
     </div>
   </div>
 
