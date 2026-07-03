@@ -309,14 +309,15 @@ table caption b{font-weight:700;}
       <div class="codeblock">
         <div class="cb-label">// LeRobot v3.0 dataset · tracks pre-merged</div>
 <pre>dataset/
-├── DATASHEET.html · QA_STORY.md · TRACKING_QUALITY.md
+├── DATASHEET.html                 # this document
 ├── meta/
 │   ├── info.json                  # format · fps · features · camera roles
 │   ├── tasks.parquet              # task_index → task-card id
+│   ├── tracks_info.json           # merged-track feature definitions
 │   ├── episodes/                  # per-episode metadata + provenance
-│   ├── custom_annotation.json     # verified subtask labels (v1.4)
-│   ├── gdm_pilot_sheet.csv        # environment_type · scene_id · task_description
-│   └── tracking_quality_per_episode.csv
+│   ├── annotations/               # per-episode verified subtask labels
+│   ├── custom_annotation.json     # all labels, flat (v1.4)
+│   └── custom_metadata.csv        # per-episode sheet: environment_type · scene_id · task_description
 ├── data/
 │   └── chunk-000/file-NNNNNN.parquet          # per-frame records · 21 columns
 ├── videos/
@@ -462,7 +463,7 @@ removals.</p>
         </tbody>
       </table>
       <div class="prose">
-        <p>Detection tail is dominated by hands leaving the egocentric field of view — inherent to worker-worn capture. Camera positions are up-to-scale (research-grade; no absolute metric scale). Per-episode rates ship with the dataset.</p>
+        <p>Detection tail is dominated by hands leaving the egocentric field of view — inherent to worker-worn capture. Camera positions are up-to-scale (research-grade; no absolute metric scale). Per-episode detection rates available on request.</p>
       </div>
     </div>
   </div>
