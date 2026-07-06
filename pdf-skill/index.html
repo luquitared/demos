@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>pdf skill — HTML to continuous single-page PDF</title>
+<meta name="description" content="Claude Code skill: convert an HTML file to a continuous single-page PDF via headless Chrome or weasyprint." />
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --card: #131313;
+    --fg: #fafafa;
+    --muted: #71717a;
+    --line: #262626;
+    --accent: #f97316;
+    --code-bg: #18181b;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font: 15px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  main { max-width: 760px; margin: 0 auto; padding: 56px 24px 96px; }
+  .back { color: var(--muted); text-decoration: none; font-size: 13px; }
+  .back:hover { color: var(--accent); }
+  header { margin: 28px 0 40px; }
+  .eyebrow {
+    font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 12px;
+  }
+  .eyebrow .dot {
+    display: inline-block; width: 6px; height: 6px;
+    border-radius: 999px; background: var(--accent);
+    margin-right: 8px; vertical-align: middle;
+  }
+  h1 {
+    font-size: 32px; line-height: 1.15; margin: 0 0 14px;
+    letter-spacing: -0.02em; font-weight: 700;
+  }
+  .intro { color: var(--muted); max-width: 600px; }
+  .meta {
+    margin-top: 20px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 16px 20px;
+    font-size: 13px;
+  }
+  .meta dt { color: var(--muted); float: left; width: 120px; clear: left; }
+  .meta dd { margin: 0 0 6px 130px; }
+  .meta dl { margin: 0; }
+  h2 {
+    font-size: 21px; font-weight: 650; letter-spacing: -0.01em;
+    margin: 48px 0 14px; padding-top: 24px; border-top: 1px solid var(--line);
+  }
+  h2 .num { color: var(--accent); margin-right: 8px; font-variant-numeric: tabular-nums; }
+  p { margin: 12px 0; }
+  ul, ol { margin: 12px 0; padding-left: 24px; }
+  li { margin: 6px 0; }
+  strong { font-weight: 650; }
+  code {
+    font: 13px/1.5 ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace;
+    background: var(--code-bg);
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    padding: 1px 6px;
+    white-space: nowrap;
+  }
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 18px 20px;
+    overflow-x: auto;
+    margin: 16px 0;
+  }
+  pre code {
+    background: none; border: none; padding: 0; white-space: pre;
+    display: block;
+  }
+  .callout {
+    border-left: 3px solid var(--accent);
+    background: var(--card);
+    border-radius: 0 10px 10px 0;
+    padding: 14px 18px;
+    margin: 16px 0;
+    color: #d4d4d8;
+  }
+  .warn { border-left-color: #ef4444; }
+  footer {
+    margin-top: 72px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 12px;
+  }
+  footer a { color: var(--muted); }
+</style>
+</head>
+<body>
+<main>
+  <a class="back" href="/">← demos</a>
+
+  <header>
+    <div class="eyebrow"><span class="dot"></span>claude code skill</div>
+    <h1>pdf — HTML to continuous single-page PDF</h1>
+    <p class="intro">
+      A Claude Code skill that converts an HTML file into one continuous,
+      single-page PDF sized exactly to its rendered content. Two methods,
+      chosen by page complexity.
+    </p>
+    <div class="meta">
+      <dl>
+        <dt>name</dt><dd><code>pdf</code></dd>
+        <dt>description</dt><dd>Convert an HTML file to a continuous single-page PDF. Use when the user wants to generate a PDF from HTML.</dd>
+        <dt>allowed-tools</dt><dd><code>Bash</code>, <code>Read</code>, <code>Edit</code></dd>
+        <dt>argument</dt><dd><code>[html-file-path]</code></dd>
+      </dl>
+    </div>
+  </header>
+
+  <p><strong>Choose by page complexity:</strong></p>
+  <ul>
+    <li><strong>Headless Chrome (DEFAULT — pixel-faithful).</strong> Renders exactly like the
+      browser: web fonts, CSS variables, grid/flex, gradients, letter-spacing. Use for anything
+      designed/branded.</li>
+    <li><strong>weasyprint (simple documents only).</strong> Fine for plain text/tables. Known to
+      RUIN complex pages: crashes on CSS <code>var()</code> inside gradients, collapses
+      calc()-based grids, no web fonts → wrong typography.
+      <em>(Learned 2026-07-02: branded datasheets came out mangled.)</em></li>
+  </ul>
+
+  <h2><span class="num">1</span>Headless Chrome (preferred)</h2>
+
+<pre><code>CHROME="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+SCRATCH=&lt;scratchpad dir&gt;   # work on copies, never the original
+
+# 1. Measure true rendered height: inject a reporter into a COPY, read it via dump-dom
+python3 - &lt;&lt;'EOF'
+src = open("$FILE").read()
+src = src.replace("&lt;/body&gt;", "&lt;script&gt;window.addEventListener('load',()=&gt;{setTimeout(()=&gt;{document.title='H:'+document.documentElement.scrollHeight},1500)})&lt;/script&gt;&lt;/body&gt;")
+open("$SCRATCH/measure.html","w").write(src)
+EOF
+H=$("$CHROME" --headless=new --disable-gpu --dump-dom --virtual-time-budget=12000 \
+    --window-size=&lt;design_width+~120&gt;,2000 "file://$SCRATCH/measure.html" 2&gt;/dev/null \
+    | grep -o '&lt;title&gt;H:[0-9]*' | grep -o '[0-9]*$')
+
+# 2. Into a print COPY, inject @page sized to content (width = the design's fixed width, else 800px):
+#    @page { size: &lt;width&gt;px &lt;H+24&gt;px; margin: 0; }
+#    @media print { body { -webkit-print-color-adjust: exact; } }
+
+# 3. Print
+"$CHROME" --headless=new --disable-gpu --no-pdf-header-footer --virtual-time-budget=15000 \
+  --print-to-pdf="&lt;output.pdf&gt;" "file://$SCRATCH/print.html"</code></pre>
+
+  <p>Notes:</p>
+  <ul>
+    <li><code>--virtual-time-budget</code> lets web fonts/images finish loading before printing.</li>
+    <li>Chrome converts CSS px→pt at 0.75 (1440px page reads as 1080pt in the PDF). Correct.</li>
+    <li>Verify visually: <code>sips -s format jpeg --resampleWidth 700 out.pdf --out check.jpg</code>, then look at it.</li>
+  </ul>
+
+  <h2><span class="num">2</span>weasyprint (simple pages)</h2>
+
+  <ol>
+    <li>Inject <code>@page { size: 800px 200px; margin: 0; }</code>, render with Python
+      <code>weasyprint</code>, count pages → height ≈ pages × 200.</li>
+    <li>Replace the @page height with the measured total; run <code>weasyprint in.html out.pdf</code>.</li>
+    <li>If the page uses CSS custom properties, flatten every <code>var(--x)</code> to its literal
+      first (weasyprint crashes on var() in gradients). If it uses calc()-based grids or web
+      fonts, <strong>STOP</strong> and use Method 1 instead.</li>
+  </ol>
+  <p>weasyprint warnings about <code>box-shadow</code> / <code>print-color-adjust</code> are harmless.</p>
+
+  <h2>Shared rules</h2>
+
+  <div class="callout warn">
+    Never edit the source HTML in place — copy to scratchpad, inject, convert.
+  </div>
+  <ul>
+    <li>No <code>min-height:100vh</code> (100vh = whole document height in single-page PDFs);
+      no <code>page-break-*</code> rules.</li>
+    <li>Always end by rendering the PDF to an image for a visual check before delivering.</li>
+  </ul>
+
+  <footer>
+    A <a href="https://claude.com/claude-code">Claude Code</a> skill · published from ~/.claude/skills/pdf/SKILL.md
+  </footer>
+</main>
+</body>
+</html>
