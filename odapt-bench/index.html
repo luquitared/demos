@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>odapt — your bench</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --paper: #fbfaf6;
+  --grid-line: rgba(39, 66, 245, 0.055);
+  --ink: #171f38;
+  --ink-soft: #565d77;
+  --ink-faint: #9298ad;
+  --cobalt: #2742f5;
+  --cobalt-deep: #1c31c4;
+  --cobalt-wash: rgba(39, 66, 245, 0.08);
+  --butter: #ffe47a;
+  --mint: #c6efce;
+  --sky: #c9e4ff;
+  --blush: #ffd9e1;
+  --lilac: #e4d9ff;
+  --card: #ffffff;
+  --line: #e6e4da;
+  --ok: #15803d;
+  --warn: #c2410c;
+  --shadow-card: 0 1px 2px rgba(23, 31, 56, 0.06), 0 12px 32px -12px rgba(23, 31, 56, 0.18);
+  --radius: 14px;
+  --font-display: "Bricolage Grotesque", "Instrument Sans", sans-serif;
+  --font-body: "Instrument Sans", system-ui, sans-serif;
+  --font-mono: "Spline Sans Mono", ui-monospace, monospace;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: var(--font-body);
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 28px 28px;
+  color: var(--ink);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+::selection { background: var(--butter); color: var(--ink); }
+a { color: var(--cobalt); text-decoration: none; }
+:focus-visible { outline: 2.5px solid var(--cobalt); outline-offset: 2px; border-radius: 4px; }
+button { font-family: var(--font-body); cursor: pointer; }
+
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+
+/* ------------------------------- header --------------------------------- */
+.site-header {
+  position: sticky; top: 0; z-index: 40;
+  background: rgba(251, 250, 246, 0.88);
+  backdrop-filter: blur(8px);
+  border-bottom: 1.5px solid var(--line);
+}
+.site-header .bar {
+  max-width: 1180px; margin: 0 auto; padding: 14px 24px;
+  display: flex; align-items: center; gap: 28px;
+}
+.wordmark {
+  font-family: var(--font-display); font-weight: 800; font-size: 1.45rem;
+  letter-spacing: -0.02em; color: var(--ink);
+}
+.wordmark .dot { color: var(--cobalt); }
+.tabs { display: flex; gap: 4px; margin-right: auto; }
+.tab {
+  font-family: var(--font-mono); font-size: 0.82rem; color: var(--ink-soft);
+  background: none; border: none; border-radius: 999px; padding: 7px 15px;
+  transition: color .15s, background .15s;
+}
+.tab:hover { color: var(--ink); background: var(--cobalt-wash); }
+.tab[aria-selected="true"] { background: var(--ink); color: #fff; }
+.spend-pill {
+  font-family: var(--font-mono); font-size: 0.78rem; color: var(--ink-soft);
+  background: var(--card); border: 1.5px solid var(--line); border-radius: 999px;
+  padding: 6px 13px; display: flex; align-items: center; gap: 8px;
+  cursor: pointer; transition: border-color .15s;
+}
+.spend-pill:hover { border-color: var(--cobalt); }
+.spend-pill .meter {
+  width: 44px; height: 5px; background: var(--line); border-radius: 3px; overflow: hidden;
+}
+.spend-pill .meter i { display: block; height: 100%; width: 28%; background: var(--cobalt); border-radius: 3px; }
+.avatar-me {
+  width: 34px; height: 34px; border-radius: 50%; background: var(--butter);
+  border: 1.5px solid var(--ink); display: grid; place-items: center;
+  font-family: var(--font-mono); font-size: 0.75rem; font-weight: 500;
+}
+
+/* ------------------------------ greeting -------------------------------- */
+.greet { padding: 44px 0 8px; }
+.greet .stamp {
+  font-family: var(--font-mono); font-size: 0.76rem; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--cobalt); margin-bottom: 10px;
+}
+.greet h1 {
+  font-family: var(--font-display); font-weight: 800;
+  font-size: clamp(1.9rem, 4vw, 2.7rem); letter-spacing: -0.03em; line-height: 1.05;
+}
+.greet .pulse { color: var(--ink-soft); margin-top: 10px; max-width: 60ch; }
+.greet .pulse b { color: var(--ink); font-weight: 600; }
+
+/* ------------------------------- layout --------------------------------- */
+.deck { display: grid; grid-template-columns: 1fr 296px; gap: 26px; padding: 26px 0 80px; align-items: start; }
+.shelf { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+/* ------------------------------ app cards ------------------------------- */
+.app-tile {
+  background: var(--card); border: 1.5px solid var(--line); border-radius: var(--radius);
+  box-shadow: var(--shadow-card); overflow: hidden; text-align: left; width: 100%;
+  padding: 0; transition: transform .18s ease, box-shadow .18s ease;
+  display: flex; flex-direction: column;
+}
+.app-tile:hover {
+  transform: translateY(-3px) rotate(-0.3deg);
+  box-shadow: 0 2px 3px rgba(23,31,56,.06), 0 20px 44px -14px rgba(23,31,56,.24);
+}
+.app-tile .bar {
+  display: flex; align-items: center; gap: 11px; padding: 12px 15px;
+  border-bottom: 1.5px solid rgba(23, 31, 56, 0.08);
+}
+.bar-butter { background: var(--butter); }
+.bar-mint { background: var(--mint); }
+.bar-sky { background: var(--sky); }
+.bar-blush { background: var(--blush); }
+.bar-lilac { background: var(--lilac); }
+.app-icon {
+  width: 34px; height: 34px; border-radius: 9px; background: rgba(255,255,255,.72);
+  border: 1px solid rgba(23,31,56,.1); display: grid; place-items: center;
+  font-size: 1.05rem; flex-shrink: 0;
+}
+.app-tile .bar .name {
+  font-family: var(--font-mono); font-size: 0.9rem; font-weight: 500; color: var(--ink);
+}
+.app-tile .bar .open-hint {
+  margin-left: auto; font-family: var(--font-mono); font-size: 0.72rem;
+  color: rgba(23,31,56,.55); background: rgba(255,255,255,.65);
+  border-radius: 999px; padding: 3px 10px; white-space: nowrap;
+  opacity: 0; transition: opacity .15s;
+}
+.app-tile:hover .open-hint, .app-tile:focus-visible .open-hint { opacity: 1; }
+.app-tile .body { padding: 13px 15px 12px; flex: 1; }
+.app-tile .desc { color: var(--ink-soft); font-size: 0.9rem; line-height: 1.45; }
+.app-tile .people { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
+.avatars { display: flex; }
+.avatars .av {
+  width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid var(--card);
+  display: grid; place-items: center; font-family: var(--font-mono);
+  font-size: 0.58rem; margin-left: -6px;
+}
+.avatars .av:first-child { margin-left: 0; }
+.av-a { background: var(--sky); } .av-b { background: var(--blush); }
+.av-c { background: var(--mint); } .av-d { background: var(--lilac); } .av-e { background: var(--butter); }
+.access-chip {
+  font-family: var(--font-mono); font-size: 0.7rem; color: var(--ink-soft);
+  border: 1px dashed var(--ink-faint); border-radius: 999px; padding: 2.5px 10px;
+}
+.access-chip.pub { color: var(--ok); border-color: var(--ok); border-style: solid; }
+.access-chip.pw { color: var(--cobalt); border-color: var(--cobalt); }
+/* the manifest line: status · address · audience · cost */
+.manifest {
+  font-family: var(--font-mono); font-size: 0.73rem; color: var(--ink-faint);
+  border-top: 1px dashed var(--line); padding: 9px 15px;
+  display: flex; align-items: center; gap: 7px; flex-wrap: wrap;
+  background: var(--paper);
+}
+.manifest .st { color: var(--ok); }
+.manifest .st.draft { color: var(--ink-faint); }
+.manifest .addr { color: var(--ink-soft); }
+.manifest .sep { color: var(--line); }
+
+/* new app tile */
+.new-tile {
+  border: 1.5px dashed var(--ink-faint); border-radius: var(--radius);
+  background: rgba(255,255,255,.5); padding: 20px; display: flex;
+  flex-direction: column; justify-content: center; gap: 12px; min-height: 190px;
+  transition: border-color .15s;
+}
+.new-tile:focus-within { border-color: var(--cobalt); }
+.new-tile label {
+  font-family: var(--font-mono); font-size: 0.76rem; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--ink-faint);
+}
+.new-tile textarea {
+  border: none; background: transparent; resize: none; outline: none;
+  font-family: var(--font-mono); font-size: 0.95rem; color: var(--ink);
+  min-height: 52px; width: 100%;
+}
+.new-tile textarea::placeholder { color: var(--ink-faint); }
+.new-tile .go {
+  align-self: flex-start; background: var(--cobalt); color: #fff; border: none;
+  border-radius: 10px; font-weight: 600; font-size: 0.85rem; padding: 8px 16px;
+  transition: background .15s;
+}
+.new-tile .go:hover { background: var(--cobalt-deep); }
+
+/* ------------------------------ side rail ------------------------------- */
+.rail { display: flex; flex-direction: column; gap: 20px; position: sticky; top: 84px; }
+.rail-card {
+  background: var(--card); border: 1.5px solid var(--line); border-radius: var(--radius);
+  padding: 18px;
+}
+.rail-card h3 {
+  font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--cobalt); font-weight: 500; margin-bottom: 4px;
+}
+.rail-card .note { font-size: 0.82rem; color: var(--ink-faint); margin-bottom: 12px; }
+.conn { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px dashed var(--line); }
+.conn:last-of-type { border-bottom: none; }
+.conn .logo {
+  width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center;
+  font-size: 0.85rem; border: 1px solid rgba(23,31,56,.08);
+}
+.conn .cname { font-size: 0.88rem; font-weight: 600; }
+.conn .cuse { font-family: var(--font-mono); font-size: 0.7rem; color: var(--ink-faint); }
+.conn .ok-dot { margin-left: auto; width: 8px; height: 8px; border-radius: 50%; background: #22c55e; }
+.rail-add {
+  width: 100%; margin-top: 12px; background: none; border: 1.5px dashed var(--ink-faint);
+  border-radius: 10px; font-family: var(--font-mono); font-size: 0.78rem;
+  color: var(--ink-soft); padding: 8px; transition: border-color .15s, color .15s;
+}
+.rail-add:hover { border-color: var(--cobalt); color: var(--cobalt); }
+.spend-row { padding: 7px 0; border-bottom: 1px dashed var(--line); }
+.spend-row:last-of-type { border-bottom: none; }
+.spend-row .top { display: flex; justify-content: space-between; font-size: 0.83rem; }
+.spend-row .top b { font-weight: 600; }
+.spend-row .top .amt { font-family: var(--font-mono); font-size: 0.78rem; color: var(--ink-soft); }
+.spend-row .track { height: 5px; background: var(--paper); border: 1px solid var(--line); border-radius: 3px; margin-top: 5px; overflow: hidden; }
+.spend-row .track i { display: block; height: 100%; background: var(--cobalt); border-radius: 3px; }
+.spend-total {
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-family: var(--font-mono); font-size: 0.8rem; color: var(--ink-soft);
+  margin-top: 12px; padding-top: 12px; border-top: 1.5px solid var(--line);
+}
+.spend-total b { font-size: 1.05rem; color: var(--ink); }
+
+/* ------------------------------ marketplace ------------------------------ */
+.mkt-head { padding: 44px 0 6px; }
+.mkt-head .stamp { font-family: var(--font-mono); font-size: 0.76rem; letter-spacing: .14em; text-transform: uppercase; color: var(--cobalt); margin-bottom: 10px; }
+.mkt-head h1 { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.9rem, 4vw, 2.7rem); letter-spacing: -0.03em; line-height: 1.05; }
+.mkt-head p { color: var(--ink-soft); margin-top: 10px; max-width: 58ch; }
+.mkt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; padding: 26px 0 80px; }
+.mkt-card {
+  background: var(--card); border: 1.5px solid var(--line); border-radius: var(--radius);
+  box-shadow: var(--shadow-card); overflow: hidden; display: flex; flex-direction: column;
+}
+.mkt-card .body { padding: 14px 16px; }
+.mkt-card .by { font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-faint); }
+.mkt-card .desc { color: var(--ink-soft); font-size: 0.92rem; margin-top: 7px; }
+.mkt-stats {
+  display: flex; gap: 14px; font-family: var(--font-mono); font-size: 0.74rem;
+  color: var(--ink-faint); margin-top: 12px;
+}
+.mkt-stats .hot { color: var(--warn); }
+.comments { border-top: 1px dashed var(--line); padding: 12px 16px; background: var(--paper); }
+.comment { display: flex; gap: 9px; padding: 5px 0; font-size: 0.84rem; color: var(--ink-soft); }
+.comment .who {
+  font-family: var(--font-mono); font-size: 0.7rem; color: var(--ink); flex-shrink: 0;
+  background: var(--cobalt-wash); border-radius: 999px; padding: 2px 9px; height: fit-content;
+}
+.mkt-actions { display: flex; gap: 10px; padding: 12px 16px; border-top: 1.5px solid var(--line); margin-top: auto; }
+.btn-sm {
+  border: none; border-radius: 9px; font-weight: 600; font-size: 0.84rem;
+  padding: 8px 15px; transition: background .15s, border-color .15s;
+}
+.btn-sm.solid { background: var(--ink); color: #fff; }
+.btn-sm.solid:hover { background: #000; }
+.btn-sm.cob { background: var(--cobalt); color: #fff; }
+.btn-sm.cob:hover { background: var(--cobalt-deep); }
+.btn-sm.ghost { background: none; border: 1.5px solid var(--line); color: var(--ink); }
+.btn-sm.ghost:hover { border-color: var(--ink-faint); }
+
+/* -------------------------------- usage --------------------------------- */
+.usage-wrap { padding: 26px 0 80px; max-width: 780px; }
+.ledger {
+  background: var(--card); border: 1.5px solid var(--line); border-radius: var(--radius);
+  box-shadow: var(--shadow-card); overflow: hidden;
+}
+.ledger .lhead {
+  display: grid; grid-template-columns: 1.4fr 1fr 100px 90px;
+  font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--ink-faint);
+  padding: 12px 18px; border-bottom: 1.5px solid var(--line); background: var(--paper);
+}
+.lrow {
+  display: grid; grid-template-columns: 1.4fr 1fr 100px 90px; align-items: center;
+  padding: 13px 18px; border-bottom: 1px dashed var(--line); font-size: 0.9rem;
+}
+.lrow:last-child { border-bottom: none; }
+.lrow .lname { display: flex; align-items: center; gap: 9px; font-weight: 600; }
+.lrow .lname .mini {
+  width: 24px; height: 24px; border-radius: 7px; display: grid; place-items: center; font-size: 0.75rem;
+}
+.lrow .track { height: 6px; background: var(--paper); border: 1px solid var(--line); border-radius: 3px; overflow: hidden; margin-right: 18px; }
+.lrow .track i { display: block; height: 100%; background: var(--cobalt); }
+.lrow .track i.hot { background: var(--warn); }
+.lrow .amt { font-family: var(--font-mono); font-size: 0.84rem; }
+.lrow .cap {
+  font-family: var(--font-mono); font-size: 0.76rem; color: var(--ink-soft);
+  background: none; border: 1px dashed var(--ink-faint); border-radius: 7px; padding: 4px 9px;
+}
+.lrow .cap:hover { border-color: var(--cobalt); color: var(--cobalt); }
+.usage-fine { font-size: 0.85rem; color: var(--ink-faint); margin-top: 14px; max-width: 58ch; }
+.usage-fine b { color: var(--ink-soft); font-weight: 600; }
+
+/* ---------------------------- app window (iframe) ------------------------ */
+.appwin-backdrop {
+  position: fixed; inset: 0; background: rgba(23, 31, 56, 0.42); z-index: 60;
+  display: none; align-items: center; justify-content: center; padding: 28px;
+}
+.appwin-backdrop.on { display: flex; }
+.appwin {
+  background: var(--card); border: 1.5px solid var(--line); border-radius: 18px;
+  box-shadow: 0 40px 90px -20px rgba(23,31,56,.5);
+  width: min(1040px, 100%); height: min(680px, 100%);
+  display: flex; flex-direction: column; overflow: hidden;
+  transition: width .25s ease, height .25s ease, border-radius .25s ease;
+}
+.appwin-backdrop.full { padding: 0; }
+.appwin-backdrop.full .appwin { width: 100%; height: 100%; border-radius: 0; border: none; }
+.appwin .chrome {
+  display: flex; align-items: center; gap: 12px; padding: 10px 14px;
+  border-bottom: 1.5px solid var(--line); background: var(--paper); position: relative;
+}
+.appwin .chrome .app-icon { width: 30px; height: 30px; background: var(--mint); }
+.appwin .chrome .cname { font-family: var(--font-mono); font-size: 0.88rem; font-weight: 500; }
+.appwin .chrome .curl {
+  font-family: var(--font-mono); font-size: 0.75rem; color: var(--ink-faint);
+  background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 4px 13px;
+}
+.chrome-btns { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.chrome-btn {
+  font-family: var(--font-mono); font-size: 0.76rem; color: var(--ink-soft);
+  background: var(--card); border: 1.5px solid var(--line); border-radius: 999px;
+  padding: 6px 13px; transition: border-color .15s, color .15s;
+}
+.chrome-btn:hover { border-color: var(--cobalt); color: var(--cobalt); }
+.chrome-btn.share { color: var(--cobalt); border-color: var(--cobalt); }
+.appwin .stage { flex: 1; overflow: auto; background: #fff; }
+
+/* fake app inside the frame */
+.fakeapp { max-width: 640px; margin: 0 auto; padding: 36px 24px 60px; }
+.fakeapp h2 { font-family: var(--font-display); font-weight: 700; font-size: 1.5rem; letter-spacing: -0.02em; }
+.fakeapp .fsub { color: var(--ink-soft); font-size: 0.9rem; margin-top: 4px; }
+.fakeapp .quote-line {
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  padding: 13px 4px; border-bottom: 1px dashed var(--line); font-size: 0.95rem;
+}
+.fakeapp .quote-line .price { font-family: var(--font-mono); font-weight: 500; }
+.fakeapp .total-line {
+  display: flex; justify-content: space-between; padding: 16px 4px;
+  font-weight: 700; font-size: 1.05rem;
+}
+.fakeapp .total-line .price { font-family: var(--font-mono); color: var(--cobalt); }
+.fakeapp .frow { display: flex; gap: 10px; margin-top: 18px; }
+.fakeapp .ai-note {
+  margin-top: 22px; background: var(--cobalt-wash); border-left: 3px solid var(--cobalt);
+  border-radius: 0 8px 8px 0; padding: 11px 13px; font-size: 0.86rem; color: var(--ink-soft);
+}
+.fakeapp .ai-note .spark { color: var(--cobalt); font-weight: 600; }
+
+/* ------------------------------ share popover ---------------------------- */
+.share-pop {
+  position: absolute; top: 52px; right: 14px; width: 330px; z-index: 5;
+  background: var(--card); border: 1.5px solid var(--line); border-radius: 14px;
+  box-shadow: var(--shadow-card); padding: 16px; display: none; text-align: left;
+}
+.share-pop.on { display: block; }
+.share-pop h4 { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: .13em; text-transform: uppercase; color: var(--cobalt); margin-bottom: 10px; }
+.share-opt { display: flex; gap: 10px; padding: 9px 10px; border-radius: 10px; cursor: pointer; align-items: flex-start; }
+.share-opt:hover { background: var(--cobalt-wash); }
+.share-opt input { margin-top: 4px; accent-color: var(--cobalt); }
+.share-opt .t { font-size: 0.88rem; font-weight: 600; }
+.share-opt .d { font-size: 0.78rem; color: var(--ink-faint); line-height: 1.4; }
+.share-emails { margin: 6px 0 4px 34px; display: flex; flex-wrap: wrap; gap: 6px; }
+.share-email {
+  font-family: var(--font-mono); font-size: 0.72rem; background: var(--paper);
+  border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; color: var(--ink-soft);
+}
+.share-email .x { color: var(--ink-faint); margin-left: 4px; cursor: pointer; }
+.share-fine {
+  font-size: 0.76rem; color: var(--ink-faint); border-top: 1px dashed var(--line);
+  margin-top: 10px; padding-top: 10px; line-height: 1.45;
+}
+.share-fine b { color: var(--ink-soft); font-weight: 600; }
+.copy-row { display: flex; gap: 8px; margin-top: 10px; }
+.copy-row input {
+  flex: 1; font-family: var(--font-mono); font-size: 0.74rem; color: var(--ink-soft);
+  border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; background: var(--paper);
+}
+.copy-row button {
+  background: var(--cobalt); color: #fff; border: none; border-radius: 8px;
+  font-size: 0.78rem; font-weight: 600; padding: 0 14px;
+}
+
+.view { display: none; }
+.view.on { display: block; }
+
+/* ------------------------------ responsive ------------------------------- */
+@media (max-width: 960px) {
+  .deck { grid-template-columns: 1fr; }
+  .rail { position: static; flex-direction: row; flex-wrap: wrap; }
+  .rail-card { flex: 1 1 260px; }
+  .mkt-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 680px) {
+  .shelf { grid-template-columns: 1fr; }
+  .tabs { order: 3; width: 100%; overflow-x: auto; }
+  .site-header .bar { flex-wrap: wrap; gap: 12px; }
+  .lrow, .ledger .lhead { grid-template-columns: 1.2fr 80px 70px; }
+  .lrow .track { display: none; } .ledger .lhead .h-track { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-tile, .appwin, .tab, .btn-sm { transition: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="bar">
+    <a href="#" class="wordmark">odapt<span class="dot">.</span></a>
+    <nav class="tabs" role="tablist" aria-label="Dashboard sections">
+      <button class="tab" role="tab" aria-selected="true" data-view="bench">your apps</button>
+      <button class="tab" role="tab" aria-selected="false" data-view="market">marketplace</button>
+      <button class="tab" role="tab" aria-selected="false" data-view="usage">usage</button>
+    </nav>
+    <button class="spend-pill" data-goto="usage" title="Spend this month, across every app">
+      $14.20 / $50 <span class="meter"><i></i></span>
+    </button>
+    <span class="avatar-me">LN</span>
+  </div>
+</header>
+
+<!-- ================================ BENCH ================================ -->
+<div class="view on" id="view-bench">
+  <div class="wrap">
+    <section class="greet">
+      <p class="stamp">sun · jul 13 · 6 apps · all live</p>
+      <h1>Morning, Lucas.</h1>
+      <p class="pulse">
+        <b>11 people</b> used your apps this week. Dana left a comment on
+        <b>Quote Builder</b>, and <b>Churn Radar</b> flagged 2 accounts overnight.
+        Nothing needs fixing.
+      </p>
+    </section>
+
+    <div class="deck">
+      <div class="shelf">
+
+        <button class="app-tile" data-open="quote">
+          <span class="bar bar-mint">
+            <span class="app-icon">📐</span>
+            <span class="name">Quote Builder</span>
+            <span class="open-hint">open ↗</span>
+          </span>
+          <span class="body">
+            <span class="desc">Turns a job walkthrough into a priced quote your crew can send from their phone.</span>
+            <span class="people">
+              <span class="avatars">
+                <span class="av av-a">DK</span><span class="av av-b">MR</span><span class="av av-c">JT</span><span class="av av-e">+1</span>
+              </span>
+              <span class="access-chip">4 people</span>
+            </span>
+          </span>
+          <span class="manifest">
+            <span class="st">● live</span><span class="sep">·</span>
+            <span class="addr">quotes.mercadofab.com</span><span class="sep">·</span>
+            <span>$1.20 this month</span>
+          </span>
+        </button>
+
+        <button class="app-tile" data-open="churn">
+          <span class="bar bar-sky">
+            <span class="app-icon">📉</span>
+            <span class="name">Churn Radar</span>
+            <span class="open-hint">open ↗</span>
+          </span>
+          <span class="body">
+            <span class="desc">Reads Stripe every morning, flags accounts going quiet, and drafts the check-in email.</span>
+            <span class="people">
+              <span class="avatars"><span class="av av-e">LN</span></span>
+              <span class="access-chip">only you</span>
+            </span>
+          </span>
+          <span class="manifest">
+            <span class="st">● live</span><span class="sep">·</span>
+            <span class="addr">churn-radar.odapt.app</span><span class="sep">·</span>
+            <span>$4.85 this month</span>
+          </span>
+        </button>
+
+        <button class="app-tile" data-open="portal">
+          <span class="bar bar-butter">
+            <span class="app-icon">🗂️</span>
+            <span class="name">Client Portal</span>
+            <span class="open-hint">open ↗</span>
+          </span>
+          <span class="body">
+            <span class="desc">Where Fernworks checks project status, files, and invoices — without emailing you first.</span>
+            <span class="people">
+              <span class="avatars"><span class="av av-b">RS</span><span class="av av-d">+5</span></span>
+              <span class="access-chip pw">password</span>
+            </span>
+          </span>
+          <span class="manifest">
+            <span class="st">● live</span><span class="sep">·</span>
+            <span class="addr">portal.odapt.app/fernworks</span><span class="sep">·</span>
+            <span>$2.10 this month</span>
+          </span>
+        </button>
+
+        <button class="app-tile" data-open="menu">
+          <span class="bar bar-blush">
+            <span class="app-icon">🧾</span>
+            <span class="name">Menu QR Orders</span>
+            <span class="open-hint">open ↗</span>
+          </span>
+          <span class="body">
+            <span class="desc">Scan-to-order menu for the weekend pop-up. Orders land in the kitchen's Slack.</span>
+            <span class="people">
+              <span class="avatars"><span class="av av-a">∞</span></span>
+              <span class="access-chip pub">public</span>
+            </span>
+          </span>
+          <span class="manifest">
+            <span class="st">● live</span><span class="sep">·</span>
+            <span class="addr">order.lapalomacafe.com</span><span class="sep">·</span>
+            <span>$5.40 this month</span>
+          </span>
+        </button>
+
+        <button class="app-tile" data-open="outreach">
+          <span class="bar bar-lilac">
+            <span class="app-icon">✉️</span>
+            <span class="name">Outreach Drafts</span>
+            <span class="open-hint">open ↗</span>
+          </span>
+          <span class="body">
+            <span class="desc">Watches the leads sheet and drafts a first email in your voice for each new row.</span>
+            <span class="people">
+              <span class="avatars"><span class="av av-e">LN</span><span class="av av-c">AB</span></span>
+              <span class="access-chip">2 people</span>
+            </span>
+          </span>
+          <span class="manifest">
+            <span class="st">● live</span><span class="sep">·</span>
+            <span class="addr">outreach.odapt.app</span><span class="sep">·</span>
+            <span>$0.65 this month</span>
+          </span>
+        </button>
+
+        <button class="app-tile" data-open="inventory" style="opacity:.82">
+          <span class="bar" style="background:#eceadf">
+            <span class="app-icon">📦</span>
+            <span class="name">Inventory Count</span>
+            <span class="open-hint">open ↗</span>
+          </span>
+          <span class="body">
+            <span class="desc">Shelf counts by phone camera. Still rough — needs the barcode step.</span>
+            <span class="people">
+              <span class="avatars"><span class="av av-e">LN</span></span>
+              <span class="access-chip">only you</span>
+            </span>
+          </span>
+          <span class="manifest">
+            <span class="st draft">○ draft</span><span class="sep">·</span>
+            <span class="addr">not published yet</span><span class="sep">·</span>
+            <span>$0.00</span>
+          </span>
+        </button>
+
+        <div class="new-tile">
+          <label for="newIdea">next on the bench</label>
+          <textarea id="newIdea" placeholder="I need an app that…" rows="2"></textarea>
+          <button class="go">Build it →</button>
+        </div>
+
+      </div>
+
+      <aside class="rail">
+        <div class="rail-card">
+          <h3>Connections</h3>
+          <p class="note">Connected once. Every app can use them — keys stay here, never in the app.</p>
+          <div class="conn">
+            <span class="logo" style="background:var(--lilac)">◆</span>
+            <span><span class="cname">Stripe</span><br /><span class="cuse">used by 2 apps</span></span>
+            <span class="ok-dot"></span>
+          </div>
+          <div class="conn">
+            <span class="logo" style="background:var(--butter)">#</span>
+            <span><span class="cname">Slack</span><br /><span class="cuse">used by 3 apps</span></span>
+            <span class="ok-dot"></span>
+          </div>
+          <div class="conn">
+            <span class="logo" style="background:var(--mint)">▦</span>
+            <span><span class="cname">Google Sheets</span><br /><span class="cuse">used by 2 apps</span></span>
+            <span class="ok-dot"></span>
+          </div>
+          <div class="conn">
+            <span class="logo" style="background:var(--sky)">⚙</span>
+            <span><span class="cname">mercadofab API</span><br /><span class="cuse">openapi.json · 1 app</span></span>
+            <span class="ok-dot"></span>
+          </div>
+          <button class="rail-add">+ connect something</button>
+        </div>
+
+        <div class="rail-card">
+          <h3>Spend · July</h3>
+          <p class="note">One bill for everything, per-app caps included.</p>
+          <div class="spend-row">
+            <div class="top"><b>Menu QR Orders</b><span class="amt">$5.40</span></div>
+            <div class="track"><i style="width:54%"></i></div>
+          </div>
+          <div class="spend-row">
+            <div class="top"><b>Churn Radar</b><span class="amt">$4.85</span></div>
+            <div class="track"><i style="width:48%"></i></div>
+          </div>
+          <div class="spend-row">
+            <div class="top"><b>Client Portal</b><span class="amt">$2.10</span></div>
+            <div class="track"><i style="width:21%"></i></div>
+          </div>
+          <div class="spend-total"><span>all apps</span><b>$14.20</b> <span>of $50 cap</span></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
+
+<!-- ============================== MARKETPLACE ============================== -->
+<div class="view" id="view-market">
+  <div class="wrap">
+    <section class="mkt-head">
+      <p class="stamp">marketplace</p>
+      <h1>Tools other builders shipped</h1>
+      <p>Every app here is live — try it before you take it. Remix one and it's yours: your connections, your data, your rules.</p>
+    </section>
+
+    <div class="mkt-grid">
+
+      <div class="mkt-card">
+        <div class="bar bar-butter" style="display:flex;align-items:center;gap:11px;padding:12px 15px;border-bottom:1.5px solid rgba(23,31,56,.08)">
+          <span class="app-icon">🧾</span>
+          <span style="font-family:var(--font-mono);font-size:.9rem;font-weight:500">Invoice Chaser</span>
+        </div>
+        <div class="body">
+          <p class="by">by @margauxbuilds · remixed 214×</p>
+          <p class="desc">Watches your unpaid invoices and sends polite, escalating reminders on your letterhead. Connects to Stripe or a plain spreadsheet. The tone dial goes from "gentle nudge" to "final notice."</p>
+          <div class="mkt-stats"><span class="hot">▲ trending</span><span>◇ 214 remixes</span><span>◍ live demo</span></div>
+        </div>
+        <div class="comments">
+          <div class="comment"><span class="who">tomas_r</span><span>Recovered $3.1k in week one. Changed the reminder cadence with one sentence.</span></div>
+          <div class="comment"><span class="who">ada.dev</span><span>Remixed it to chase timesheets instead. Took 5 minutes.</span></div>
+        </div>
+        <div class="mkt-actions">
+          <button class="btn-sm cob">Remix it</button>
+          <button class="btn-sm ghost">Try the demo</button>
+        </div>
+      </div>
+
+      <div class="mkt-card">
+        <div class="bar bar-sky" style="display:flex;align-items:center;gap:11px;padding:12px 15px;border-bottom:1.5px solid rgba(23,31,56,.08)">
+          <span class="app-icon">🔍</span>
+          <span style="font-family:var(--font-mono);font-size:.9rem;font-weight:500">Lead Enricher</span>
+        </div>
+        <div class="body">
+          <p class="by">by @coldstart_co · remixed 156×</p>
+          <p class="desc">Paste a company URL, get the who/what/how-big brief before your call — team size, stack, recent news, and a suggested opener. Feeds straight into your CRM sheet.</p>
+          <div class="mkt-stats"><span>◇ 156 remixes</span><span>◍ live demo</span></div>
+        </div>
+        <div class="comments">
+          <div class="comment"><span class="who">priyasells</span><span>My whole agency uses one shared copy. The owner pays ~$6/mo total.</span></div>
+        </div>
+        <div class="mkt-actions">
+          <button class="btn-sm cob">Remix it</button>
+          <button class="btn-sm ghost">Try the demo</button>
+        </div>
+      </div>
+
+      <div class="mkt-card">
+        <div class="bar bar-mint" style="display:flex;align-items:center;gap:11px;padding:12px 15px;border-bottom:1.5px solid rgba(23,31,56,.08)">
+          <span class="app-icon">🗓️</span>
+          <span style="font-family:var(--font-mono);font-size:.9rem;font-weight:500">Standup Digest</span>
+        </div>
+        <div class="body">
+          <p class="by">by @okonkwo · remixed 89×</p>
+          <p class="desc">Everyone types one line by 10am; the digest writes itself and posts to Slack. Flags blockers that repeat two days in a row. No meeting.</p>
+          <div class="mkt-stats"><span>◇ 89 remixes</span><span>◍ live demo</span></div>
+        </div>
+        <div class="comments">
+          <div class="comment"><span class="who">felixk</span><span>Shared it with the team by email allowlist — zero onboarding, they just opened the link.</span></div>
+        </div>
+        <div class="mkt-actions">
+          <button class="btn-sm cob">Remix it</button>
+          <button class="btn-sm ghost">Try the demo</button>
+        </div>
+      </div>
+
+      <div class="mkt-card">
+        <div class="bar bar-blush" style="display:flex;align-items:center;gap:11px;padding:12px 15px;border-bottom:1.5px solid rgba(23,31,56,.08)">
+          <span class="app-icon">💸</span>
+          <span style="font-family:var(--font-mono);font-size:.9rem;font-weight:500">Deposit Taker</span>
+        </div>
+        <div class="body">
+          <p class="by">by @studio_ame · remixed 67×</p>
+          <p class="desc">A booking page that takes a deposit before it takes a slot. Made for tattoo artists, works for anyone who's tired of no-shows. Payments land in your Stripe.</p>
+          <div class="mkt-stats"><span>◇ 67 remixes</span><span>◍ live demo</span></div>
+        </div>
+        <div class="comments">
+          <div class="comment"><span class="who">inkbyjo</span><span>No-shows went from 3/week to zero. It paid for itself the first day.</span></div>
+          <div class="comment"><span class="who">marcusc</span><span>Remixed for my barbershop — kept the deposit logic, redid the look.</span></div>
+        </div>
+        <div class="mkt-actions">
+          <button class="btn-sm cob">Remix it</button>
+          <button class="btn-sm ghost">Try the demo</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ================================= USAGE ================================= -->
+<div class="view" id="view-usage">
+  <div class="wrap">
+    <section class="mkt-head">
+      <p class="stamp">usage · july 2026</p>
+      <h1>One bill. Every app. Your caps.</h1>
+      <p>AI calls, tool calls, and hosting — metered per app, billed once. Set a cap and an app can never surprise you.</p>
+    </section>
+
+    <div class="usage-wrap">
+      <div class="ledger">
+        <div class="lhead"><span>app</span><span class="h-track">this month</span><span>spent</span><span>cap</span></div>
+        <div class="lrow">
+          <span class="lname"><span class="mini" style="background:var(--blush)">🧾</span>Menu QR Orders</span>
+          <span class="track"><i style="width:68%"></i></span>
+          <span class="amt">$5.40</span>
+          <button class="cap">$8 cap</button>
+        </div>
+        <div class="lrow">
+          <span class="lname"><span class="mini" style="background:var(--sky)">📉</span>Churn Radar</span>
+          <span class="track"><i class="hot" style="width:81%"></i></span>
+          <span class="amt">$4.85</span>
+          <button class="cap">$6 cap</button>
+        </div>
+        <div class="lrow">
+          <span class="lname"><span class="mini" style="background:var(--butter)">🗂️</span>Client Portal</span>
+          <span class="track"><i style="width:26%"></i></span>
+          <span class="amt">$2.10</span>
+          <button class="cap">$8 cap</button>
+        </div>
+        <div class="lrow">
+          <span class="lname"><span class="mini" style="background:var(--mint)">📐</span>Quote Builder</span>
+          <span class="track"><i style="width:15%"></i></span>
+          <span class="amt">$1.20</span>
+          <button class="cap">$8 cap</button>
+        </div>
+        <div class="lrow">
+          <span class="lname"><span class="mini" style="background:var(--lilac)">✉️</span>Outreach Drafts</span>
+          <span class="track"><i style="width:9%"></i></span>
+          <span class="amt">$0.65</span>
+          <button class="cap">$7 cap</button>
+        </div>
+      </div>
+      <p class="usage-fine">
+        <b>Churn Radar is at 81% of its cap.</b> If it hits $6 it pauses and tells you —
+        it can't spend past the line. Everything you share runs on <b>your</b> balance
+        unless you switch an app to viewer-pays.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================== APP WINDOW =============================== -->
+<div class="appwin-backdrop" id="appwinBackdrop">
+  <div class="appwin" role="dialog" aria-label="Quote Builder">
+    <div class="chrome">
+      <span class="app-icon">📐</span>
+      <span class="cname">Quote Builder</span>
+      <span class="curl">quotes.mercadofab.com</span>
+      <div class="chrome-btns">
+        <button class="chrome-btn share" id="shareBtn">↗ share</button>
+        <button class="chrome-btn" id="expandBtn">⤢ full screen</button>
+        <button class="chrome-btn" id="closeBtn">✕</button>
+      </div>
+
+      <div class="share-pop" id="sharePop">
+        <h4>Who can open this app</h4>
+        <label class="share-opt"><input type="radio" name="acc" />
+          <span><span class="t">Only you</span><br /><span class="d">Your private bench.</span></span>
+        </label>
+        <label class="share-opt"><input type="radio" name="acc" checked />
+          <span><span class="t">Specific people</span><br /><span class="d">They log in with their email — nothing to install.</span></span>
+        </label>
+        <div class="share-emails">
+          <span class="share-email">dana@mercadofab.com <span class="x">×</span></span>
+          <span class="share-email">miguel@mercadofab.com <span class="x">×</span></span>
+          <span class="share-email">jt@mercadofab.com <span class="x">×</span></span>
+          <span class="share-email" style="border-style:dashed;color:var(--cobalt)">+ add</span>
+        </div>
+        <label class="share-opt"><input type="radio" name="acc" />
+          <span><span class="t">Anyone with the password</span><br /><span class="d">One shared password — good for clients.</span></span>
+        </label>
+        <label class="share-opt"><input type="radio" name="acc" />
+          <span><span class="t">Anyone with the link</span><br /><span class="d">Public on the web.</span></span>
+        </label>
+        <div class="copy-row">
+          <input readonly value="https://quotes.mercadofab.com" />
+          <button>Copy</button>
+        </div>
+        <p class="share-fine">
+          Your <b>Slack</b> and <b>Sheets</b> connections keep working for everyone
+          you share with — <b>without sharing your keys.</b> Their usage bills to you: <b>$1.20 so far.</b>
+        </p>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="fakeapp">
+        <h2>New quote — Alvarez deck rebuild</h2>
+        <p class="fsub">from Dana's walkthrough notes, this morning</p>
+        <div style="margin-top:22px">
+          <div class="quote-line"><span>Demo + haul-away</span><span class="price">$1,150.00</span></div>
+          <div class="quote-line"><span>Framing — 240 sq ft, cedar</span><span class="price">$4,320.00</span></div>
+          <div class="quote-line"><span>Composite decking + rails</span><span class="price">$6,875.00</span></div>
+          <div class="quote-line"><span>Permits + inspection</span><span class="price">$410.00</span></div>
+          <div class="total-line"><span>Total</span><span class="price">$12,755.00</span></div>
+        </div>
+        <div class="ai-note">
+          <span class="spark">✦</span> Cedar's up 9% since your last framing quote —
+          I priced at current supplier rates. Margin lands at 31%.
+        </div>
+        <div class="frow">
+          <button class="btn-sm cob">Send to client</button>
+          <button class="btn-sm ghost">Edit lines</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // tabs
+  const tabs = document.querySelectorAll(".tab");
+  const views = { bench: "view-bench", market: "view-market", usage: "view-usage" };
+  function show(view) {
+    tabs.forEach((t) => t.setAttribute("aria-selected", String(t.dataset.view === view)));
+    Object.values(views).forEach((id) => document.getElementById(id).classList.remove("on"));
+    document.getElementById(views[view]).classList.add("on");
+    window.scrollTo({ top: 0 });
+  }
+  tabs.forEach((t) => t.addEventListener("click", () => show(t.dataset.view)));
+  document.querySelector(".spend-pill").addEventListener("click", () => show("usage"));
+
+  // app window
+  const backdrop = document.getElementById("appwinBackdrop");
+  const sharePop = document.getElementById("sharePop");
+  document.querySelectorAll(".app-tile").forEach((tile) => {
+    tile.addEventListener("click", () => backdrop.classList.add("on"));
+  });
+  document.getElementById("closeBtn").addEventListener("click", () => {
+    backdrop.classList.remove("on", "full");
+    sharePop.classList.remove("on");
+  });
+  backdrop.addEventListener("click", (e) => {
+    if (e.target === backdrop) { backdrop.classList.remove("on", "full"); sharePop.classList.remove("on"); }
+  });
+  const expandBtn = document.getElementById("expandBtn");
+  expandBtn.addEventListener("click", () => {
+    const full = backdrop.classList.toggle("full");
+    expandBtn.textContent = full ? "⤡ exit full screen" : "⤢ full screen";
+  });
+  document.getElementById("shareBtn").addEventListener("click", (e) => {
+    e.stopPropagation();
+    sharePop.classList.toggle("on");
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") { backdrop.classList.remove("on", "full"); sharePop.classList.remove("on"); }
+  });
+</script>
+</body>
+</html>
