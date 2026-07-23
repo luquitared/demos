@@ -1,0 +1,819 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Synjuku — The human-intelligence layer for Physical AI</title>
+<meta name="description" content="Training-ready human-demonstration data for robot foundation models. The scripted long tail that makes policies generalize, graded before it ships, delivered LeRobot-native." />
+<link rel="icon" href="assets/symbol.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f6f2ea;
+    --surface:#fffdf8;
+    --surface-2:#efece4;
+    --ink:#22231f;
+    --ink-2:#3a3a35;
+    --muted:#77746d;
+    --faint:#a29d93;
+    --line:#d8d3c8;
+    --line-strong:#c7c1b4;
+    --red:#b64d3d;
+    --red-soft:#f4dfdb;
+    --green:#4a7c59;
+    --green-soft:#e3efe4;
+    --amber:#c47b2b;
+    --amber-soft:#f7ead6;
+    --ink-panel:#1b1c18;
+    --shadow:0 20px 55px rgba(38,35,29,.10);
+    --shadow-sm:0 8px 20px rgba(35,33,28,.06);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:var(--paper);color:var(--ink);
+    font-family:Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing:antialiased;line-height:1.6;
+  }
+  .mono{font-family:"JetBrains Mono", ui-monospace, Menlo, monospace}
+  .serif{font-family:"Newsreader", Georgia, serif;font-weight:400}
+  a{color:inherit;text-decoration:none}
+  img{max-width:100%;display:block}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 28px}
+
+  .eyebrow{
+    font-family:"JetBrains Mono",monospace;font-size:11px;font-weight:500;
+    letter-spacing:.22em;text-transform:uppercase;color:var(--red);
+  }
+  .eyebrow.muted{color:var(--muted)}
+
+  /* buttons */
+  .btn{
+    display:inline-flex;align-items:center;gap:9px;border:1px solid var(--ink);
+    background:var(--ink);color:#fff;padding:12px 20px;border-radius:9px;
+    font-weight:600;font-size:14.5px;transition:transform .14s ease, box-shadow .14s ease;
+    white-space:nowrap;
+  }
+  .btn:hover{transform:translateY(-1px);box-shadow:0 10px 26px rgba(20,20,20,.16)}
+  .btn.ghost{background:transparent;color:var(--ink);border-color:var(--line-strong)}
+  .btn.ghost:hover{border-color:var(--ink);box-shadow:none}
+  .btn .arw{transition:transform .16s ease}
+  .btn:hover .arw{transform:translateX(3px)}
+
+  /* nav */
+  nav{position:sticky;top:0;z-index:50;background:rgba(246,242,234,.82);
+    backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+  .nav-in{display:flex;align-items:center;justify-content:space-between;gap:24px;height:66px}
+  .nav-in img.logo{height:22px;width:auto}
+  .nav-links{display:flex;gap:24px}
+  .nav-links a{font-size:14px;color:var(--ink-2);font-weight:500}
+  .nav-links a:hover{color:var(--red)}
+  .nav-right{display:flex;align-items:center;gap:14px}
+  @media(max-width:980px){ .nav-links{display:none} }
+
+  /* hero */
+  .hero{padding:78px 0 54px;position:relative;overflow:hidden}
+  .hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:52px;align-items:center}
+  h1{font-size:clamp(38px,5.4vw,64px);line-height:1.03;letter-spacing:-.03em;
+    margin:20px 0 0;font-weight:700}
+  h1 .em{font-family:"Newsreader",Georgia,serif;font-weight:500;font-style:italic;color:var(--red)}
+  .hero p.sub{font-size:19px;line-height:1.55;color:var(--ink-2);max-width:560px;margin:24px 0 0}
+  .hero-cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:32px}
+  .trust{margin-top:30px;padding-top:22px;border-top:1px solid var(--line);
+    font-size:13.5px;color:var(--muted);max-width:540px;line-height:1.7}
+  .trust b{color:var(--ink);font-weight:600}
+  .hero-art{position:relative}
+  .hero-art .frame{
+    background:linear-gradient(170deg,#fffdf8,#efeae0);border:1px solid var(--line);
+    border-radius:16px;overflow:hidden;box-shadow:var(--shadow);position:relative;
+  }
+  .hero-art .frame img{width:100%;height:auto;mix-blend-mode:multiply}
+  .hero-art .tag{
+    position:absolute;left:14px;bottom:14px;font-family:"JetBrains Mono",monospace;
+    font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);
+    background:rgba(255,253,248,.9);border:1px solid var(--line);border-radius:6px;padding:5px 9px;
+  }
+  .hero-art .corner{position:absolute;top:14px;right:14px;width:14px;height:14px;background:var(--red)}
+  @media(max-width:860px){
+    .hero-grid{grid-template-columns:1fr;gap:34px}
+    .hero{padding:44px 0 40px}
+  }
+
+  /* section scaffolding */
+  section{padding:72px 0;border-top:1px solid var(--line)}
+  .sec-head{max-width:760px;margin-bottom:44px}
+  .sec-head h2{font-size:clamp(27px,3.4vw,40px);line-height:1.12;letter-spacing:-.02em;
+    margin:14px 0 0;font-weight:700}
+  .sec-head p{font-size:17.5px;color:var(--ink-2);margin:16px 0 0;line-height:1.6}
+  .statement{font-family:"Newsreader",Georgia,serif;font-weight:400;
+    font-size:clamp(28px,4vw,46px);line-height:1.14;letter-spacing:-.01em}
+  .statement .accent{font-style:italic;color:var(--red)}
+
+  /* stat tiles */
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:40px}
+  .stat{background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:24px 22px}
+  .stat .n{font-size:40px;font-weight:700;letter-spacing:-.03em;line-height:1}
+  .stat .n .u{font-size:20px;color:var(--muted);font-weight:600}
+  .stat .l{margin-top:10px;font-size:13.5px;color:var(--muted);line-height:1.5}
+  .stat.hl{background:var(--ink-panel);border-color:var(--ink-panel)}
+  .stat.hl .n{color:var(--red)}.stat.hl .n .u{color:#b8b2a5}.stat.hl .l{color:#b8b2a5}
+  @media(max-width:720px){ .stats{grid-template-columns:1fr} }
+
+  /* product cards */
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:8px}
+  .pcard{background:var(--surface);border:1px solid var(--line);border-radius:14px;
+    padding:26px 24px;position:relative;transition:border-color .15s ease, transform .15s ease}
+  .pcard:hover{border-color:var(--line-strong);transform:translateY(-2px)}
+  .pcard .idx{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.14em;
+    color:var(--faint)}
+  .pcard h3{font-size:20px;margin:12px 0 0;letter-spacing:-.01em}
+  .pcard .role{font-family:"JetBrains Mono",monospace;font-size:10.5px;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--red);margin-top:6px}
+  .pcard p{font-size:14.5px;color:var(--ink-2);margin:14px 0 0;line-height:1.6}
+  @media(max-width:860px){ .cards{grid-template-columns:1fr} }
+
+  /* two-col feature */
+  .feat{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+  .feat.rev .feat-text{order:2}
+  .pullquote{font-family:"Newsreader",Georgia,serif;font-size:clamp(24px,3vw,34px);
+    line-height:1.2;letter-spacing:-.01em;margin:0}
+  .pullquote .accent{font-style:italic;color:var(--red)}
+  .feat-text p{font-size:16.5px;color:var(--ink-2);margin:20px 0 0;line-height:1.62}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+  .chip{font-family:"JetBrains Mono",monospace;font-size:11.5px;letter-spacing:.03em;
+    background:var(--surface);border:1px solid var(--line);border-radius:999px;
+    padding:7px 13px;color:var(--ink-2)}
+  @media(max-width:860px){
+    .feat{grid-template-columns:1fr;gap:30px}
+    .feat.rev .feat-text{order:0}
+  }
+
+  /* receipt */
+  .receipt{background:var(--surface);border:1px solid var(--line-strong);border-radius:14px;
+    box-shadow:var(--shadow-sm);overflow:hidden;font-family:"JetBrains Mono",monospace}
+  .receipt .r-head{background:var(--ink-panel);color:#f3efe6;padding:16px 20px;
+    display:flex;justify-content:space-between;align-items:center}
+  .receipt .r-head .t{font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+  .receipt .r-head .b{font-size:10.5px;color:#b8b2a5}
+  .r-row{display:flex;justify-content:space-between;align-items:center;gap:14px;
+    padding:13px 20px;border-bottom:1px solid var(--line)}
+  .r-row:last-child{border-bottom:0}
+  .r-row .dim{font-size:12.5px;color:var(--ink)}
+  .r-row .dim small{display:block;color:var(--muted);font-size:10.5px;margin-top:3px;letter-spacing:.02em}
+  .grade{font-size:12px;font-weight:700;width:26px;height:26px;border-radius:6px;
+    display:flex;align-items:center;justify-content:center;flex:none}
+  .grade.a{background:var(--green-soft);color:#2e5f39}
+  .grade.b{background:var(--amber-soft);color:#8a5518}
+  .grade.c{background:var(--surface-2);color:var(--muted)}
+  .r-foot{padding:14px 20px;background:var(--surface-2);font-size:11px;color:var(--muted);
+    display:flex;justify-content:space-between;align-items:center}
+  .verify{color:var(--green);font-weight:700}
+
+  /* DATA LAYERS */
+  .layers{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .layer{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;
+    display:flex;flex-direction:column;transition:transform .15s ease,border-color .15s ease}
+  .layer:hover{transform:translateY(-2px);border-color:var(--line-strong)}
+  .layer .shot{position:relative;background:#111;aspect-ratio:16/9;overflow:hidden}
+  .layer .shot img{width:100%;height:100%;object-fit:cover;object-position:center}
+  .layer .shot.contain{background:var(--surface-2)}
+  .layer .shot.contain img{object-fit:contain}
+  .layer .shot .lbl{position:absolute;top:10px;left:10px;font-family:"JetBrains Mono",monospace;
+    font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:#fff;
+    background:rgba(20,20,18,.72);border-radius:5px;padding:4px 8px}
+  .layer .shot.roadmap{aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;
+    background:repeating-linear-gradient(135deg,var(--surface-2),var(--surface-2) 10px,#e9e5db 10px,#e9e5db 20px)}
+  .layer .shot.roadmap span{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--muted)}
+  .layer .body{padding:18px 18px 20px}
+  .layer .body .n{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.12em;color:var(--faint)}
+  .layer .body h3{margin:7px 0 0;font-size:17px;letter-spacing:-.01em}
+  .layer .body p{margin:8px 0 0;font-size:13.5px;color:var(--ink-2);line-height:1.55}
+  @media(max-width:860px){ .layers{grid-template-columns:1fr} }
+
+  /* ENGINE schematic */
+  .engine{border:1px solid var(--line-strong);border-radius:18px;overflow:hidden;background:var(--surface);
+    box-shadow:var(--shadow-sm)}
+  .engine .e-top{display:flex;justify-content:space-between;align-items:center;padding:15px 22px;
+    border-bottom:1px solid var(--line);background:var(--surface-2);
+    font-family:"JetBrains Mono",monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  .e-phases{display:grid;grid-template-columns:1fr 1.4fr 1fr;gap:0}
+  .e-phase{padding:22px;border-right:1px solid var(--line)}
+  .e-phase:last-child{border-right:0}
+  .e-phase.mid{background:linear-gradient(180deg,rgba(182,77,61,.05),transparent)}
+  .e-phase .ph-k{font-family:"JetBrains Mono",monospace;font-size:10.5px;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--red)}
+  .e-phase h4{margin:8px 0 0;font-size:20px;letter-spacing:-.01em}
+  .e-phase p{margin:8px 0 0;font-size:13px;color:var(--muted);line-height:1.5}
+  .e-mods{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+  .e-mod{font-family:"JetBrains Mono",monospace;font-size:10.5px;letter-spacing:.02em;
+    background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:5px 9px;color:var(--ink-2)}
+  .e-phase.final{background:var(--ink-panel)}
+  .e-phase.final .ph-k{color:#e0a99e}.e-phase.final h4{color:#fff}.e-phase.final p{color:#b8b2a5}
+  .e-phase.final .e-mod{background:transparent;border-color:#39392f;color:#d8d3c6}
+  .e-readout{display:flex;flex-wrap:wrap;gap:22px;padding:14px 22px;border-top:1px solid var(--line);
+    background:var(--surface-2);font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--muted)}
+  .e-readout b{color:var(--ink);font-weight:700}
+  .e-readout .ok{color:var(--green);font-weight:700}
+  @media(max-width:860px){ .e-phases{grid-template-columns:1fr}
+    .e-phase{border-right:0;border-bottom:1px solid var(--line)} }
+
+  /* testimonial */
+  .quote-band{background:var(--ink-panel);border-radius:18px;padding:52px 46px;color:#f4f0e7;
+    position:relative;overflow:hidden}
+  .quote-band .mark{font-family:"Newsreader",serif;font-size:120px;line-height:.6;color:var(--red);
+    opacity:.5;position:absolute;top:26px;left:30px;pointer-events:none}
+  .quote-band blockquote{font-family:"Newsreader",Georgia,serif;font-size:clamp(23px,3vw,33px);
+    line-height:1.28;margin:0;position:relative;max-width:900px}
+  .quote-band .attr{margin-top:22px;font-family:"JetBrains Mono",monospace;font-size:12px;
+    letter-spacing:.1em;text-transform:uppercase;color:#b8b2a5}
+  .quote-band .attr b{color:#fff;font-weight:700}
+
+  /* why / trust */
+  .why{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .why-card{background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:26px 24px}
+  .why-card .k{font-family:"JetBrains Mono",monospace;font-size:10.5px;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--red)}
+  .why-card h3{margin:10px 0 0;font-size:19px;letter-spacing:-.01em}
+  .why-card p{font-size:14.5px;color:var(--ink-2);margin:12px 0 0;line-height:1.6}
+  @media(max-width:720px){ .why{grid-template-columns:1fr} }
+
+  /* TEAM */
+  .team{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+  .member{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .member .pic{aspect-ratio:1/1;overflow:hidden;background:var(--surface-2);position:relative}
+  .member .pic img{width:100%;height:100%;object-fit:cover;object-position:top center;filter:grayscale(1) contrast(1.02)}
+  .member .mono-av{width:100%;height:100%;display:flex;align-items:center;justify-content:center;
+    background:radial-gradient(circle at 50% 40%,#fffdf8,#e9e4da);position:relative}
+  .member .mono-av .in{font-family:"Newsreader",serif;font-size:52px;color:var(--ink);letter-spacing:-.02em}
+  .member .mono-av .dot{position:absolute;top:16px;right:16px;width:11px;height:11px;background:var(--red);border-radius:50%}
+  .member .info{padding:16px 18px 20px}
+  .member .info h4{margin:0;font-size:17px;letter-spacing:-.01em}
+  .member .info .ro{font-family:"JetBrains Mono",monospace;font-size:10.5px;letter-spacing:.06em;
+    text-transform:uppercase;color:var(--red);margin-top:5px}
+  .member .info p{margin:11px 0 0;font-size:13px;color:var(--ink-2);line-height:1.5}
+  @media(max-width:900px){ .team{grid-template-columns:repeat(2,1fr)} }
+  @media(max-width:520px){ .team{grid-template-columns:1fr} }
+
+  /* ADVISORS */
+  .adv-note{font-size:15.5px;color:var(--ink-2);max-width:640px;margin:0 0 24px;line-height:1.6}
+  .adv-group{margin-top:20px}
+  .adv-group .g-k{font-family:"JetBrains Mono",monospace;font-size:10.5px;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--faint);margin-bottom:12px}
+  .adv-chips{display:flex;flex-wrap:wrap;gap:10px}
+  .adv-chip{background:var(--surface);border:1px solid var(--line);border-radius:9px;
+    padding:11px 16px;font-weight:600;font-size:14.5px;letter-spacing:-.01em;color:var(--ink)}
+
+  /* ladder */
+  .ladder{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:8px}
+  .rung{background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:24px 22px;position:relative}
+  .rung .step{font-family:"JetBrains Mono",monospace;font-size:10.5px;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--muted)}
+  .rung h4{margin:10px 0 0;font-size:19px;letter-spacing:-.01em}
+  .rung .vol{color:var(--red);font-weight:700}
+  .rung p{font-size:13.5px;color:var(--muted);margin:9px 0 0;line-height:1.55}
+  .rung.mid{border-color:var(--line-strong);box-shadow:var(--shadow-sm)}
+  @media(max-width:720px){ .ladder{grid-template-columns:1fr} }
+
+  /* final cta */
+  .final{background:linear-gradient(165deg,#fffdf8,#eee9df);border:1px solid var(--line);
+    border-radius:20px;padding:56px 48px;text-align:center;box-shadow:var(--shadow)}
+  .final h2{font-size:clamp(30px,4vw,48px);letter-spacing:-.025em;margin:0;font-weight:700}
+  .final h2 .em{font-family:"Newsreader",serif;font-style:italic;font-weight:500;color:var(--red)}
+  .final p{font-size:17.5px;color:var(--ink-2);max-width:600px;margin:18px auto 0;line-height:1.6}
+  .final .hero-cta{justify-content:center;margin-top:30px}
+
+  /* footer */
+  footer{border-top:1px solid var(--line);padding:46px 0 60px;margin-top:20px}
+  .foot-in{display:flex;justify-content:space-between;gap:28px;flex-wrap:wrap;align-items:flex-start}
+  footer img.logo{height:20px;margin-bottom:14px}
+  footer .pos{font-size:14px;color:var(--muted);max-width:320px;line-height:1.6}
+  .foot-links{display:flex;gap:44px;flex-wrap:wrap}
+  .foot-col .h{font-family:"JetBrains Mono",monospace;font-size:10.5px;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--faint);margin-bottom:12px}
+  .foot-col a{display:block;font-size:14px;color:var(--ink-2);margin-bottom:9px}
+  .foot-col a:hover{color:var(--red)}
+
+  .note{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.06em;
+    text-transform:uppercase;color:var(--red);opacity:.75}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="wrap nav-in">
+    <img class="logo" src="assets/logo-horizontal.png" alt="Synjuku" />
+    <div class="nav-links">
+      <a href="#thesis">The thesis</a>
+      <a href="#make">What we make</a>
+      <a href="#layers">The data</a>
+      <a href="#engine">The engine</a>
+      <a href="#deploy">Deployment</a>
+      <a href="#team">Team</a>
+    </div>
+    <div class="nav-right">
+      <a class="btn" href="#start">Request a sample</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow">The human-intelligence layer for Physical AI</div>
+      <h1>Human experience is the <span class="em">missing layer</span> of Physical AI.</h1>
+      <p class="sub">Synjuku builds training-ready human-demonstration data for robot
+        foundation models — the scripted long tail that makes policies generalize, graded
+        before it ships, and delivered LeRobot-native.</p>
+      <div class="hero-cta">
+        <a class="btn" href="#start">Request a pilot tranche <span class="arw">→</span></a>
+        <a class="btn ghost" href="#engine">See how the engine works</a>
+      </div>
+      <p class="trust">Rated <b>Grade 1</b> — the top quality tier — in a leading robotics
+        lab's evaluation of 70–80 vendors. We build for the tail, and grade every hour before
+        it ships.</p>
+    </div>
+    <div class="hero-art">
+      <div class="frame">
+        <img src="assets/robot-hand-stone.png" alt="A robot hand cradling a natural stone" />
+        <span class="corner"></span>
+        <span class="tag">Machine intelligence, learning from the physical world</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- THESIS -->
+<section id="thesis">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow muted">The thesis</div>
+      <p class="statement" style="margin-top:14px">More data was never the problem.
+        <span class="accent">The right data was.</span></p>
+    </div>
+    <p style="max-width:720px;font-size:17.5px;color:var(--ink-2);line-height:1.65;margin:0">
+      Across the industry, only a small fraction of collected robot data is ever actually
+      trainable. Head data — the common cases — is already a commodity. The value lives in
+      the <b>tail</b>: the rare, awkward, real situations a policy has never seen. We build
+      for the tail at the same cost as the head. We don't compete with the web —
+      <b>we make the chapter the internet skipped.</b>
+    </p>
+    <div class="stats">
+      <div class="stat">
+        <div class="n">5–10<span class="u">%</span></div>
+        <div class="l">of collected robot data across the industry is actually trainable.</div>
+      </div>
+      <div class="stat hl">
+        <div class="n">90<span class="u">%+</span></div>
+        <div class="l">Synjuku yield — measured before delivery, not promised after.</div>
+      </div>
+      <div class="stat">
+        <div class="n">1</div>
+        <div class="l">open standard we deliver in — LeRobot v3, loads out of the box.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT WE MAKE -->
+<section id="make">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow muted">What we make</div>
+      <h2>Design first. Capture second. Quality is a property of the pipeline.</h2>
+      <p>Not a footage broker — a production system. Coverage is designed before anything is
+        recorded, and graded before anything ships, so every hour you receive is training-ready
+        on arrival.</p>
+    </div>
+    <div class="cards">
+      <div class="pcard">
+        <div class="idx">01</div>
+        <div class="role">Design</div>
+        <h3>Coverage, by design</h3>
+        <p>A task generator enumerates every environment × skill × request and oversamples the
+          long tail. You order coverage — not raw hours — the way you'd write a spec.</p>
+      </div>
+      <div class="pcard">
+        <div class="idx">02</div>
+        <div class="role">Capture</div>
+        <h3>Multi-view human demonstration</h3>
+        <p>A synchronized four-camera rig per episode — egocentric, exocentric, and both
+          wrists — plus IMU, audio, and 2D/3D hand pose. Scripted long-horizon tasks and real,
+          unscripted workdays.</p>
+      </div>
+      <div class="pcard">
+        <div class="idx">03</div>
+        <div class="role">Refine</div>
+        <h3>QC &amp; Refinery</h3>
+        <p>A three-layer quality system: stream integrity → content truth → diversity analysis,
+          with humans in the loop. Every batch ships a quality receipt. You pay for accepted
+          data.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DIFF I: LONG TAIL -->
+<section id="tail">
+  <div class="wrap">
+    <div class="feat">
+      <div class="feat-text">
+        <div class="eyebrow muted">The long tail, on purpose</div>
+        <p class="pullquote" style="margin-top:16px">Most vendors sell hours.
+          <span class="accent">We sell coverage.</span></p>
+        <p>A task generator enumerates every environment × skill × request, filters for
+          diversity — action spread, duration spread, object overlap capped — and drops
+          anything we've already captured. You can order coverage the way you'd write a spec.</p>
+        <p>And it's real work by real people: a majority of captures are genuine workers on
+          genuine tasks, verified after delivery, across many distinct operators. No staged
+          tasks. No hired actors.</p>
+        <div class="chips">
+          <span class="chip">Scripted long-horizon</span>
+          <span class="chip">Unscripted workdays</span>
+          <span class="chip">Diversity score ≥ 0.8</span>
+          <span class="chip">≥70% real workers</span>
+          <span class="chip">Oversampled tail</span>
+        </div>
+      </div>
+      <div>
+        <div class="receipt">
+          <div class="r-head">
+            <span class="t">Order — Coverage spec</span>
+            <span class="b">REQ-0442</span>
+          </div>
+          <div class="r-row"><span class="dim">Environment<small>Domestic kitchen</small></span><span class="mono" style="font-size:12px;color:var(--muted)">8 sites</span></div>
+          <div class="r-row"><span class="dim">Primitives<small>Unscripted manipulation</small></span><span class="mono" style="font-size:12px;color:var(--muted)">500 req.</span></div>
+          <div class="r-row"><span class="dim">Diversity target<small>Action + object spread</small></span><span class="grade a" style="width:auto;padding:0 10px">≥ 0.80</span></div>
+          <div class="r-row"><span class="dim">Already on file<small>Auto-excluded from order</small></span><span class="mono" style="font-size:12px;color:var(--muted)">−63 dup</span></div>
+          <div class="r-foot"><span>Generated, not scraped</span><span class="verify">COVERAGE ✓</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DIFF II: QUALITY -->
+<section id="quality">
+  <div class="wrap">
+    <div class="feat rev">
+      <div class="feat-text">
+        <div class="eyebrow muted">Quality is graded, not claimed</div>
+        <p class="pullquote" style="margin-top:16px">Quality is a property of the pipeline,
+          <span class="accent">not a promise on a slide.</span></p>
+        <p>A vendor-neutral standard scores every dataset across <b>twenty dimensions</b> —
+          signal integrity, time-sync, hand-pose error, label grounding — each with an
+          A / B / C grade tied to a measured number, assigned from what's verified in the
+          data, not from vendor self-assessment. It grades anyone's data, including a corpus
+          you bought somewhere else.</p>
+        <p>Every camera file is SHA-256 hashed at capture, re-verified on ingest, and the
+          hash is carried into the delivered files — so <b>you can independently verify any
+          episode back to the original bytes.</b></p>
+        <div class="chips">
+          <span class="chip">20 graded dimensions</span>
+          <span class="chip">A / B / C, measured</span>
+          <span class="chip">SHA-256 chain of custody</span>
+          <span class="chip">SOC 2-aligned</span>
+        </div>
+      </div>
+      <div>
+        <div class="receipt">
+          <div class="r-head">
+            <span class="t">Batch quality receipt</span>
+            <span class="b">SJ-1000H · v3</span>
+          </div>
+          <div class="r-row"><span class="dim">DS-10 · Signal integrity<small>Decodable frames ≥ 99.5%</small></span><span class="grade a">A</span></div>
+          <div class="r-row"><span class="dim">DS-06 · Time sync<small>≤ ±10 ms @ 99th pct</small></span><span class="grade a">A</span></div>
+          <div class="r-row"><span class="dim">DS-13 · Label grounding<small>Human-audited, κ ≥ 0.81</small></span><span class="grade b">B</span></div>
+          <div class="r-row"><span class="dim">DS-08 · Hand pose<small>≤ 10 mm keypoint error</small></span><span class="grade b">B</span></div>
+          <div class="r-row"><span class="dim">DS-12 · Operator authenticity<small>≥ 70% real workers</small></span><span class="grade a">A</span></div>
+          <div class="r-foot"><span>Shipped with every batch</span><span class="verify">VERIFIABLE ✓</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GRADE-1 QUOTE -->
+<section style="border-top:none;padding-top:0">
+  <div class="wrap">
+    <div class="quote-band">
+      <span class="mark">&ldquo;</span>
+      <blockquote>We evaluated 70–80 vendors and shortlisted five. Your data is rated
+        Grade&nbsp;1 — our highest quality tier. Nobody else is there.</blockquote>
+      <div class="attr">— <b>Leading robotics lab</b>, active customer &nbsp;·&nbsp; <span style="color:#b8b2a5">quote pending public-use clearance</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- DATA LAYERS -->
+<section id="layers">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow muted">What's in every hour</div>
+      <h2>One capture. Every layer a policy needs.</h2>
+      <p>Each episode is delivered as aligned layers — not raw video. Vision, motion,
+        language, and geometry, time-synced to a single frame and grounded in the same task.</p>
+    </div>
+    <div class="layers">
+      <div class="layer">
+        <div class="shot"><span class="lbl">Multi-view</span><img src="assets/data/multiview-calib.png" alt="Multi-camera calibration and cross-view feature matching" /></div>
+        <div class="body"><div class="n">LAYER 01</div><h3>Multi-view capture</h3>
+          <p>Egocentric, exocentric, and both wrists — cross-calibrated and audio-synced to
+            within one frame.</p></div>
+      </div>
+      <div class="layer">
+        <div class="shot"><span class="lbl">Motion</span><img src="assets/data/hand-pose.png" alt="21-keypoint hand-pose skeleton overlay across an ego sequence" /></div>
+        <div class="body"><div class="n">LAYER 02</div><h3>Hand pose &amp; motion</h3>
+          <p>Per-frame 21-keypoint hand skeletons — left, right, and grip center — plus IMU
+            motion.</p></div>
+      </div>
+      <div class="layer">
+        <div class="shot"><span class="lbl">Language</span><img src="assets/data/annotation-example.png" alt="Manipulation primitives labeled with action language and timestamps" /></div>
+        <div class="body"><div class="n">LAYER 03</div><h3>Grounded labels</h3>
+          <p>Task → action → primitive segmentation with grounded action language and exact
+            timestamps.</p></div>
+      </div>
+      <div class="layer">
+        <div class="shot"><span class="lbl">Spatial</span><img src="assets/data/3d-hand-mano.png" alt="Reconstructed 3D MANO hand mesh beside the source frame" /></div>
+        <div class="body"><div class="n">LAYER 04</div><h3>3D hand &amp; geometry</h3>
+          <p>Reconstructed 3D hand mesh for spatial grounding. Calibrated metric depth on the
+            near roadmap.</p></div>
+      </div>
+      <div class="layer">
+        <div class="shot contain" style="background:#fff"><span class="lbl">Coverage</span><img src="assets/data/diversity-matrix.png" alt="Environment relationship chord diagram and task distribution charts" /></div>
+        <div class="body"><div class="n">LAYER 05</div><h3>Coverage &amp; diversity</h3>
+          <p>Every batch reports its spread across environments and tasks — coverage you can
+            audit, not just count.</p></div>
+      </div>
+      <div class="layer">
+        <div class="shot roadmap"><span class="lbl" style="background:rgba(20,20,18,.55)">Provenance</span><span>SHA-256 · verifiable to source</span></div>
+        <div class="body"><div class="n">LAYER 06</div><h3>Provenance</h3>
+          <p>A hash chain from the original camera bytes into the delivered files — every
+            frame traceable and rights-cleared.</p></div>
+      </div>
+    </div>
+    <div style="margin-top:16px"><span class="note">Layer previews are internal pipeline outputs — pending clearance for public use.</span></div>
+  </div>
+</section>
+
+<!-- ENGINE -->
+<section id="engine">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow muted">The engine · capture to trainable</div>
+      <h2>Data a policy trains on directly — not video it has to translate.</h2>
+      <p>One line, end to end. Delivered in LeRobot v3 and Physical Intelligence's data format,
+        loading out of the box in PyTorch, JAX, or TF, with recommended co-training mixture
+        weights. No augmentation, no synthetic padding.</p>
+    </div>
+    <div class="engine">
+      <div class="e-top"><span>Synjuku engine</span><span>lerobot_v3 · 960×720 · 29.97 fps</span></div>
+      <div class="e-phases">
+        <div class="e-phase">
+          <div class="ph-k">01 · Sense</div>
+          <h4>Capture</h4>
+          <p>Continuous 4-camera session on-site. One session, one episode.</p>
+          <div class="e-mods"><span class="e-mod">4-cam rig</span><span class="e-mod">IMU</span><span class="e-mod">Audio</span></div>
+        </div>
+        <div class="e-phase mid">
+          <div class="ph-k">02 · Refine</div>
+          <h4>Sync · Label · Pose · Grade</h4>
+          <p>Audio-synced to one frame, action-labeled, hand-pose extracted, then graded on 20
+            dimensions with a diversity report.</p>
+          <div class="e-mods"><span class="e-mod">Audio sync ±33ms</span><span class="e-mod">Action labels</span><span class="e-mod">Hand pose</span><span class="e-mod">20-dim QC</span></div>
+        </div>
+        <div class="e-phase final">
+          <div class="ph-k">03 · Deliver</div>
+          <h4>Model-ready</h4>
+          <p>A LeRobot v3 bundle with a quality receipt, verifiable back to source bytes.</p>
+          <div class="e-mods"><span class="e-mod">LeRobot v3</span><span class="e-mod">PI format</span><span class="e-mod">Mixture weights</span></div>
+        </div>
+      </div>
+      <div class="e-readout">
+        <span>OUTPUT&nbsp; <b>lerobot_v3</b></span>
+        <span>FRAME&nbsp; <b>hand_pose · imu · action</b></span>
+        <span>SYNC&nbsp; <b>±1 frame</b></span>
+        <span>INTEGRITY&nbsp; <span class="ok">sha256 ✓</span></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DEPLOYMENT (novelty pump) -->
+<section id="deploy">
+  <div class="wrap">
+    <div class="feat">
+      <div class="feat-text">
+        <div class="eyebrow muted">Deployment readiness · a partnership</div>
+        <p class="pullquote" style="margin-top:16px">The tail lives where a policy
+          <span class="accent">actually fails.</span></p>
+        <p>The richest long-tail data doesn't emerge on its own from scaled deployment — it has
+          to be hunted. We partner with you on a real use case, on site, and run the policy
+          until it breaks: the rare states where it hesitates, slips, or stalls.</p>
+        <p>Then we capture the corrective demonstrations that fix them — the within-task and
+          across-task novelty no crowd-capture or synthetic pipeline produces. It takes ops
+          taste and effort to find, and it's exactly the work we're built for. You keep the
+          model; we keep you supplied with the trajectories that make it generalize.</p>
+        <div class="chips">
+          <span class="chip">On-site, real use case</span>
+          <span class="chip">Find the failure states</span>
+          <span class="chip">Corrective demonstrations</span>
+          <span class="chip">Within- &amp; across-task novelty</span>
+        </div>
+      </div>
+      <div>
+        <div class="receipt">
+          <div class="r-head"><span class="t">Failure → correction</span><span class="b">DEPLOY-07</span></div>
+          <div class="r-row"><span class="dim">Observed failure<small>Grasp slip on reflective object</small></span><span class="grade b" style="width:auto;padding:0 10px;background:var(--red-soft);color:#913428">×18</span></div>
+          <div class="r-row"><span class="dim">State novelty<small>Unseen in training distribution</small></span><span class="mono" style="font-size:12px;color:var(--muted)">high</span></div>
+          <div class="r-row"><span class="dim">Corrective demos captured<small>Expert, on-site</small></span><span class="mono" style="font-size:12px;color:var(--muted)">+ 42</span></div>
+          <div class="r-row"><span class="dim">Fed back to training<small>Graded, LeRobot v3</small></span><span class="grade a" style="width:auto;padding:0 10px">ready</span></div>
+          <div class="r-foot"><span>The novelty pump</span><span class="verify">TAIL ✓</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY / TRUST -->
+<section id="why">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow muted">Why Synjuku</div>
+      <h2>The neutral supplier the labs can trust.</h2>
+    </div>
+    <div class="why">
+      <div class="why-card">
+        <div class="k">No conflict</div>
+        <h3>We don't build a model that competes with yours</h3>
+        <p>No competing foundation model. When we work on deployment, it's a readiness
+          partnership on your use case — never our own robot product. The labs building the
+          models can rely on us as a data partner, not a rival.</p>
+      </div>
+      <div class="why-card">
+        <div class="k">Custody</div>
+        <h3>Rights cleared, provenance intact</h3>
+        <p>Every capture carries operator and site releases and a full provenance chain from
+          the original camera bytes to delivery. SOC 2 readiness, built for how frontier labs
+          buy.</p>
+      </div>
+      <div class="why-card">
+        <div class="k">Neutral on rig</div>
+        <h3>Any source, one schema</h3>
+        <p>Off-the-shelf rigs, partner headsets, or your own hardware — all normalized into
+          one delivered schema. Neutral on the rig, strict on the output.</p>
+      </div>
+      <div class="why-card">
+        <div class="k">Omakase data</div>
+        <h3>Quality before quantity</h3>
+        <p>Expert-curated, sequenced for the highest learning value. We don't hand you a
+          haystack and call it scale. Better data is better.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section id="team">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow muted">Team</div>
+      <h2>Operators who've built the data and the pipeline before.</h2>
+    </div>
+    <div class="team">
+      <div class="member">
+        <div class="pic"><img src="assets/team-frank.png" alt="Frank Jiang" /></div>
+        <div class="info"><h4>Frank Jiang</h4><div class="ro">Co-Founder · CEO</div>
+          <p>Scaled a VLM training-data library from 7K to 6M+ hours and 8-figure revenue in
+            18 months. Manufacturing &amp; legal routes across SEA and the US.</p></div>
+      </div>
+      <div class="member">
+        <div class="pic"><img src="assets/team-gary.png" alt="Gary Zhang" /></div>
+        <div class="info"><h4>Gary Zhang</h4><div class="ro">Co-Founder · Head of Eng</div>
+          <p>UC Berkeley Robotics PhD. Built the full capture-to-delivery pipeline — hardware
+            sync, automated QC, and the annotation engine.</p></div>
+      </div>
+      <div class="member">
+        <div class="pic"><div class="mono-av"><span class="dot"></span><span class="in">CH</span></div></div>
+        <div class="info"><h4>Cancy Han</h4><div class="ro">Head of Ops</div>
+          <p>Tech investment banking, with semiconductor and mobility industry experience.
+            <span class="note">Portrait TBD</span></p></div>
+      </div>
+      <div class="member">
+        <div class="pic"><div class="mono-av"><span class="dot"></span><span class="in">LN</span></div></div>
+        <div class="info"><h4>Lucas Negritto</h4><div class="ro">Head of Product</div>
+          <p>Ex-OpenAI and YC founder. Leads product and the buyer-facing data experience.
+            <span class="note">Portrait TBD</span></p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ADVISORS -->
+<section id="advisors">
+  <div class="wrap">
+    <div class="sec-head" style="margin-bottom:24px">
+      <div class="eyebrow muted">Advisors</div>
+      <h2>Advised by people who built the field.</h2>
+    </div>
+    <p class="adv-note">Guidance from operators and researchers across the labs, robot
+      companies, and universities defining Physical AI. <span class="note">Named advisors &amp; portraits — placeholder, to confirm.</span></p>
+    <div class="adv-group">
+      <div class="g-k">Industry &amp; labs</div>
+      <div class="adv-chips">
+        <span class="adv-chip">Physical Intelligence</span>
+        <span class="adv-chip">Meta</span>
+        <span class="adv-chip">Google Robotics</span>
+        <span class="adv-chip">NVIDIA</span>
+        <span class="adv-chip">Dyna Robotics</span>
+        <span class="adv-chip">1X</span>
+        <span class="adv-chip">Agility Robotics</span>
+        <span class="adv-chip">AMD</span>
+      </div>
+    </div>
+    <div class="adv-group">
+      <div class="g-k">Research &amp; universities</div>
+      <div class="adv-chips">
+        <span class="adv-chip">UC Berkeley</span>
+        <span class="adv-chip">Harvard</span>
+        <span class="adv-chip">Tsinghua</span>
+        <span class="adv-chip">NTU Singapore</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- START / CTA -->
+<section id="start">
+  <div class="wrap">
+    <div class="sec-head" style="text-align:center;margin:0 auto 40px">
+      <div class="eyebrow muted" style="display:block">How to begin</div>
+      <h2 style="margin-top:14px">Start with a sample. Scale from there.</h2>
+    </div>
+    <div class="ladder">
+      <div class="rung">
+        <div class="step">Step 01 · Pilot</div>
+        <h4><span class="vol">150–200 hrs</span></h4>
+        <p>A graded sample with annotation and a quality report — enough to run your own eval.</p>
+      </div>
+      <div class="rung mid">
+        <div class="step">Step 02 · Commercial</div>
+        <h4><span class="vol">10K hrs</span></h4>
+        <p>Standing supply, integrated into your training loop with agreed mixture weights.</p>
+      </div>
+      <div class="rung">
+        <div class="step">Step 03 · Scale</div>
+        <h4><span class="vol">100K+ hrs</span></h4>
+        <p>The full long-tail matrix — every primitive across every environment you need.</p>
+      </div>
+    </div>
+
+    <div class="final" style="margin-top:36px">
+      <h2>Request a <span class="em">pilot tranche.</span></h2>
+      <p>Tell us the embodiment and the tasks you're training. We'll scope a graded sample
+        you can evaluate against your own benchmark.</p>
+      <div class="hero-cta">
+        <a class="btn" href="mailto:hello@synjuku.ai?subject=Pilot%20tranche%20request">Request a pilot tranche <span class="arw">→</span></a>
+        <a class="btn ghost" href="mailto:hello@synjuku.ai">Talk to the team</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap foot-in">
+    <div>
+      <img class="logo" src="assets/logo-horizontal.png" alt="Synjuku" />
+      <div class="pos">The human-intelligence layer powering Physical AI. Better data is better.</div>
+    </div>
+    <div class="foot-links">
+      <div class="foot-col">
+        <div class="h">Product</div>
+        <a href="#make">What we make</a>
+        <a href="#layers">The data</a>
+        <a href="#engine">The engine</a>
+        <a href="#quality">Quality standard</a>
+      </div>
+      <div class="foot-col">
+        <div class="h">Company</div>
+        <a href="#deploy">Deployment</a>
+        <a href="#team">Team</a>
+        <a href="#advisors">Advisors</a>
+        <a href="mailto:hello@synjuku.ai">Contact</a>
+      </div>
+      <div class="foot-col">
+        <div class="h">Get started</div>
+        <a href="#start">Request a sample</a>
+        <a href="mailto:hello@synjuku.ai">hello@synjuku.ai</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

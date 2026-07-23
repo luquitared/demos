@@ -24,6 +24,7 @@ const PROTECTED = {
   '/odapt-build-report/': 'PW_ODAPT_BUILD_REPORT',
   '/synjuku-label/': 'PW_SYNJUKU_LABEL',
   '/synjuku-qc/': 'PW_SYNJUKU_QC',
+  '/synjuku/': 'PW_SYNJUKU',
 };
 
 export const onRequest = async (context) => {
