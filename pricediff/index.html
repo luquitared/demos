@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PriceDiff</title>
+<meta name="description" content="Send us your supplier price sheet, get back a Shopify-ready price and cost diff within 24 hours. First sheet free.">
+<style>
+  :root {
+    --accent: #0f6b4f;
+    --accent-ink: #ffffff;
+    --bg: #ffffff;
+    --ink: #1a1a1a;
+    --muted: #5f6368;
+    --line: #e4e6e8;
+    --soft: #f4f6f5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --accent: #3fbf92; --accent-ink: #06231a; --bg: #101312; --ink: #ecefee;
+      --muted: #a2a8a5; --line: #262b29; --soft: #181c1b;
+    }
+  }
+  :root[data-theme="dark"] {
+    --accent: #3fbf92; --accent-ink: #06231a; --bg: #101312; --ink: #ecefee;
+    --muted: #a2a8a5; --line: #262b29; --soft: #181c1b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 17px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 16px; }
+  header { padding: 20px 0; display: flex; justify-content: space-between; align-items: center; }
+  .logo { font-weight: 700; letter-spacing: -0.01em; text-decoration: none; color: var(--ink); }
+  .logo span { color: var(--accent); }
+  header a.small { color: var(--muted); text-decoration: none; font-size: 15px; }
+  .hero { padding: 56px 0 40px; }
+  h1 { font-size: clamp(30px, 5.5vw, 46px); line-height: 1.1; letter-spacing: -0.02em; margin: 0 0 18px; }
+  .lede { font-size: 20px; color: var(--muted); max-width: 640px; margin: 0 0 28px; }
+  .btn {
+    display: inline-block; background: var(--accent); color: var(--accent-ink); text-decoration: none;
+    padding: 14px 22px; border-radius: 8px; font-weight: 600; font-size: 17px;
+  }
+  .btn:hover { filter: brightness(0.95); }
+  .fine { font-size: 14px; color: var(--muted); margin-top: 12px; }
+  section { padding: 40px 0; border-top: 1px solid var(--line); }
+  h2 { font-size: 24px; letter-spacing: -0.01em; margin: 0 0 20px; }
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .step { background: var(--soft); border-radius: 10px; padding: 20px; }
+  .step b { display: block; color: var(--accent); font-size: 14px; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 8px; }
+  .step h3 { margin: 0 0 8px; font-size: 18px; }
+  .step p { margin: 0; color: var(--muted); font-size: 15px; }
+  .tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; min-width: 640px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  th { background: var(--soft); font-weight: 600; color: var(--muted); font-size: 13px; }
+  tr:last-child td { border-bottom: none; }
+  td.num { font-variant-numeric: tabular-nums; }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+  .tag.update { background: var(--accent); color: var(--accent-ink); }
+  .tag.disc { background: var(--ink); color: var(--bg); }
+  .tag.review { border: 1px solid var(--accent); color: var(--accent); }
+  .tag.same { background: var(--soft); color: var(--muted); }
+  .caption { font-size: 14px; color: var(--muted); margin-top: 10px; }
+  .plans { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .plan { border: 1px solid var(--line); border-radius: 10px; padding: 24px; }
+  .plan .price { font-size: 36px; font-weight: 700; letter-spacing: -0.02em; }
+  .plan .price small { font-size: 16px; font-weight: 400; color: var(--muted); }
+  .plan ul { padding-left: 18px; margin: 12px 0 0; color: var(--muted); font-size: 15px; }
+  .plan li { margin: 4px 0; }
+  .honest { background: var(--soft); border-radius: 10px; padding: 20px 24px; }
+  .honest p { margin: 8px 0; }
+  footer { padding: 32px 0 48px; color: var(--muted); font-size: 14px; border-top: 1px solid var(--line); }
+  @media (max-width: 640px) {
+    .steps, .plans { grid-template-columns: 1fr; }
+    .hero { padding: 36px 0 28px; }
+    .lede { font-size: 18px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="logo" href="#">Price<span>Diff</span></a>
+    <a class="small" href="#pricing">Pricing</a>
+  </header>
+
+  <div class="hero">
+    <h1>Supplier price sheet in. Shopify-ready price update out.</h1>
+    <p class="lede">Send us the Excel, CSV or PDF your supplier emailed you. Within 24 hours you get a diff of every SKU that changed (MAP, MSRP fallback, dealer cost, discontinued) and a CSV you import straight into Shopify.</p>
+    <a class="btn cta" href="#">Send your first price sheet, free</a>
+    <p class="fine">Opens an email to us. No account, no card. First sheet is on us.</p>
+  </div>
+
+  <section id="how">
+    <h2>How it works</h2>
+    <div class="steps">
+      <div class="step">
+        <b>Step 1</b>
+        <h3>Email the sheet and your export</h3>
+        <p>Attach the supplier price list as it came (xlsx, csv or pdf, merged headers and all) plus a Shopify products export.</p>
+      </div>
+      <div class="step">
+        <b>Step 2</b>
+        <h3>We match and diff</h3>
+        <p>SKUs are matched to your variants, with barcode and title fallbacks. New price is MAP, or MSRP when there is no MAP. Cost is dealer cost. Discontinued items are flagged.</p>
+      </div>
+      <div class="step">
+        <b>Step 3</b>
+        <h3>Import the CSV</h3>
+        <p>You get diff.csv to check, apply.csv in Shopify's import format with only the changed rows, and a short summary of what needs a human look.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="sample">
+    <h2>What the diff looks like</h2>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr><th>Supplier SKU</th><th>Shopify SKU</th><th>Old price</th><th>New price</th><th>Delta</th><th>Old cost</th><th>New cost</th><th>Action</th><th>Note</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>K-596-CP</td><td>K-596-CP</td><td class="num">395.00</td><td class="num">409.00</td><td class="num">+3.5%</td><td class="num">220.00</td><td class="num">228.00</td><td><span class="tag update">UPDATE</span></td><td></td></tr>
+          <tr><td>K 22169 CP</td><td>K-22169-CP</td><td class="num">89.00</td><td class="num">89.00</td><td class="num">0.0%</td><td class="num">48.00</td><td class="num">48.00</td><td><span class="tag same">NO_CHANGE</span></td><td></td></tr>
+          <tr><td>K-22169-BN</td><td>K-22169-BN</td><td class="num">109.00</td><td class="num">145.00</td><td class="num">+33.0%</td><td class="num">59.00</td><td class="num">61.00</td><td><span class="tag update">UPDATE</span></td><td>no MAP, price set to MSRP</td></tr>
+          <tr><td>K-3609-96</td><td>K-3609-96</td><td class="num">589.00</td><td class="num">589.00</td><td class="num">0.0%</td><td class="num">325.00</td><td class="num">325.00</td><td><span class="tag disc">DISCONTINUE</span></td><td>supplier status 'Discontinued'</td></tr>
+          <tr><td>K-596-BL</td><td>K-596-CP</td><td class="num">395.00</td><td class="num">475.00</td><td class="num">+20.3%</td><td class="num">220.00</td><td class="num">262.00</td><td><span class="tag review">REVIEW</span></td><td>matched by title (79)</td></tr>
+          <tr><td>K-99270-CP</td><td></td><td></td><td class="num">2150.00</td><td></td><td></td><td class="num">1180.00</td><td><span class="tag same">UNMATCHED</span></td><td>not in your catalog</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="caption">Real output from a test run on a messy dealer sheet. Everything the tool is not sure about lands in REVIEW instead of being applied.</p>
+  </section>
+
+  <section id="pricing">
+    <h2>Pricing</h2>
+    <div class="plans">
+      <div class="plan">
+        <div class="price">$99 <small>/ month per store</small></div>
+        <ul>
+          <li>Unlimited supplier sheets</li>
+          <li>Diff and import CSV within 24 hours</li>
+          <li>Any format: xlsx, csv, pdf</li>
+          <li>Cancel anytime</li>
+        </ul>
+      </div>
+      <div class="plan">
+        <div class="price">$149 <small>/ month for 3+ stores</small></div>
+        <ul>
+          <li>Everything in the single-store plan</li>
+          <li>One inbox for all your stores</li>
+          <li>Cancel anytime</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="honest">
+    <div class="honest">
+      <h2>Straight answers</h2>
+      <p><strong>Is this an app I install?</strong> Not yet. You email files, we run them through our matcher and email back the results. You apply the CSV with Shopify's own import, so nothing touches your store without you looking at it first.</p>
+      <p><strong>What if a SKU does not match?</strong> It goes in the REVIEW or UNMATCHED list with the reason. We would rather you check five rows than have a wrong price go live.</p>
+      <p><strong>What does the free run cost me?</strong> Nothing. Send one sheet, get the diff, decide.</p>
+    </div>
+  </section>
+
+  <section>
+    <a class="btn cta" href="#">Send your first price sheet, free</a>
+    <p class="fine">You get a Shopify-ready diff within 24 hours. If it saves you the hours, it is $99 a month after that.</p>
+  </section>
+
+  <footer>PriceDiff. Questions: <a class="cta" href="#" style="color:var(--accent)">email us</a>.</footer>
+</div>
+<script>
+  // Swap the address here; every CTA on the page uses it.
+  const CONTACT = "lucas@synjuku.ai";
+  const SUBJECT = "Free price sheet run";
+  const BODY = "Hi, I'd like the free run. Attached: my supplier price sheet and a Shopify products export.";
+  const href = "mailto:" + CONTACT + "?subject=" + encodeURIComponent(SUBJECT) + "&body=" + encodeURIComponent(BODY);
+  document.querySelectorAll("a.cta").forEach(a => a.href = href);
+</script>
+</body>
+</html>
